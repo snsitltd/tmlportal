@@ -1,0 +1,100 @@
+<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+
+require APPPATH . '/libraries/BaseController.php';
+
+/**
+ * Class : User (UserController)
+ * User Class to control all user related operations.
+ * @author : Kishor Mali
+ * @version : 1.1
+ * @since : 15 November 2016
+ */
+class Dashboard extends BaseController
+{
+
+    protected $isView;
+    protected $isAdd;
+    protected $isEdit;
+    protected $isDelete;
+    
+    /**
+     * This is default constructor of the class
+     */
+    public function __construct()
+    {
+
+        parent::__construct();
+        $this->load->model('user_model');
+        $this->load->model('Booking_model');
+        $this->load->model('Fcm_model');
+		$this->load->model('tickets_model');  
+        $this->load->model('Dashboard_model');
+        $this->load->model('Dashboard_model');
+          
+       
+        $this->isLoggedIn();  
+        $roleCheck = $this->Common_model->checkpermission('user');
+
+         $this->global['isView'] = $this->isView = $roleCheck->view;   
+         $this->global['isAdd'] = $this->isAdd = $roleCheck->add; 
+         $this->global['isEdit'] = $this->isEdit = $roleCheck->edit; 
+         $this->global['isDelete'] = $this->isDelete = $roleCheck->delete;
+         $this->global['active_menu'] = 'dashboard_new';          
+
+    }
+    
+    /**
+     * This function used to load the first screen of the user
+     */
+    public function index()
+    {
+        $this->global['pageTitle'] = WEB_PAGE_TITLE.' : Dashboard';
+        $this->global['active_menu'] = 'dashboard_new';
+		$data = array();   
+        $data['contact_count'] = $this->Common_model->CountContacts() ; 
+		$data['company_count'] = $this->Common_model->CountCompany() ; 
+        $data['ticket_count'] = $this->Common_model->CountTicket(); 
+        $data['ticket_limit_company'] = $this->Common_model->getTicketLimitCompanyList();   
+		$data['new_company'] = $this->Common_model->getRecentlyAddedSites() ; 
+		$data['new_company1'] = $this->Common_model->getRecentlyAddedCompany() ; 
+        $data['user_count'] = $this->user_model->userListingCount() ;  
+
+        if (isset($_GET['booking_id']) && !empty($_GET['booking_id']) && isset($_GET['driver_id']) && !empty($_GET['driver_id']) && isset($_GET['load_id']) && !empty($_GET['load_id']) && isset($_GET['vehicle_reg_no']) && !empty($_GET['vehicle_reg_no']) && isset($_GET['opportunity_id']) && !empty($_GET['opportunity_id'])) {
+            //Booking Data for Allocations
+            $data['running_loads'] = $this->Dashboard_model->GetLoadsData($_GET['driver_id'],"due");
+            $data['completed_loads'] = $this->Dashboard_model->GetLoadsData($_GET['driver_id'],"completed");
+            $data['tomorrow_loads'] = $this->Dashboard_model->GetLoadsData($_GET['driver_id'],"tomorrow");
+            //$data['completed_loads'] = array();
+
+            $this->db->select('tbl_live_tracking.*');
+            $this->db->from('tbl_live_tracking');
+            $this->db->where("tbl_live_tracking.created_at >= ' ".date("Y-m-d 00:00:00")."' "); 
+            $this->db->where("tbl_live_tracking.created_at <= ' ".date("Y-m-d 23:59:59")."' "); 
+            $this->db->where('tbl_live_tracking.driver_id = '.$_GET['driver_id']);
+            $this->db->where('tbl_live_tracking.load_id = '.$_GET['load_id']);
+            $this->db->order_by('tbl_live_tracking.id', 'DESC');
+            $query = $this->db->get();
+            $live_tracking_data = $query->result_array();
+            $data['live_tracking_data'] = $live_tracking_data;
+        }
+         
+        /*  
+        //$data['LorryRecords1'] = $this->Booking_model->LorryListAJAX1();  	 
+        $data['LorryRecords1'] = $this->Booking_model->LorryListAJAX();  	 
+        $data['LorryListNonApp'] = $this->Booking_model->LorryListNonApp();  	  
+        $data['LorryRecords'] = $this->Booking_model->LorryListAJAX();  	
+        $data['DriverTodayTAList'] = $this->Booking_model->DriverTodayTAList();  
+            
+        $data['TipRecords'] = $this->Booking_model->TipListAJAX();  */
+
+        $data['loads'] = $this->Dashboard_model->GetLoadsData();   
+        $this->global['pageTitle'] = WEB_PAGE_TITLE.' : Allocate Booking ';
+        $this->global['active_menu'] = 'bookingallocate'; 
+
+
+        $this->loadViews("dashboard_new", $this->global,  $data, NULL);
+    }
+    
+}
+
+?>

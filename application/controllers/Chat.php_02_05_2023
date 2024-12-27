@@ -1,0 +1,97 @@
+<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+
+require APPPATH . '/libraries/BaseController.php';
+include_once APPPATH.'/third_party/mpdf/mpdf.php';
+  
+class Chat extends BaseController{
+
+    protected $isView;
+    protected $isAdd;
+    protected $isEdit;
+    protected $isDelete;
+	
+	protected $isApprove;
+	protected $isPApprove;
+	protected $isIApprove;
+ 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('Chat_model');
+        $this->load->model('Booking_model');
+        $this->load->model('Fcm_model');
+		$this->load->model('tickets_model');        
+		$this->load->model('Common_model'); 
+        $this->isLoggedIn();  
+      
+         $this->global['active_menu'] = 'dashboard'; 
+
+    }
+	public function Drivers(){ 
+        $data = array();     
+		$this->global['pageTitle'] = WEB_PAGE_TITLE.' : All Chat Message';
+		$this->global['active_menu'] = 'chatmessage'; 
+		$this->loadViews("Chat/Drivers", $this->global, $data, NULL);
+    }
+	public function AddChatMessage(){ 
+        $data = array();      
+		//$data['driverList'] = $this->Booking_model->GetDriverList();
+		$data['driverList'] = $this->Chat_model->GetDriverList();   
+		//$data['driverList'] = $this->Booking_model->GetMessageLorryList();   
+		
+		$this->global['pageTitle'] = WEB_PAGE_TITLE.' : Driver Message';
+		$this->global['active_menu'] = 'chatmessage'; 
+		
+		$this->loadViews("Chat/AddChatMessage", $this->global, $data, NULL);
+    }
+	function SendDriverChatMessage()
+    {
+        $IDS = $this->security->xss_clean($this->input->post('IDS')); 
+        $LorryNo = $this->security->xss_clean($this->input->post('LorryNo')); 
+		$Message = $this->security->xss_clean($this->input->post('Message')); 
+		$Id = explode(',',$IDS);	
+		for($i=0;$i<count($Id);$i++){
+			$MessageInfo = array('driver_id'=> $Id[$i], 'message_from'=>'admin' , 'message'=> $Message , 'lorry_no'=> $LorryNo, 'admin_user'=> $_SESSION['name'] ); 
+			$messageId = $this->Common_model->insert("tbl_driver_messages_new",$MessageInfo);  
+			
+			$MessageStatusInfo = array('message_id'=> $messageId, 'driver_id'=>$Id[$i] ); 
+			$result1 = $this->Common_model->insert("tbl_driver_messages_status",$MessageStatusInfo);  
+		}  
+		if(isset($LorryNo) && !empty($LorryNo)){
+		    $IDS = $LorryNo;
+		}
+		$this->Fcm_model->sendNotication($IDS,$Message,'message');
+		echo(json_encode(array('status'=>TRUE,'result'=>$result1))); 
+    }
+	
+	public function ChatAjaxMessage(){  
+		$this->load->library('ajax');
+		$data = $this->Chat_model->GetAllActiveDriverMessage();   
+		$this->ajax->send($data);
+	}
+	public function ViewChat(){ 
+        $data = array();      
+        if(!isset($_GET['lorry_no']) || empty($_GET['lorry_no'])){
+            redirect($_SERVER['HTTP_REFERER']);
+            exit;
+        }
+		$data['driverMessagesList'] = $this->Chat_model->GetDriverMessages($_GET['lorry_no']);   
+		//$data['driverList'] = $this->Booking_model->GetMessageLorryList();   
+		$this->global['pageTitle'] = WEB_PAGE_TITLE.' : Driver Messages';
+		$this->global['active_menu'] = 'chatmessage'; 
+		$this->loadViews("Chat/ViewChat", $this->global, $data, NULL);
+    }
+    public function GetAjaxDriverChatMessage(){ 
+        $this->load->library('ajax');
+        $data = array();      
+        if(!isset($_GET['lastMessageId']) || empty($_GET['lastMessageId']) || !isset($_GET['lorry_no']) || empty($_GET['lorry_no'])){
+            $data['status'] = false;
+            $this->ajax->send($data);
+        }
+        $data['status'] = true;
+		$data['driverMessagesList'] = $this->Chat_model->GetDriverMessages($_GET['lorry_no'],$_GET['lastMessageId']);   
+		$this->ajax->send($data);
+    }
+}
+
+?>

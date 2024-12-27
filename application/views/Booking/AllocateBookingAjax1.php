@@ -1,0 +1,139 @@
+<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap-select.css'); ?>">    
+<script src="<?php echo base_url('assets/js/bootstrap-select.min.js'); ?>" type="text/javascript"></script>
+<script>
+	$(function () {  $('select').selectpicker();  }) 	
+</script> 
+
+<?php  
+$dl = array();
+for($i=0;$i<count($DriverTodayTAList);$i++){
+	$dl[$i]=$DriverTodayTAList[$i]['DriverID'];
+}  
+$cls = "driverlstd";
+//var_dump($BookingInfo);
+?>	
+<div class="row">
+	<div class="col-md-3">
+		<div class="form-group">
+			<label >Request Date : </label> <?php echo $BookingInfo['BookingDate']; ?> 
+		</div> 
+	</div> 
+	<div class="col-md-2">
+		<div class="form-group">
+			<label >Booking Type : </label> <?php if($BookingInfo['BookingType']==1){ echo "Collection"; }else{ echo "Delivery"; } ?> 
+		</div> 
+	</div> 
+	<div class="col-md-2">
+		<div class="form-group">
+			<label >Load/Lorry Type : </label> <?php if($BookingInfo['TonBook']==1){ echo "Tonnage"; }else{ if($LoadType==1){ echo "Loads"; }else{ echo "Turnaround"; } } ?> 
+		</div> 
+	</div> 
+	<?php if($BookingInfo['TonBook']==1){ ?>
+	<div class="col-md-2">
+		<div class="form-group">
+			<label >Ton/Load : </label> <?php  echo $BookingInfo['TonPerLoad'];   ?> 
+		</div> 
+	</div> 
+	<?php } ?>
+	<div class="col-md-3">
+		<div class="form-group">
+			<label >No of Load/Lorry : </label> <?php echo $BookingInfo['Loads']; ?>
+		</div> 
+	</div>  
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="form-group">
+			<label ><b>Company Name : </b></label > <?php echo $BookingInfo['CompanyName']; ?>  <br> 
+			<label ><b>Opportunity Name : </b></label > <?php echo $BookingInfo['OpportunityName']; ?> <br> 
+			<label ><b>Material Name : </b></label > <?php echo $BookingInfo['MaterialName']; ?> 
+		</div> 
+	</div> 
+</div> 
+ 
+<div class="row">  
+	<div class="col-md-3"> 
+		<div id="t<?php echo $BookingDateID; ?>">
+			<select  class="form-control tiplst1 selectpicker " data-live-search="true" style="width:120px" id="tip<?php echo $BookingDateID; ?>" name="tip<?php echo $BookingDateID; ?>"  >
+			<?php if(!empty($TipRecords)){ foreach ($TipRecords as $rl){ ?>
+					<option value="<?php echo $rl->TipID ?>" ><?php echo $rl->TipName ?></option>
+			<?php }} ?>
+			</select>
+		</div> 
+	</div> 
+	<?php if($LoadType==1){ ?>
+	<div class="col-md-2"> 
+		<div id="q<?php echo $BookingDateID; ?>">
+			<select  class="form-control selectpicker " data-live-search="true" style="width:200px" id="qty<?php echo $BookingDateID; ?>" name="qty<?php echo $BookingDateID; ?>"  >
+			<?php if($PendingLoad!=0){ for($i=0;$i<$PendingLoad;$i++){ ?>
+					<option value="<?php echo $i+1 ?>" <?php if($i+1==1){ echo "checked"; } ?> > <?php echo $i+1; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+			<?php }} ?>
+			</select>
+		</div>  	
+	</div>
+	<?php } ?>
+	<?php if($LoadType==2){ ?>
+	<input type="hidden" name= "qty<?php echo $BookingDateID; ?>" id= "qty<?php echo $BookingDateID; ?>"  value="1" >
+	<?php } ?> 
+	<div class="col-md-4">
+		<div id="d<?php echo $BookingDateID; ?>">
+			<select  class="form-control <?php echo $cls; ?> selectpicker" data-live-search="true" style="width:120px" id="driver<?php echo $BookingDateID; ?>" name="driver<?php echo $BookingDateID; ?>"  >
+			<?php if(!empty($LorryRecords)){ foreach ($LorryRecords as $rl){  if (!in_array($rl->LorryNo, $dl)) {   ?>
+				<option value="<?php echo $rl->LorryNo ?>" ><?php echo $rl->LorryNo.' | '.$rl->DriverName.' | '.$rl->RegNumber ?></option>
+			<?php }} }?>
+			<?php if(!empty($LorryListNonApp)){ foreach ($LorryListNonApp as $rl){ 
+			if($rl->ContractorLorryNo!=0){ $ln = $rl->ContractorLorryNo; }else{ $ln = $rl->LorryNo;  }
+			if($rl->RegNumber!=''){ $rn = " | ".$rl->RegNumber; }else{ $rn = "";  }
+			if (!in_array($rl->LorryNo, $dl)) { ?>
+				<option value="<?php echo $rl->LorryNo ?>" ><?php echo $rl->DriverName.' | '.$ln." ".$rn ?></option>
+			<?php } } } ?>
+			</select> 
+		</div>
+	</div>  	
+	<div class="col-md-2">
+		<a class="btn btn-sm  btn-info AllocateBooking" herf="#"  data-BookingNo="<?php echo $BookingID; ?>"  data-BookingDateID="<?php echo $BookingDateID; ?>" title="Allocate Booking"><i class="fa fa-check"></i> Allocate </a>  
+	</div>  
+	 
+</div>
+</div>
+<div id="LoadAllocated">
+<?php if(!empty($Loads)){ ?>
+<table  class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info" >
+	<thead>
+		<tr> 
+			<th width="5" align="right">No.</th>                        
+			<th width="100" align="right">Driver Name </th>                        
+			<th width="90" > VRNO</th>                        
+			<th width="100" >Tip Name</th>
+			<th >Material</th>     
+			<th width="115">Allocate DateTime</th>        
+			<th width="110">Accept DateTime</th>        
+			<th width="20">Status</th>    
+		</tr>
+	</thead> 
+	 <tbody>
+	<?php   
+	if(!empty($Loads)){ 
+	for($i=0;$i<count($Loads);$i++){  
+	$cls1 = "";
+		if($Loads[$i]->AutoCreated ==1){ $cls1='even1';  }else{ $cls1='odd1';   }   
+	?>
+	<tr class="<?php echo $cls1; ?>">  
+		<td width="5" align="right"><?php echo $Loads[$i]->ConveyanceNo; ?></td>                        
+		<td width="100" ><?php if($Loads[$i]->DriverName!=""){ echo $Loads[$i]->DriverName; }else{ echo $Loads[$i]->dname; } ?></td>
+		<td width="90"><?php if($Loads[$i]->VehicleRegNo!=""){ echo $Loads[$i]->VehicleRegNo; }else{ echo $Loads[$i]->vrn; }  ?></td>
+		<td width="100"><?php echo $Loads[$i]->TipName ?></td>
+		<td ><?php echo $Loads[$i]->MaterialName ?></td>
+		<td width="110"><?php  echo $Loads[$i]->CreateDateTime; ?></td>
+		<td width="110"><?php if($Loads[$i]->Status!=0){ echo $Loads[$i]->JobStartDateTime; }else{ echo '-'; } ?></td>
+		<td width="20"><?php if($Loads[$i]->Status==0){ echo '<span class="label label-danger" > Pending </span>'; } 
+		 if($Loads[$i]->Status==1){ echo '<span class="label label-warning" > Accepted </span>';  }  if($Loads[$i]->Status==2){ echo '<span class="label label-primary" > At Site </span>';  }
+		 if($Loads[$i]->Status==3){  echo '<span class="label label-default" > Out Site </span>'; }  if($Loads[$i]->Status==4){ echo '<span class="label label-success" > Finish </span>';  } ?>
+		</td> 
+	</tr>
+	<?php } } ?>
+	</tbody>	
+</table> 
+<?php } ?> 
+</div> 

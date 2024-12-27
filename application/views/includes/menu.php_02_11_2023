@@ -1,0 +1,248 @@
+<?php
+$dashboard = array("dashboard");
+$dashboardNew = array("dashboard_new");
+$settings = array("uploaddata", "importcsvfile", "content", "cron", "transfertickets");
+$users = array("userListing", "adduser", "edituser","viewuser","roles");
+$tips = array("tips", "edittip", "addtip");
+$companies = array("companies", "editcompanies", "addcompanies", "viewcompanies");
+$contacts = array("contact", "addcontact", "editcontact", "viewcontact",);
+$opportunity = array("wifopportunity", "opportunity","opportunity1", 'addopportunity', 'editopportunity', 'editProduct', 'addProduct', 'editContact', 'addContact', "viewopportunity");
+$county = array("county");
+$drivers = array("lorry","editlorry","addlorry","drivers","adddriver","editdriver","editdriverlogin","viewdriver","subcontractor","editsubcontractor","addsubcontractor");
+$lorry = array("driverslogin","adddriverlogin","editdriverprofile","editdriverpassword");
+$materials = array("materials", "editmaterial", "addmaterial", "viewmaterial");
+$bookings = array("bookings","bookingallocate","allocateddrivers", "addbooking", "editbooking", "loads","cloads", "message", "chatmessage", "driverloads","nonappsloads");
+$preinvoice = array("bookingcreateinvoice","bookingcreateinvoicetonnage","allnonapprequestloads","nonapprequestloads","mybookingpreinvoice","bookingpreinvoice","bookingpriceby" );
+$invoices = array( "bookinginvoicedetails","mybookinginvoice","bookinginvoice","allbookinginvoice","myreadybookinginvoice","allreadybookinginvoice");
+
+$tickets = array("tickets","tmltickets", "deleteTickets", "tmlholdtickets", "conveyance", 
+"intickets", "outtickets", "colltickets", "editintickets", 
+"viewintickets", "editouttickets","viewouttickets", "editcolltickets", "viewcollectiontickets"); 
+$reports = array("ticketreports", "materialreports","tmlreports","eareports","tippedinreports","ticketpaymentreports","materialreports");
+$invoice = array("invoicelist", "gen_invoices"); 
+
+?>
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+            <li class="treeview <?php if (in_array($active_menu, $dashboard)) echo 'active'; ?>">
+                <a href="<?php echo base_url('dashboard'); ?>">
+                    <i class="fa fa-dashboard"></i> <span> Dashboard</span></i>
+                </a>
+            </li> 
+            <!--<li class="treeview <?php //if (in_array($active_menu, $dashboardNew)) echo 'active'; ?>">
+                <a href="<?php //echo base_url('dashboard_new'); ?>">
+                    <i class="fa fa-dashboard"></i> <span> Live Tracking Dashboard</span></i>
+                </a>
+            </li>--> 
+            <?php if ($role == ROLE_ADMIN || $role == ROLE_MANAGER) { ?>
+                <li class="treeview <?php if (in_array($active_menu, $settings)) echo 'active menu-open' ?> ">
+                    <a href="#" ><i class="fa fa-ticket"></i>
+                        <span class="pull-right-container"><span>Admin settings</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="<?php if (in_array($active_menu, $settings)) echo ''; else echo 'display: none;' ?> ">
+                        <li class="<?php if ('uploaddata' == $active_menu || 'importcsvfile' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('uploaddata'); ?>" ><i class="fa fa-circle-o" aria-hidden="true"></i><span> Upload data</span></a></li>
+                        <li class="<?php if ('content' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('content'); ?>" ><i class="fa fa-thumb-tack"></i><span> Company Master</span></a></li>
+						<li class="<?php if ('cron' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('CronJobs'); ?>" ><i class="fa fa-thumb-tack"></i><span> CRON Manually</span></a></li>
+						 
+                    </ul>
+                </li>
+            <?php } ?> 
+            <li class="treeview <?php if (in_array($active_menu, $users)) echo 'active menu-open' ?> ">
+                <a href="#">
+                    <i class="fa fa-users"></i>
+                    <span class="pull-right-container"><span> Manage User</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $users)) echo ''; else echo 'display: none;' ?>">
+                <li class="<?php if ('adduser' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('addNew'); ?>"><i class="fa fa-circle-o"></i> Add user</a></li>
+                <li class="<?php if ('userListing' == $active_menu || 'edituser' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('userListing'); ?>"><i class="fa fa-circle-o"></i> User List</a></li>
+                <?php if ($role == ROLE_ADMIN ) { ?> 
+						<li class="<?php if ('roles' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('roles'); ?>"><i class="fa fa-circle-o"></i> User Roles</a></li> 
+                <?php } ?>
+                </ul>
+            </li>
+			<li class="treeview <?php if (in_array($active_menu, $tips)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                    <span class="pull-right-container"><span> Manage Tip Address</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $tips)) echo ''; else echo 'display: none;' ?>">
+					<li class="<?php if ('addtip' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('AddTip'); ?>"><i class="fa fa-circle-o"></i> Add Tip Address</a></li>
+                    <li class="<?php if ('tips' == $active_menu || 'edittip' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('Tips'); ?>"><i class="fa fa-circle-o"></i> Tip Address</a></li> 
+                </ul>
+            </li>	
+            <li class="treeview <?php if (in_array($active_menu, $companies)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                    <span class="pull-right-container"><span> Manage Company</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $companies)) echo ''; else echo 'display: none;' ?>">
+					<li class="<?php if ('addcompanies' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('Add-New-Company'); ?>"><i class="fa fa-circle-o"></i> Add Company</a></li>
+                    <li class="<?php if ('companies' == $active_menu || 'editcompanies' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('companies'); ?>"><i class="fa fa-circle-o"></i> Company List</a></li> 
+                </ul>
+            </li> 
+            <li class="treeview <?php if (in_array($active_menu, $contacts)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-users"></i>
+                    <span class="pull-right-container"><span> Manage Contacts</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $contacts)) echo ''; else echo 'display: none;' ?>">
+                <li class="<?php if ('addcontact' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('Add-New-Contacts'); ?>"><i class="fa fa-circle-o"></i> Add Contact</a></li>
+                    <li class="<?php if ('contact' == $active_menu || 'editcontact' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('contacts'); ?>"><i class="fa fa-circle-o"></i> Contact List</a></li> 
+                </ul>
+            </li> 
+            <li class="treeview <?php if (in_array($active_menu, $opportunity)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                    <span class="pull-right-container"><span> Manage Opportunity</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $opportunity)) echo ''; else echo 'display: none;' ?>">
+					<li class="<?php if ('addopportunity' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('Add-Opportunity'); ?>"><i class="fa fa-circle-o"></i> Add Opportunity</a></li> 
+					<li class="<?php if ('opportunity' == $active_menu || 'editopportunity' == $active_menu|| 'addProduct' == $active_menu|| 'editProduct' == $active_menu|| 'addContact' == $active_menu|| 'editContact' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('opportunities'); ?>"><i class="fa fa-circle-o"></i> Opportunity List</a></li>
+					<li class="<?php if ('wifopportunity' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('wifOppo'); ?>"><i class="fa fa-circle-o"></i> WIF FORM</a></li> 					
+					<li class="<?php if ('opportunity1' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('TransferTickets'); ?>" ><i class="fa fa-thumb-tack"></i><span> Transfer Opportunity</span></a></li>
+                </ul>
+            </li> 
+            <li class="treeview <?php if (in_array($active_menu, $county)) echo 'active' ?>">
+                <a href="<?php echo base_url('county'); ?>" ><i class="fa fa-files-o"></i><span> County List</span>  </a>
+            </li>
+			<li class="treeview <?php if (in_array($active_menu, $drivers)) echo 'active menu-open' ?>">
+                <a href="#"> <i class="fa fa-user" aria-hidden="true"></i> <span class="pull-right-container"><span> Manage Lorry</span> 
+				<i class="fa fa-angle-left pull-right"></i> </span> </a> 
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $drivers)) echo ''; else echo 'display: none;' ?>">
+					<li class="<?php if ('addlorry' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('AddLorry'); ?>"><i class="fa fa-circle-o"></i> Add Lorry</a></li>
+                    <li class="<?php if ('lorry' == $active_menu || 'editlorry' == $active_menu) echo 'active'; ?>">
+					<a href="<?php echo base_url('Lorry'); ?>"><i class="fa fa-circle-o"></i> Lorry List</a></li> 
+					<li class="<?php if ('Subcontractor' == $active_menu || 'editSubcontractor' == $active_menu) echo 'active'; ?>">
+					<a href="<?php echo base_url('Subcontractor'); ?>"><i class="fa fa-circle-o"></i> Subcontractor</a></li> 
+                </ul>
+            </li> 
+			<li class="treeview <?php if (in_array($active_menu, $lorry)) echo 'active menu-open' ?>">
+                <a href="#"> <i class="fa fa-user" aria-hidden="true"></i> <span class="pull-right-container"><span> Manage Driver</span> 
+				<i class="fa fa-angle-left pull-right"></i> </span> </a> 
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $lorry)) echo ''; else echo 'display: none;' ?>">
+					<li class="<?php if ('adddriverlogin' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('addDriverLogin'); ?>"><i class="fa fa-circle-o"></i> Add Driver</a></li>
+                    <li class="<?php if ('driverlogin' == $active_menu || 'editdriverprofile' == $active_menu|| 'editdriverpassword' == $active_menu) echo 'active'; ?>">
+					<a href="<?php echo base_url('DriversLogin'); ?>"><i class="fa fa-circle-o"></i> Active Drivers</a></li>  
+					<li class="<?php if ('driverlogin' == $active_menu || 'editdriverprofile' == $active_menu|| 'editdriverpassword' == $active_menu) echo 'active'; ?>">
+					<a href="<?php echo base_url('DriversLoginDeleted'); ?>"><i class="fa fa-circle-o"></i> Deleted Drivers</a></li>
+                </ul>
+            </li> 
+            <li class="treeview <?php if (in_array($active_menu, $materials)) echo 'active' ?>">
+                <a href="<?php echo base_url('materiallist'); ?>" ><i class="fa fa-files-o"></i> <span> Material List</span></a>
+            </li> 
+			<li class="treeview <?php if (in_array($active_menu, $bookings)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-ticket"></i>
+                    <span class="pull-right-container"><span> Manage Bookings</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $bookings)) echo ''; else echo 'display: none;' ?>">
+                    
+					<!-- <li class="<?php if ('AddBooking' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('AddBooking'); ?>"><i class="fa fa-circle-o"></i> Add Booking</a></li> 
+					<li class="<?php if ('Bookings' == $active_menu || 'EditBooking' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('Bookings'); ?>"><i class="fa fa-circle-o"></i> Bookings </a></li> 
+					<li class="<?php if ('bookingallocate' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('AllocateBookings'); ?>"><i class="fa fa-circle-o"></i> Allocate Loads/Lorry</a></li> 
+					<li class="<?php if ('loads' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('Loads'); ?>"><i class="fa fa-circle-o"></i> All Loads/Lorry</a></li> 
+					 
+					<li class="<?php if ('cloads' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('ContractorLoads'); ?>"><i class="fa fa-circle-o"></i> Subcontractor Loads/Lorry</a></li> 
+                    <li class="<?php if ('nonappsloads' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('NonAppsLoads'); ?>"><i class="fa fa-circle-o"></i> NonApps Loads/Lorry</a></li>   -->
+					<!-- <li class="<?php //if ('cloads' == $active_menu ) echo 'active'; ?>"><a href="<?php //echo base_url('ContractorLoads'); ?>"><i class="fa fa-circle-o"></i> Subcontractor Loads/Lorry</a></li> -->
+										
+					<li class="<?php if ('AddBookingRequest' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('AddBookingRequest'); ?>"><i class="fa fa-circle-o"></i> Add Booking </a></li> 
+                    <li class="<?php if ('Bookings' == $active_menu || 'EditBooking' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('BookingRequest'); ?>"><i class="fa fa-circle-o"></i> Bookings  </a></li> 
+					<li class="<?php if ('bookingallocate' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('AllocateBookingRequest'); ?>"><i class="fa fa-circle-o"></i> Allocate Loads/Lorry  </a></li> 
+					<li class="<?php if ('loads' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('RequestLoads'); ?>"><i class="fa fa-circle-o"></i> All Loads/Lorry </a></li> 
+					<li class="<?php if ('driverloads' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('DriverLoads'); ?>"><i class="fa fa-circle-o"></i> Driver Reports</a></li>  
+					<li class="<?php if ('allocateddrivers' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('AllocateDrivers'); ?>"><i class="fa fa-circle-o"></i> Drivers</a></li> 
+					<li class="<?php if ('message' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('AllMessage'); ?>"><i class="fa fa-circle-o"></i>All Messages</a></li>  
+					<li class="<?php if ('chatmessage' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('AddChatMessage'); ?>"><i class="fa fa-circle-o"></i>All Chat Messages</a></li>  
+					<!-- <li class="<?php //if ('bookingpreinvoice' == $active_menu ) echo 'active'; ?>"><a href="<?php //echo base_url('MyBookingPreInvoice'); ?>"><i class="fa fa-circle-o"></i> PRE INVOICE</a></li>  -->
+ 
+                </ul>
+            </li>
+			<li class="treeview <?php if (in_array($active_menu, $tickets)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-ticket"></i>
+                    <span class="pull-right-container"><span> Manage Tickets</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $tickets)) echo ''; else echo 'display: none;' ?>">
+                    <li class="<?php if ('intickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('In-Tickets'); ?>"><i class="fa fa-circle-o"></i> Add IN Tickets</a></li>
+                    <li class="<?php if ('outtickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('Out-Tickets'); ?>"><i class="fa fa-circle-o"></i> Add OUT Tickets</a></li>
+                    <li class="<?php if ('colltickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('Collection-Tickets'); ?>"><i class="fa fa-circle-o"></i> Add Collection Tickets</a></li>
+					<li class="<?php if ('conveyance' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('ConveyanceTickets'); ?>"><i class="fa fa-circle-o"></i>Conveyance Tickets </a></li>
+                    <li class="<?php if ('tickets' == $active_menu || 'editintickets' == $active_menu || 'editouttickets' == $active_menu || 'editcolltickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('All-Tickets'); ?>"><i class="fa fa-circle-o"></i> Ticket List</a></li>
+                    <li class="<?php if ('tmltickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('TML-Tickets'); ?>"><i class="fa fa-circle-o"></i>TML Ticket List</a></li>
+					<li class="<?php if ('tmlholdtickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('TML-Hold-Tickets'); ?>"><i class="fa fa-circle-o"></i>TML HOLD Ticket List</a></li>
+					
+					<li class="<?php if ('deleteTickets' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('deleteTickets'); ?>"><i class="fa fa-circle-o"></i>Deleted Tickets</a></li>
+                </ul>
+            </li>  
+			<li class="treeview <?php if (in_array($active_menu, $preinvoice)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-ticket"></i>
+                    <span class="pull-right-container"><span> Manage PreInvoice</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $preinvoice)) echo ''; else echo 'display: none;' ?>"> 
+					<li class="<?php if ('bookingpriceby' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('BookingPriceByPending'); ?>"><i class="fa fa-circle-o"></i> Price By</a></li>  
+					<li class="<?php if ( 'bookingcreateinvoicetonnage' == $active_menu || 'mybookingpreinvoice' == $active_menu || 'bookingpreinvoice' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('MyBookingPreInvoice'); ?>"><i class="fa fa-circle-o"></i> PRE INVOICE</a></li>   
+					<li class="<?php if ('conveyance' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('NonAppConveyanceTickets'); ?>"><i class="fa fa-circle-o"></i> All NonApp Loads</a></li>  
+                </ul>
+            </li>
+			
+			<li class="treeview <?php if (in_array($active_menu, $invoices)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-ticket"></i>
+                    <span class="pull-right-container"><span> Manage Invoices</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $invoices)) echo ''; else echo 'display: none;' ?>">  
+					<li class="<?php if ('bookinginvoicedetails' == $active_menu  || 'bookinginvoicedetailstonnage' == $active_menu  || 'myreadybookinginvoice' == $active_menu || 'allreadybookinginvoice' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('MyReadyBookingInvoice'); ?>"><i class="fa fa-circle-o"></i> Ready INVOICES</a></li>   
+					<!-- <li class="<?php if ('bookinginvoicedetails' == $active_menu  || 'mybookinginvoice' == $active_menu|| 'bookinginvoice' == $active_menu || 'allbookinginvoice' == $active_menu ) echo 'active'; ?>"><a href="<?php echo base_url('MyBookingInvoice'); ?>"><i class="fa fa-circle-o"></i> INVOICES</a></li>    -->
+                </ul>
+            </li>
+			
+            
+            <li class="treeview <?php if (in_array($active_menu, $reports)) echo 'active menu-open' ?>">
+                <a href="#">
+                    <i class="fa fa-ticket"></i>
+                    <span class="pull-right-container"><span> Reports</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="<?php if (in_array($active_menu, $reports)) echo ''; else echo 'display: none;' ?>">
+                    <li class="<?php if ('ticketreports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('tickets-reports'); ?>"><i class="fa fa-circle-o"></i> Tickets</a></li>
+                    <li class="<?php if ('materialreports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('material-reports'); ?>"><i class="fa fa-circle-o"></i> Material</a></li>
+					<li class="<?php if ('tmlreports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('tml-tickets-reports'); ?>"><i class="fa fa-circle-o"></i> TML-IN-OUT-REPORT </a></li> 
+                    <!-- <li class="<?php if ('tippedinreports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('tipped-reports'); ?>"><i class="fa fa-circle-o"></i> Tipped-IN-REPORT</a></li>  -->
+					<li class="<?php if ('materialreports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('MaterialReports'); ?>"><i class="fa fa-circle-o"></i> Material Reports</a></li> 
+					<li class="<?php if ('eareports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('ea-reports'); ?>"><i class="fa fa-circle-o"></i> EA-REPORT</a></li> 
+					<li class="<?php if ('ticketpaymentreports' == $active_menu) echo 'active'; ?>"><a href="<?php echo base_url('tickets-payment-reports'); ?>"><i class="fa fa-circle-o"></i> Payment REPORT</a></li> 					
+                </ul>
+            </li>
+            <li class="treeview <?php if (in_array($active_menu, $invoice)) echo 'active' ?>">
+                <a href="<?php echo base_url('Invoice-List'); ?>" ><i class="fa fa-files-o"></i><span> Invoice List</span></a>
+            </li> 
+        </ul>
+    </section> 
+</aside>

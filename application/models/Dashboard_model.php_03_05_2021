@@ -1,0 +1,146 @@
+<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+
+class Dashboard_model extends CI_Model{ 
+	
+	public function GetLoadsData($driverId='',$completed=false)
+	{
+		//$columnIndex = $_POST['order'][0]['column']; // Column index
+		//$columnName = $_POST['columns'][$columnIndex]['data']; // Column name   
+		//$columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+		//$searchValue = trim(strtolower($_POST['search']['value'])); // Search value  
+		 
+        //Only select column that want to show in datatable or you can filte it mnually when send it
+        //$this->db->start_cache(); 
+		$this->db->select(' tbl_booking_loads.BookingID  as BookingID  ');  	 		
+		$this->db->select(' tbl_booking.CompanyID  as CompanyID  ');  	 		
+		$this->db->select(' tbl_booking_loads.MaterialID ');
+		$this->db->select(' tbl_booking_loads.DriverID ');
+		$this->db->select(' tbl_booking_loads.DriverLoginID ');		
+		$this->db->select(' tbl_booking_loads.ConveyanceNo ');  
+		$this->db->select(' tbl_booking_loads.LoadID '); 
+		$this->db->select(' tbl_booking_loads.DriverName ');  	 		
+		$this->db->select(' tbl_booking_loads.VehicleRegNo ');  	 		
+		$this->db->select(' tbl_booking_loads.Status ');  	 		
+		$this->db->select(' tbl_drivers_login.DriverName as dname ');  	 		
+		$this->db->select(' tbl_drivers.RegNumber as rname ');  	 				
+		$this->db->select(' tbl_drivers.AppUser ');  	 				
+		$this->db->select(' tbl_booking.BookingType ');  	 		
+		$this->db->select(' tbl_booking.LoadType ');  	 
+		$this->db->select(' tbl_booking.OpportunityID ');		
+		$this->db->select(' DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") as BookingDateTime ');  	 	 
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") as CreateDateTime ');  	 	  
+		//$this->db->select('(select tbl_company.CompanyName FROM tbl_company where tbl_company.CompanyID = tbl_booking.CompanyID ) as CompanyName '); 
+		//$this->db->select('(select tbl_materials.MaterialName FROM tbl_materials where tbl_materials.MaterialID = tbl_booking_loads.MaterialID ) as MaterialName '); 
+		//$this->db->select('(select tbl_opportunities.OpportunityName FROM tbl_opportunities where tbl_opportunities.OpportunityID = tbl_booking.OpportunityID ) as OpportunityName ');    
+		
+		$this->db->select(' tbl_company.CompanyName ');		
+		$this->db->select(' tbl_materials.MaterialName ');		
+		$this->db->select(' tbl_opportunities.OpportunityName ');
+		
+		$this->db->join('tbl_booking_date', ' tbl_booking_loads.BookingDateID = tbl_booking_date.BookingDateID '); 		
+		$this->db->join('tbl_booking', 'tbl_booking_loads.BookingID = tbl_booking.BookingID '); 		 
+		$this->db->join('tbl_drivers', ' tbl_booking_loads.DriverID = tbl_drivers.LorryNo '); 		
+		//$this->db->join('tbl_drivers_login', 'tbl_drivers_login.DriverID = tbl_drivers.DriverID', 'LEFT'); 		
+		$this->db->join('tbl_drivers_login', ' tbl_drivers.DriverID = tbl_drivers_login.DriverID ', 'LEFT'); 		 
+		$this->db->join('tbl_opportunities', 'tbl_booking.OpportunityID = tbl_opportunities.OpportunityID '); 
+		$this->db->join('tbl_company', 'tbl_booking.CompanyID = tbl_company.CompanyID '); 
+		$this->db->join('tbl_materials', 'tbl_booking.MaterialID = tbl_materials.MaterialID '); 
+		if($completed){
+			$this->db->where('tbl_booking_loads.Status = 4 '); 
+		} else{
+			$this->db->where('tbl_booking_loads.Status < 4 '); 
+		}
+		
+		if(isset($driverId) && !empty($driverId)){
+			$this->db->where('tbl_booking_loads.DriverID = '.$driverId);
+		}
+		
+		$this->db->order_by('tbl_booking_loads.BookingID', 'DESC');			 
+        $query = $this->db->get('tbl_booking_loads');
+		//echo $this->db->last_query(); 
+		//exit; 
+		
+        //$this->db->stop_cache();
+
+		//Reset Key Array
+        $data = array();
+		$data = $query->result_array();
+		$totalData  = $this->db->count_all_results();
+		$totalFiltered =  $totalData; 
+        //Prepare Return Data
+        $return = array(
+                "recordsTotal"    => $totalData,  // total number of records
+                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data   // total data array 
+        ); 
+        return $return; 
+    }
+	public function GetCompletedLoads($driverId=''){
+
+
+		/* $columnIndex = $_POST['order'][0]['column']; // Column index
+		$columnName = $_POST['columns'][$columnIndex]['data']; // Column name   
+		$columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+		$searchValue = trim(strtolower($_POST['search']['value'])); // Search value   */
+ 
+        //Only select column that want to show in datatable or you can filte it mnually when send it
+        $this->db->start_cache(); 
+		$this->db->select(' tbl_booking_loads.BookingID  as BookingID  ');  	 		
+		$this->db->select(' tbl_booking.CompanyID  as CompanyID  ');  	 		
+		$this->db->select(' tbl_booking_loads.ConveyanceNo ');  
+		$this->db->select(' tbl_booking_loads.MaterialID ');  	 		
+		$this->db->select(' tbl_booking_loads.LoadID '); 
+		$this->db->select(' tbl_booking_loads.DriverName ');  	 		
+		$this->db->select(' tbl_booking_loads.VehicleRegNo ');  	 		
+		$this->db->select(' tbl_booking_loads.Status ');  	 		
+		$this->db->select(' tbl_drivers_login.DriverName as dname ');
+		//$this->db->select(' tbl_drivers.DriverName as dname ');  	 		
+		$this->db->select(' tbl_drivers.RegNumber as rname ');  	 				
+		$this->db->select(' tbl_booking.BookingType ');  	 		
+		$this->db->select(' tbl_booking.LoadType ');  	 
+		$this->db->select(' tbl_booking.OpportunityID ');		
+		$this->db->select(' DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") as BookingDateTime ');  	 	 
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") as CreateDateTime ');  	 	  
+		
+		//$this->db->select('(select tbl_company.CompanyName FROM tbl_company where tbl_company.CompanyID = tbl_booking.CompanyID ) as CompanyName '); 
+		//$this->db->select('(select tbl_materials.MaterialName FROM tbl_materials where tbl_materials.MaterialID = tbl_booking_loads.MaterialID ) as MaterialName '); 
+		//$this->db->select('(select tbl_opportunities.OpportunityName FROM tbl_opportunities where tbl_opportunities.OpportunityID = tbl_booking.OpportunityID ) as OpportunityName ');    
+		
+		$this->db->select(' tbl_company.CompanyName ');		
+		$this->db->select(' tbl_materials.MaterialName ');		
+		$this->db->select(' tbl_opportunities.OpportunityName ');		
+		
+		$this->db->join('tbl_booking', 'tbl_booking_loads.BookingID = tbl_booking.BookingID '); 		
+		$this->db->join('tbl_booking_date', 'tbl_booking_loads.BookingDateID = tbl_booking_date.BookingDateID  '); 		
+		$this->db->join('tbl_drivers', 'tbl_booking_loads.DriverID = tbl_drivers.LorryNo '); 		
+		//$this->db->join('tbl_drivers_login', 'tbl_drivers_login.DriverID = tbl_drivers.DriverID',"LEFT"); 		
+		$this->db->join('tbl_drivers_login', 'tbl_drivers.DriverID = tbl_drivers_login.DriverID ',"LEFT"); 		
+		
+		$this->db->join('tbl_opportunities', 'tbl_booking.OpportunityID = tbl_opportunities.OpportunityID '); 
+		$this->db->join('tbl_company', 'tbl_booking.CompanyID = tbl_company.CompanyID '); 
+		$this->db->join('tbl_materials', 'tbl_booking.MaterialID = tbl_materials.MaterialID '); 
+		$this->db->where('tbl_booking_loads.Status = 4 '); 
+		$this->db->order_by('tbl_booking_loads.BookingID', 'DESC');			 
+        $query = $this->db->get('tbl_booking_loads');
+        //echo $this->db->last_query(); 
+		//exit; 
+		$this->db->stop_cache();
+		
+		//Reset Key Array
+        $data = array();
+		$data = $query->result_array();
+		$totalData  = $this->db->count_all_results();
+		$totalFiltered =  $totalData; 
+		 
+        //Prepare Return Data
+        $return = array(
+                "recordsTotal"    => $totalData,  // total number of records
+                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data   // total data array 
+        ); 
+        return $return; 
+    }
+ 
+}
+
+  
