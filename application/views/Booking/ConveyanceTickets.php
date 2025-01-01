@@ -136,7 +136,7 @@
 
 var mdataArray = []; 
 // const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
-var apiUrl = baseUrl; 
+var apiUrl = baseURL; 
 
 var ColumnData;    
 var defaultcol = "";
