@@ -124,7 +124,8 @@ var mdataArray = [];
 var ColumnData;    
 var defaultcol = "";
   
-var apiUrl = '/'; 
+const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
+var apiUrl = baseUrl; 
  
 var GetTableMetaApiEndpoint = 'DayWorkTicketsTableMeta';//Endpoint returning Table Metadata 
 var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and return Table Data

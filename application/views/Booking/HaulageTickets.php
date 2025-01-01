@@ -124,7 +124,8 @@ var mdataArray = [];
 var ColumnData;    
 var defaultcol = "";
   
-var apiUrl = '/'; 
+const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
+var apiUrl = baseUrl; 
  
 var GetTableMetaApiEndpoint = 'HaulageTicketsTableMeta';//Endpoint returning Table Metadata 
 var GetTableDataApiEndpoint = 'AjaxHaulageTickets';//Endpoint processing and return Table Data

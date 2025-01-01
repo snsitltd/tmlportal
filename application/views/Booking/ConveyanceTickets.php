@@ -135,11 +135,12 @@
 <script type="text/javascript" language="javascript" >
 
 var mdataArray = []; 
- 
+// const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
+var apiUrl = baseUrl; 
+
 var ColumnData;    
 var defaultcol = "";
   
-var apiUrl = '/'; 
  
 var GetTableMetaApiEndpoint = 'ConveyanceTicketsTableMeta';//Endpoint returning Table Metadata 
 var GetTableDataApiEndpoint = 'AjaxConveyanceTickets';//Endpoint processing and return Table Data

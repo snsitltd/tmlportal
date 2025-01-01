@@ -99,7 +99,8 @@ var mdataArray1 = [];
 var ColumnData1;   
 var defaultcol = "";
   
-var apiUrl = '/'; 
+const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
+var apiUrl = baseUrl; 
 
 var GetTableMetaApiEndpoint1 = 'DeliveryTicketsTableMeta';//Endpoint returning Table Metadata 
 var GetTableDataApiEndpoint1 = 'AjaxDeliveryTickets';//Endpoint processing and return Table Data
