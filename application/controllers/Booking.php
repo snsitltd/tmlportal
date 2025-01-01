@@ -697,552 +697,497 @@ class Booking extends BaseController{
             $this->global['pageTitle'] = 'Error';             
             $this->loadViews("permission", $this->global, $data, NULL);
         }else{     
-		 			
-			
-			//var_dump($_POST); 			
-			$CompanyName   = $this->input->post('CompanyName');  
-			$Search   = $this->input->post('Search');  
-			$OpportunityID   = $this->input->post('OpportunityID');  
-			$OpportunityName   = $this->input->post('OpportunityName');  
-			$reservation   = $this->input->post('reservation');  
-			$TipName   = $this->input->post('TipName');  
-			$SiteOutDateTime   = $this->input->post('SiteOutDateTime');  
-			$ConveyanceNo   = $this->input->post('ConveyanceNo');  
-			$MaterialName   = $this->input->post('MaterialName');  
-			$DriverName   = $this->input->post('DriverName');  
-			$VehicleRegNo   = $this->input->post('VehicleRegNo');  
-			$WaitTime   = $this->input->post('WaitTime');   
-			$Status   = $this->input->post('Status');   
-			$Price   = $this->input->post('Price');   
-			$NetWeight   = $this->input->post('NetWeight');   
-			
-			$data['SplitExcelConveyanceTickets'] = $this->Booking_model->SplitExcelConveyanceTickets($OpportunityID,$CompanyName,$OpportunityName,$reservation,$TipName,$SiteOutDateTime,$ConveyanceNo,$MaterialName,$DriverName,$VehicleRegNo,$WaitTime,$Status,$Search,$Price,$NetWeight); 
-			
-			if(count($data['SplitExcelConveyanceTickets'])>0){
-				$Array = array();  
-				$xx = 0; 
+            $CompanyName = $this->input->post('CompanyName');  
+            $Search = $this->input->post('Search');  
+            $OpportunityID = $this->input->post('OpportunityID');  
+            $OpportunityName = $this->input->post('OpportunityName');  
+            $reservation = $this->input->post('reservation');  
+            $TipName = $this->input->post('TipName');  
+            $SiteOutDateTime = $this->input->post('SiteOutDateTime');  
+            $ConveyanceNo = $this->input->post('ConveyanceNo');  
+            $MaterialName = $this->input->post('MaterialName');  
+            $DriverName = $this->input->post('DriverName');  
+            $VehicleRegNo = $this->input->post('VehicleRegNo');  
+            $WaitTime = $this->input->post('WaitTime');   
+            $Status = $this->input->post('Status');   
+            $Price = $this->input->post('Price');   
+            $NetWeight = $this->input->post('NetWeight');   
+            
+            $data['SplitExcelConveyanceTickets'] = $this->Booking_model->SplitExcelConveyanceTickets($OpportunityID,$CompanyName,$OpportunityName,$reservation,$TipName,$SiteOutDateTime,$ConveyanceNo,$MaterialName,$DriverName,$VehicleRegNo,$WaitTime,$Status,$Search,$Price,$NetWeight); 
 
-				foreach( $data['SplitExcelConveyanceTickets'] as $row){ 
+            if(count($data['SplitExcelConveyanceTickets']) > 0) {
+                // Group data by lorry type
+                $lorryTypeData = array(
+                    1 => array(), // Tipper
+                    2 => array(), // Grab
+                    3 => array()  // Bin
+                );
 
-					if($xx==0){
-						$x = $row['CompanyID']; $y = $row['OpportunityID']; $z = $row['MaterialID'];	
-					}
-					
-					if($x == $row['CompanyID'] && $y == $row['OpportunityID'] && $z == $row['MaterialID'] ){  
-					}else{
-						$Array[] = $xx; 
-					    $x = $row['CompanyID'];  
-					    $y = $row['OpportunityID'];  
-					    $z = $row['MaterialID']; 
-					} 
-					
-				    if(count($data['SplitExcelConveyanceTickets'])-1 == $xx){ 
-					    $xx++; 
-					    $Array[] = $xx;  
-					    break; 
-					}else{
-					    $xx++; 
-					}	 
-				} 
-			}
-			 
+                foreach($data['SplitExcelConveyanceTickets'] as $ticket) {
+                    $lorryType = $ticket['LorryType'];
+                    if(isset($lorryTypeData[$lorryType])) {
+                        $lorryTypeData[$lorryType][] = $ticket;
+                    }
+                }
 
-			$this->load->library('zip'); 
-			$this->load->library("excel");
-	 		$xlsfiles = array(); 
-			for($j=0;$j<count($Array);$j++){ 
-				 $FileName = "";
-				/* Header Start Excel  */	
-				$object = new PHPExcel();
-				//print_r($_POST); die;
-				$object->setActiveSheetIndex(0);
-				if($NetWeight=='1'){  
-					$table_columns = array("ConvTkt No","ConvTkt Date","Customer Name ", "Job Site Address", "Supplier Name","Tip Site Address","SuppTkt Date" ,"SuppTkt No" ,"PO NO" ,"Product Description" ,"Price","WaitTime","Status","Net Weight","Total Price" ); 
-				}else{  
-					$table_columns = array("ConvTkt No","ConvTkt Date","Customer Name ", "Job Site Address", "Supplier Name","Tip Site Address","SuppTkt Date" ,"SuppTkt No" ,"PO NO" ,"Product Description" ,"Price","WaitTime","Status" ); 
-				}
-				$column = 0; 
-				foreach($table_columns as $field)
-				{
-					$object->getActiveSheet()->getStyle('A1:O1')->getFont()->setBold( true );		
-					$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
-					$column++;
-				}
-				$object->getActiveSheet()->getStyle('k:k')->getNumberFormat()->setFormatCode('0.00'); 		
-				$excel_row = 2; 
-				/* Header End Excel  */	
-				
-				/* Records Start  For Each  */	
-				//foreach( $data['SplitExcelConveyanceTickets'] as $row){ 
-				//echo $Array[$j]; 
-				if($j==0){ $newi = 0;  }else{ $newi = $Array[$j-1];  }
-				$TPrice = 0; $TNPrice = 0; $TLoad  = 0; $TNetWeight  = 0;
-				for($i=$newi; $i<$Array[$j]; $i++){ 
-				//for($i=0;$i<count($data['SplitExcelConveyanceTickets']);$i++){  
-				$cname = "";$oname = "";
-					$url = '';
-					
-					$NPrice = 0; 	
-					$NetWeight1 = 0;     
-					
+                $this->load->library('zip'); 
+                $this->load->library("excel");
+                $xlsfiles = array(); 
 
-					if($data['SplitExcelConveyanceTickets'][$i]['ReceiptName']!=""){
-						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['ConveyanceNo']); 
-						if($data['SplitExcelConveyanceTickets'][$i]['ReceiptName']!=""){
-							$object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/'.$data['SplitExcelConveyanceTickets'][$i]['ReceiptName'])); 	
-						} 
-					}else{
-						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TicketConveyance']); 
-						if($data['SplitExcelConveyanceTickets'][$i]['ConveyanceGUID']!=''){ 
-							$object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl('http://193.117.210.98:8081/ticket/Conveyance/'.trim($data['SplitExcelConveyanceTickets'][$i]['TicketConveyance']).'.pdf'); 	
-							//$object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/'.$data['SplitExcelConveyanceTickets'][$i]['ReceiptName'])); 	
-						}//else{ 	
-						//} 
-					}
-					
-					
-					$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['SiteOutDateTime']);
-					$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['CompanyName']);
-					$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['OpportunityName']); 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipName'] );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipAddress'] ); 
-					if($data['SplitExcelConveyanceTickets'][$i]['TipID']==1){
-						if($data['SplitExcelConveyanceTickets'][$i]['Net']!='0.00'){
-							$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['SuppDate'] );    
-							$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['SuppNo'] ); 
-							if($data['SplitExcelConveyanceTickets'][$i]['pdf_name']!="" && $data['SplitExcelConveyanceTickets'][$i]['pdf_name']!='.pdf'){
-								$object->getActiveSheet()->getCell('H'.$excel_row)->getHyperlink()->setUrl(base_url('assets/pdf_file/'.$data['SplitExcelConveyanceTickets'][$i]['pdf_name'])); 	
-							}
-						}
-					}else{
-						$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipTicketDate'] );    
-						
-						if($data['SplitExcelConveyanceTickets'][$i]['TipTicketNo']!='' && $data['SplitExcelConveyanceTickets'][$i]['TipTicketNo']!='0'){
-							$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipTicketNo'] ); 
-                            $url = "http://193.117.210.98:8081/ticket/Supplier/" . rawurlencode($data['SplitExcelConveyanceTickets'][$i]['TipName'] . "-" . $data['SplitExcelConveyanceTickets'][$i]['TipTicketNo']) . ".pdf";
-                            $object->getActiveSheet()->getCell('H' . $excel_row)->getHyperlink()->setUrl($url);
-						} 
-					} 
-					 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['PurchaseOrderNo'] );    
-					if($row['MStatus'] == 1){
-						$LT = '';
-						if($data['SplitExcelConveyanceTickets'][$i]['LorryType'] == 1) { $LT = 'Tipper'; }
-						else if($data['SplitExcelConveyanceTickets'][$i]['LorryType'] == 2) { $LT = 'Grab'; }
-						else if($data['SplitExcelConveyanceTickets'][$i]['LorryType'] == 3) { $LT = 'Bin'; }
-						else{ $LT = ''; }
+                foreach($lorryTypeData as $lorryType => $typeTickets) {
+                    if(empty($typeTickets)) continue;
 
-						$TB = '';
-						if($data['SplitExcelConveyanceTickets'][$i]['TonBook']== 1) { $TB = ' Tonnage '; } 
-						else{ $TB = ' Load '; }
-						
-						$MaterialText = $data['SplitExcelConveyanceTickets'][$i]['MaterialName'].' Collected '.$LT.' '.$TB;					
-						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText );    
-					}else{
-						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['MaterialName'] );    
-					}    
-					
+                    // Get lorry type name for filename
+                    $lorryTypeName = '';
+                    switch($lorryType) {
+                        case 1: $lorryTypeName = 'Tipper'; break;
+                        case 2: $lorryTypeName = 'Grab'; break;
+                        case 3: $lorryTypeName = 'Bin'; break;
+                    }
 
-					if($data['SplitExcelConveyanceTickets'][$i]['BookingMaterialID'] == $data['SplitExcelConveyanceTickets'][$i]['MaterialID']){
-                        $Price = is_numeric($data['SplitExcelConveyanceTickets'][$i]['Price']) ? $data['SplitExcelConveyanceTickets'][$i]['Price'] : 0;
-                    }else{
-                        $Price = 0;
-                    } 		
+                    // Find group boundaries
+                    $Array = array();
+                    $xx = 0;
+                    
+                    foreach($typeTickets as $row) {
+                        if($xx == 0) {
+                            $x = $row['CompanyID']; 
+                            $y = $row['OpportunityID']; 
+                            $z = $row['MaterialID'];
+                        }
+                        
+                        if($x != $row['CompanyID'] || $y != $row['OpportunityID'] || $z != $row['MaterialID']) {
+                            $Array[] = $xx;
+                            $x = $row['CompanyID'];
+                            $y = $row['OpportunityID'];
+                            $z = $row['MaterialID'];
+                        }
+                        
+                        if(count($typeTickets)-1 == $xx) {
+                            $xx++;
+                            $Array[] = $xx;
+                            break;
+                        } else {
+                            $xx++;
+                        }
+                    }
 
-					//$TPrice = floor(($TPrice + $Price)*100)/100;
-					$TPrice = bcadd($TPrice,$Price,3);	 
+                    // Create Excel files for each group
+                    for($j = 0; $j < count($Array); $j++) {
+                        $object = new PHPExcel();
+                        $object->setActiveSheetIndex(0);
 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price );     
-					if($data['SplitExcelConveyanceTickets'][$i]['WaitTime']==null){ $min = "N/A";  }else{ $min = $data['SplitExcelConveyanceTickets'][$i]['WaitTime']." Min";  } 
-					
-					$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $min );    
-					$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['Status'] );    
-					if($NetWeight=='1'){ 
-						//$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, floor(($data['SplitExcelConveyanceTickets'][$i]['Net']/1000)*100)/100 );    
-						
-						//$NetWeight1 = round($data['SplitExcelConveyanceTickets'][$i]['Net']/1000,2);
-						//$NetWeight1 = floor(($data['SplitExcelConveyanceTickets'][$i]['Net']/1000)*100)/100;
-						
-						$NetWeight1 = bcdiv($data['SplitExcelConveyanceTickets'][$i]['Net'],1000,2); 
-						$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row,$NetWeight1);   
-						
-						//$TNetWeight = floor(($TNetWeight + $NetWeight1)*100)/100; 
-						$TNetWeight = bcadd($TNetWeight,$NetWeight1,3);	 
-						
-						//$NPrice = floor(($NetWeight1*$data['SplitExcelConveyanceTickets'][$i]['Price'])*100)/100; 
-						$NPrice = bcmul($NetWeight1,$data['SplitExcelConveyanceTickets'][$i]['Price'],3);
-						
-						//$TNPrice = floor(($TNPrice + $NPrice)*100)/100;
-						$TNPrice = bcadd($TNPrice, $NPrice, 2);
-						
-						$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice );  
-						
-					}
-					
-					$excel_row++;  
-					$TLoad = $TLoad + 1;
-					$cname =  $data['SplitExcelConveyanceTickets'][$i]['CompanyName']; 
-					$oname =  $data['SplitExcelConveyanceTickets'][$i]['OpportunityName']; 
-					
-				 } /// For each 
-				 /* Records Start For Each   */	
+                        if($NetWeight == '1') {
+                            $table_columns = array("ConvTkt No","ConvTkt Date","Customer Name","Job Site Address","Supplier Name","Tip Site Address","SuppTkt Date","SuppTkt No","PO NO","Product Description","Price","WaitTime","Status","Net Weight","Total Price");
+                        } else {
+                            $table_columns = array("ConvTkt No","ConvTkt Date","Customer Name","Job Site Address","Supplier Name","Tip Site Address","SuppTkt Date","SuppTkt No","PO NO","Product Description","Price","WaitTime","Status");
+                        }
 
-				if($NetWeight!='1'){ 
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row.'')->getFont()->setBold( true );	 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Price' );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TPrice );	
-				}
-				
-				if($NetWeight=='1'){ 
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row.'')->getFont()->setBold( true );	 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, 'Total NetWeight' );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $TNetWeight );
-					$excel_row++;
-					
+                        $column = 0;
+                        foreach($table_columns as $field) {
+                            $object->getActiveSheet()->getStyle('A1:O1')->getFont()->setBold(true);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+                            $column++;
+                        }
 
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':M'.$excel_row.'')->getFont()->setBold( true );		
-					$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, "Total Price" );   
-					$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $TNPrice );  
-					
-				}				
-				
-				$excel_row++;
-				if($NetWeight!='1'){  
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row.'')->getFont()->setBold( true );	 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Loads' );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TLoad );	
-				}
-				/* Export Start Excel  */		
-				for ($x = 'A'; $x !=  $object->getActiveSheet()->getHighestColumn(); $x++) {
-					$object->getActiveSheet()->getColumnDimension($x)->setAutoSize(TRUE);
-				}
-				
-                $FileName = $cname."@".$oname."@".date("YmdHis")."@".rand().".xls";		
-				
-				$FileName = mb_ereg_replace("([^\w\s\d\-_~@&,;\[\]\(\).'])", '', $FileName);
+                        $object->getActiveSheet()->getStyle('k:k')->getNumberFormat()->setFormatCode('0.00');
+                        $excel_row = 2;
 
-                // Remove any runs of periods (thanks falstro!)
-                $FileName = mb_ereg_replace("([\.]{2,})", '', $FileName);
-			  
-				//$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
-				$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
-				
-				header('Content-Type: application/vnd.ms-excel');
-				//header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				//application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-				header('Content-Disposition: attachment;filename="'.$FileName.'"'); 
-				
-				ob_start(); 
-				$object_writer->save("SplitXLS/".$FileName); 
-				 
-				$xlsfiles[] = $FileName;
-				$xlsData = ob_get_contents();
-				ob_end_clean();  
-				/* Export End Excel  */			  
-				}
-				 
-				foreach($xlsfiles as $xls){ 
-				  $this->zip->read_file('SplitXLS/'.$xls);
-				}
-				$zname = date("YmdHis")."-".rand().".zip";  
-				$this->zip->archive("SplitXLS/".$zname);  
-					 
-				$response =  array(
-						'op' => 'ok',
-						'FileName' => "SplitXLS/".$zname ,
-						'file' => "data:application/zip;base64,".$zname
-				); 
-				die(json_encode($response));   
+                        if($j == 0) { 
+                            $newi = 0;
+                        } else { 
+                            $newi = $Array[$j-1];
+                        }
+                        
+                        $TPrice = 0; 
+                        $TNPrice = 0; 
+                        $TLoad = 0; 
+                        $TNetWeight = 0;
+                        $cname = '';
+                        $oname = '';
+
+                        for($i = $newi; $i < $Array[$j]; $i++) {
+                            $row = $typeTickets[$i];
+                            $url = '';
+
+                            if($row['ReceiptName'] != "") {
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row['ConveyanceNo']);
+                                if($row['ReceiptName'] != "") {
+                                    $object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/'.$row['ReceiptName']));
+                                }
+                            } else {
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row['TicketConveyance']);
+                                if($row['ConveyanceGUID'] != '') {
+                                    $object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl('http://193.117.210.98:8081/ticket/Conveyance/'.trim($row['TicketConveyance']).'.pdf');
+                                }
+                            }
+
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime']);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row['CompanyName']);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row['OpportunityName']);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row['TipName']);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $row['TipAddress']);
+
+                            if($row['TipID'] == 1) {
+                                if($row['Net'] != '0.00') {
+                                    $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row['SuppDate']);
+                                    $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row['SuppNo']);
+                                    if($row['pdf_name'] != "" && $row['pdf_name'] != '.pdf') {
+                                        $object->getActiveSheet()->getCell('H'.$excel_row)->getHyperlink()->setUrl(base_url('assets/pdf_file/'.$row['pdf_name']));
+                                    }
+                                }
+                            } else {
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row['TipTicketDate']);
+                                if($row['TipTicketNo'] != '' && $row['TipTicketNo'] != '0') {
+                                    $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row['TipTicketNo']);
+                                    $url = "http://193.117.210.98:8081/ticket/Supplier/" . rawurlencode($row['TipName'] . "-" . $row['TipTicketNo']) . ".pdf";
+                                    $object->getActiveSheet()->getCell('H'.$excel_row)->getHyperlink()->setUrl($url);
+                                }
+                            }
+
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row['PurchaseOrderNo']);
+
+                            if($row['MStatus'] == 1) {
+                                $LT = '';
+                                if($row['LorryType'] == 1) { $LT = 'Tipper'; }
+                                else if($row['LorryType'] == 2) { $LT = 'Grab'; }
+                                else if($row['LorryType'] == 3) { $LT = 'Bin'; }
+
+                                $TB = ($row['TonBook'] == 1) ? ' Tonnage ' : ' Load ';
+                                $MaterialText = $row['MaterialName'].' Collected '.$LT.' '.$TB;
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText);
+                            } else {
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
+                            }
+
+                            $Price = ($row['BookingMaterialID'] == $row['MaterialID']) ? (is_numeric($row['Price']) ? $row['Price'] : 0) : 0;
+                            $TPrice = bcadd($TPrice, $Price, 3);
+
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);
+                            $min = ($row['WaitTime'] === null) ? "N/A" : $row['WaitTime']." Min";
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $min);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $row['Status']);
+
+                            if($NetWeight == '1') {
+                                $NetWeight1 = bcdiv($row['Net'], 1000, 2);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $NetWeight1);
+                                $TNetWeight = bcadd($TNetWeight, $NetWeight1, 3);
+                                $NPrice = bcmul($NetWeight1, $row['Price'], 3);
+                                $TNPrice = bcadd($TNPrice, $NPrice, 2);
+                                $object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice);
+                            }
+
+                            $excel_row++;
+                            $TLoad++;
+                            $cname = $row['CompanyName'];
+                            $oname = $row['OpportunityName'];
+                        }
+
+                        if($NetWeight != '1') {
+                            $object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row)->getFont()->setBold(true);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Price');
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TPrice);
+                        }
+
+                        if($NetWeight == '1') {
+                            $object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row)->getFont()->setBold(true);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, 'Total NetWeight');
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $TNetWeight);
+                            $excel_row++;
+
+                            $object->getActiveSheet()->getStyle('A'.$excel_row.':M'.$excel_row)->getFont()->setBold(true);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, "Total Price");
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $TNPrice);
+                        }
+
+                        $excel_row++;
+                        if($NetWeight != '1') {
+                            $object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row)->getFont()->setBold(true);
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Loads');
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TLoad);
+                        }
+
+                        for($x = 'A'; $x != $object->getActiveSheet()->getHighestColumn(); $x++) {
+                            $object->getActiveSheet()->getColumnDimension($x)->setAutoSize(TRUE);
+                        }
+
+                        $FileName = $cname."@".$oname."@".$lorryTypeName."@".date("YmdHis")."@".rand().".xls";
+                        $FileName = mb_ereg_replace("([^\w\s\d\-_~@&,;\[\]\(\).'])", '', $FileName);
+                        $FileName = mb_ereg_replace("([\.]{2,})", '', $FileName);
+
+                        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
+                        header('Content-Type: application/vnd.ms-excel');
+                        header('Content-Disposition: attachment;filename="'.$FileName.'"');
+
+                        ob_start();
+                        $object_writer->save("SplitXLS/".$FileName);
+                        $xlsfiles[] = $FileName;
+                        $xlsData = ob_get_contents();
+                        ob_end_clean();
+                    }
+                }
+
+                foreach($xlsfiles as $xls) {
+                    $this->zip->read_file('SplitXLS/'.$xls);
+                }
+                $zname = date("YmdHis")."-".rand().".zip";
+                $this->zip->archive("SplitXLS/".$zname);
+
+                $response = array(
+                    'op' => 'ok',
+                    'FileName' => "SplitXLS/".$zname,
+                    'file' => "data:application/zip;base64,".$zname
+                );
+                die(json_encode($response));
+            }
         }
     }
 	
 	
-	function SplitExcelExportAll(){
-        if($this->isEdit == 0){
-            $data = array();
-            $this->global['pageTitle'] = 'Error';             
-            $this->loadViews("permission", $this->global, $data, NULL);
-        }else{     
-		
-			//var_dump($_POST); 			
-			$CompanyName   = $this->input->post('CompanyName');  
-			$Search   = $this->input->post('Search');   
-			$OpportunityName   = $this->input->post('OpportunityName');  
-			$reservation   = $this->input->post('reservation');  
-			$TipName   = $this->input->post('TipName');  
-			$SiteOutDateTime   = $this->input->post('SiteOutDateTime');  
-			$ConveyanceNo   = $this->input->post('ConveyanceNo');  
-			$MaterialName   = $this->input->post('MaterialName');  
-			$DriverName   = $this->input->post('DriverName');  
-			$VehicleRegNo   = $this->input->post('VehicleRegNo');  
-			$WaitTime   = $this->input->post('WaitTime');   
-			$Status   = $this->input->post('Status');   
-			$Price   = $this->input->post('Price');   
-			$NetWeight   = $this->input->post('NetWeight');   
-			
-			 
-			$data['SplitExcelConveyanceTickets'] = $this->Booking_model->SplitExcelConveyanceTicketsAll($CompanyName,$OpportunityName,$reservation,$TipName,$SiteOutDateTime,$ConveyanceNo,$MaterialName,$DriverName,$VehicleRegNo,$WaitTime,$Status,$Search,$Price,$NetWeight); 			
-			//var_dump($data['SplitExcelConveyanceTickets']); 
-			if(count($data['SplitExcelConveyanceTickets'])>0){
-				$Array = array(); 
-				//for($a=0;$a>count($data['SplitExcelConveyanceTickets']);$a++){  
-				$xx = 0; 
-
-				foreach( $data['SplitExcelConveyanceTickets'] as $row){ 
-					if($xx==0){
-						$x = $row['CompanyID']; $y = $row['OpportunityID']; $z = $row['MaterialID'];	
-					}
-					
-					if($x == $row['CompanyID'] && $y == $row['OpportunityID'] && $z == $row['MaterialID'] ){ 
-						//$xx++;  
-						
-					//	echo $xx;
-					//	echo " ==== ";
-					//	echo $x; 
-					//	echo " ==== ";
-					//	echo $y; 
-					//	echo " ==== ";
-					//	echo $z;
-					//	echo " </br>  ";
-						
-					}else{
-						$Array[] = $xx;
-						
-						//$xx++; 
-						//echo "| else ".$xx." |";
-					//	echo " ||| ==== ";
-					    $x = $row['CompanyID']; 
-					//	echo " ==== ";
-					    $y = $row['OpportunityID']; 
-					//	echo " ==== ";
-					    $z = $row['MaterialID'];
-					//	echo " </br>  ";
-					} 
-					
-				    if(count($data['SplitExcelConveyanceTickets'])-1 == $xx){ 
-					    $xx++; 
-					    $Array[] = $xx; 
-					    //echo "|  count ".$xx." |";
-					    break;
-
-					}else{
-					    $xx++; 
-					}	
-					
-				 	
+	function SplitExcelExportAll() {
+		if ($this->isEdit == 0) {
+			$data = array();
+			$this->global['pageTitle'] = 'Error';
+			$this->loadViews("permission", $this->global, $data, NULL);
+		} else {
+			$CompanyName = $this->input->post('CompanyName');
+			$Search = $this->input->post('Search');
+			$OpportunityName = $this->input->post('OpportunityName');
+			$reservation = $this->input->post('reservation');
+			$TipName = $this->input->post('TipName');
+			$SiteOutDateTime = $this->input->post('SiteOutDateTime');
+			$ConveyanceNo = $this->input->post('ConveyanceNo');
+			$MaterialName = $this->input->post('MaterialName');
+			$DriverName = $this->input->post('DriverName');
+			$VehicleRegNo = $this->input->post('VehicleRegNo');
+			$WaitTime = $this->input->post('WaitTime');
+			$Status = $this->input->post('Status');
+			$Price = $this->input->post('Price');
+			$NetWeight = $this->input->post('NetWeight');
+	
+			$data['SplitExcelConveyanceTickets'] = $this->Booking_model->SplitExcelConveyanceTicketsAll($CompanyName, $OpportunityName, $reservation, $TipName, $SiteOutDateTime, $ConveyanceNo, $MaterialName, $DriverName, $VehicleRegNo, $WaitTime, $Status, $Search, $Price, $NetWeight);
+	
+			if (count($data['SplitExcelConveyanceTickets']) > 0) {
+				$groupedData = array();
+				foreach ($data['SplitExcelConveyanceTickets'] as $row) {
+					$groupedData[$row['LorryType']][] = $row;
 				}
-				
-			}
-			 
-			
-			//print_r($Array);
-			//exit;
-			$this->load->library('zip'); 
-			$this->load->library("excel");
-	 		$xlsfiles = array(); 
-			for($j=0;$j<count($Array);$j++){ 
-				 $FileName = "";
-				/* Header Start Excel  */	
-				$object = new PHPExcel();
-				//print_r($_POST); die;
-				$object->setActiveSheetIndex(0);
-				if($NetWeight=='1'){  
-					$table_columns = array("ConvTkt No","ConvTkt Date","Customer Name ", "Job Site Address", "Supplier Name","Tip Site Address","SuppTkt Date" ,"SuppTkt No" ,"PO NO" ,"Product Description" ,"Price","WaitTime","Status","Net Weight","Total Price" ); 
-				}else{  
-					$table_columns = array("ConvTkt No","ConvTkt Date","Customer Name ", "Job Site Address", "Supplier Name","Tip Site Address","SuppTkt Date" ,"SuppTkt No" ,"PO NO" ,"Product Description" ,"Price","WaitTime","Status" ); 
-				}
-				$column = 0; 
-				foreach($table_columns as $field)
-				{
-					$object->getActiveSheet()->getStyle('A1:O1')->getFont()->setBold( true );		
-					$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
-					$column++;
-				}
-				$object->getActiveSheet()->getStyle('k:k')->getNumberFormat()->setFormatCode('0.00'); 		
-				$excel_row = 2; 
-				/* Header End Excel  */	
-				
-				/* Records Start  For Each  */	
-				//foreach( $data['SplitExcelConveyanceTickets'] as $row){ 
-				//echo $Array[$j]; 
-				if($j==0){ $newi = 0;  }else{ $newi = $Array[$j-1];  }
-				$TPrice = 0; $TNPrice = 0; $TLoad  = 0; $TNetWeight = 0; 
-				for($i=$newi; $i<$Array[$j]; $i++){ 
-				//for($i=0;$i<count($data['SplitExcelConveyanceTickets']);$i++){  
-				$cname = "";$oname = "";
-					$url = '';
-					$Price = 0; //$Status = ''; 
-					$NPrice = 0; 
-					$NetWeight1 = 0;   
-					
-					if($data['SplitExcelConveyanceTickets'][$i]['ReceiptName']!=""){
-						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['ConveyanceNo']); 
-						if($data['SplitExcelConveyanceTickets'][$i]['ReceiptName']!=""){
-							$object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/'.$data['SplitExcelConveyanceTickets'][$i]['ReceiptName'])); 	
-						} 
-					}else{
-						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TicketConveyance']); 
-						if($data['SplitExcelConveyanceTickets'][$i]['ConveyanceGUID']!=''){ 
-							$object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl('http://193.117.210.98:8081/ticket/Conveyance/'.trim($data['SplitExcelConveyanceTickets'][$i]['TicketConveyance']).'.pdf'); 	
-							//$object->getActiveSheet()->getCell('A'.$excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/'.$data['SplitExcelConveyanceTickets'][$i]['ReceiptName'])); 	
-						}//else{ 	
-						//} 
-					}
-					
-					
-					$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['SiteOutDateTime']);
-					$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['CompanyName']);
-					$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['OpportunityName']); 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipName'] );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipAddress'] ); 
-					if($data['SplitExcelConveyanceTickets'][$i]['TipID']==1){
-						if($data['SplitExcelConveyanceTickets'][$i]['Net']!='0.00'){
-							$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['SuppDate'] );    
-							$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['SuppNo'] ); 
-							if($data['SplitExcelConveyanceTickets'][$i]['pdf_name']!="" && $data['SplitExcelConveyanceTickets'][$i]['pdf_name']!='.pdf'){
-								$object->getActiveSheet()->getCell('H'.$excel_row)->getHyperlink()->setUrl(base_url('assets/pdf_file/'.$data['SplitExcelConveyanceTickets'][$i]['pdf_name'])); 	
-							}
+	
+				$this->load->library('zip');
+				$this->load->library("excel");
+				$xlsfiles = array();
+	
+				foreach ($groupedData as $lorryType => $tickets) {
+					$Array = array();
+					$xx = 0;
+					foreach ($tickets as $row) {
+						if ($xx == 0) {
+							$x = $row['CompanyID'];
+							$y = $row['OpportunityID'];
+							$z = $row['MaterialID'];
 						}
-					}else{
-						$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipTicketDate'] );    
-						
-						if($data['SplitExcelConveyanceTickets'][$i]['TipTicketNo']!='' && $data['SplitExcelConveyanceTickets'][$i]['TipTicketNo']!='0'){
-							$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['TipTicketNo'] ); 
-							$url = "http://193.117.210.98:8081/ticket/Supplier/" . rawurlencode($data['SplitExcelConveyanceTickets'][$i]['TipName'] . "-" . $data['SplitExcelConveyanceTickets'][$i]['TipTicketNo']) . ".pdf";
-                            $object->getActiveSheet()->getCell('H' . $excel_row)->getHyperlink()->setUrl($url);
-						} 
-					} 
-					 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['PurchaseOrderNo'] );    
-					if($row['MStatus'] == 1){
-						$LT = '';
-						if($data['SplitExcelConveyanceTickets'][$i]['LorryType'] == 1) { $LT = 'Tipper'; }
-						else if($data['SplitExcelConveyanceTickets'][$i]['LorryType'] == 2) { $LT = 'Grab'; }
-						else if($data['SplitExcelConveyanceTickets'][$i]['LorryType'] == 3) { $LT = 'Bin'; }
-						else{ $LT = ''; }
-
-						$TB = '';
-						if($data['SplitExcelConveyanceTickets'][$i]['TonBook']== 1) { $TB = ' Tonnage '; } 
-						else{ $TB = ' Load '; }
-						
-						$MaterialText = $data['SplitExcelConveyanceTickets'][$i]['MaterialName'].' Collected '.$LT.' '.$TB;					
-						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText );    
-					}else{
-						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['MaterialName'] );    
-					}    
-					
-					if($data['SplitExcelConveyanceTickets'][$i]['BookingMaterialID'] == $data['SplitExcelConveyanceTickets'][$i]['MaterialID']){
-                        $Price = is_numeric($row['Price']) ? $row['Price'] : 0;
-                    }else{
-                        $Price = 0;
-                    }		
-					 //$TPrice = $TPrice + $Price;
-					 $TPrice = floor(($TPrice + $Price)*100)/100;
-					
-					$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price );     
-					if($data['SplitExcelConveyanceTickets'][$i]['WaitTime']==null){ $min = "N/A";  }else{ $min = $data['SplitExcelConveyanceTickets'][$i]['WaitTime']." Min";  } 
-					
-					$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $min );    
-					$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['Status'] );    
-					if($NetWeight=='1'){ 
-						$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, round($data['SplitExcelConveyanceTickets'][$i]['Net']/1000,2) );   
-						$NetWeight1 = floor(($data['SplitExcelConveyanceTickets'][$i]['Net']/1000)*100)/100;
-						$TNetWeight = floor(($TNetWeight + $NetWeight1)*100)/100; 
-						//$NetWeight1 = round($data['SplitExcelConveyanceTickets'][$i]['Net']/1000,2);
-						//$TNetWeight = $TNetWeight + $NetWeight1;
-						 
-						$NPrice = floor(($NetWeight1*$data['SplitExcelConveyanceTickets'][$i]['Price'])*100)/100; 
-						$TNPrice = floor(($TNPrice + $NPrice)*100)/100;
-						//$NPrice = round($NetWeight1*$data['SplitExcelConveyanceTickets'][$i]['Price'],2); 
-						//$TNPrice = $TNPrice + $NPrice; 
-						
-						$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice );  
-														
+						if ($x == $row['CompanyID'] && $y == $row['OpportunityID'] && $z == $row['MaterialID']) {
+							// Continue
+						} else {
+							$Array[] = $xx;
+							$x = $row['CompanyID'];
+							$y = $row['OpportunityID'];
+							$z = $row['MaterialID'];
+						}
+						if (count($tickets) - 1 == $xx) {
+							$xx++;
+							$Array[] = $xx;
+							break;
+						} else {
+							$xx++;
+						}
 					}
-					
-					$excel_row++;  
-					$TLoad = $TLoad + 1;
-					$cname =  $data['SplitExcelConveyanceTickets'][$i]['CompanyName']; 
-					$oname =  $data['SplitExcelConveyanceTickets'][$i]['OpportunityName']; 
-					
-				 } /// For each 
-				 /* Records Start For Each   */	
-				if($NetWeight!='1'){ 
-				
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row.'')->getFont()->setBold( true );		 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Price' );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TPrice );	
+	
+					for ($j = 0; $j < count($Array); $j++) {
+						$FileName = "";
+						$object = new PHPExcel();
+						$object->setActiveSheetIndex(0);
+						if ($NetWeight == '1') {
+							$table_columns = array("ConvTkt No", "ConvTkt Date", "Customer Name", "Job Site Address", "Supplier Name", "Tip Site Address", "SuppTkt Date", "SuppTkt No", "PO NO", "Product Description", "Price", "WaitTime", "Status", "Net Weight", "Total Price");
+						} else {
+							$table_columns = array("ConvTkt No", "ConvTkt Date", "Customer Name", "Job Site Address", "Supplier Name", "Tip Site Address", "SuppTkt Date", "SuppTkt No", "PO NO", "Product Description", "Price", "WaitTime", "Status");
+						}
+						$column = 0;
+						foreach ($table_columns as $field) {
+							$object->getActiveSheet()->getStyle('A1:O1')->getFont()->setBold(true);
+							$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+							$column++;
+						}
+						$object->getActiveSheet()->getStyle('K:K')->getNumberFormat()->setFormatCode('0.00');
+						$excel_row = 2;
+	
+						if ($j == 0) {
+							$newi = 0;
+						} else {
+							$newi = $Array[$j - 1];
+						}
+						$TPrice = 0;
+						$TNPrice = 0;
+						$TLoad = 0;
+						$TNetWeight = 0;
+						for ($i = $newi; $i < $Array[$j]; $i++) {
+							$cname = "";
+							$oname = "";
+							$url = '';
+							$Price = 0;
+							$NPrice = 0;
+							$NetWeight1 = 0;
+	
+							if ($tickets[$i]['ReceiptName'] != "") {
+								$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $tickets[$i]['ConveyanceNo']);
+								if ($tickets[$i]['ReceiptName'] != "") {
+									$object->getActiveSheet()->getCell('A' . $excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/' . $tickets[$i]['ReceiptName']));
+								}
+							} else {
+								$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $tickets[$i]['TicketConveyance']);
+								if ($tickets[$i]['ConveyanceGUID'] != '') {
+									$object->getActiveSheet()->getCell('A' . $excel_row)->getHyperlink()->setUrl('http://193.117.210.98:8081/ticket/Conveyance/' . trim($tickets[$i]['TicketConveyance']) . '.pdf');
+								}
+							}
+	
+							$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $tickets[$i]['SiteOutDateTime']);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $tickets[$i]['CompanyName']);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $tickets[$i]['OpportunityName']);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $tickets[$i]['TipName']);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $tickets[$i]['TipAddress']);
+							if ($tickets[$i]['TipID'] == 1) {
+								if ($tickets[$i]['Net'] != '0.00') {
+									$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $tickets[$i]['SuppDate']);
+									$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $tickets[$i]['SuppNo']);
+									if ($tickets[$i]['pdf_name'] != "" && $tickets[$i]['pdf_name'] != '.pdf') {
+										$object->getActiveSheet()->getCell('H' . $excel_row)->getHyperlink()->setUrl(base_url('assets/pdf_file/' . $tickets[$i]['pdf_name']));
+									}
+								}
+							} else {
+								$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $tickets[$i]['TipTicketDate']);
+								if ($tickets[$i]['TipTicketNo'] != '' && $tickets[$i]['TipTicketNo'] != '0') {
+									$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $tickets[$i]['TipTicketNo']);
+									$url = "http://193.117.210.98:8081/ticket/Supplier/" . rawurlencode($tickets[$i]['TipName'] . "-" . $tickets[$i]['TipTicketNo']) . ".pdf";
+									$object->getActiveSheet()->getCell('H' . $excel_row)->getHyperlink()->setUrl($url);
+								}
+							}
+	
+							$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $tickets[$i]['PurchaseOrderNo']);
+							if ($row['MStatus'] == 1) {
+								$LT = '';
+								if ($tickets[$i]['LorryType'] == 1) {
+									$LT = 'Tipper';
+								} else if ($tickets[$i]['LorryType'] == 2) {
+									$LT = 'Grab';
+								} else if ($tickets[$i]['LorryType'] == 3) {
+									$LT = 'Bin';
+								} else {
+									$LT = '';
+								}
+	
+								$TB = '';
+								if ($tickets[$i]['TonBook'] == 1) {
+									$TB = ' Tonnage ';
+								} else {
+									$TB = ' Load ';
+								}
+	
+								$MaterialText = $tickets[$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
+								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText);
+							} else {
+								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tickets[$i]['MaterialName']);
+							}
+	
+							if ($tickets[$i]['BookingMaterialID'] == $tickets[$i]['MaterialID']) {
+								$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
+							} else {
+								$Price = 0;
+							}
+							$TPrice = floor(($TPrice + $Price) * 100) / 100;
+	
+							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);
+							if ($tickets[$i]['WaitTime'] == null) {
+								$min = "N/A";
+							} else {
+								$min = $tickets[$i]['WaitTime'] . " Min";
+							}
+	
+							$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $min);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $tickets[$i]['Status']);
+							if ($NetWeight == '1') {
+								$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, round($tickets[$i]['Net'] / 1000, 2));
+								$NetWeight1 = floor(($tickets[$i]['Net'] / 1000) * 100) / 100;
+								$TNetWeight = floor(($TNetWeight + $NetWeight1) * 100) / 100;
+								$NPrice = floor(($NetWeight1 * $tickets[$i]['Price']) * 100) / 100;
+								$TNPrice = floor(($TNPrice + $NPrice) * 100) / 100;
+								$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice);
+							}
+	
+							$excel_row++;
+							$TLoad = $TLoad + 1;
+							$cname = $tickets[$i]['CompanyName'];
+							$oname = $tickets[$i]['OpportunityName'];
+						}
+	
+						if ($NetWeight != '1') {
+							$object->getActiveSheet()->getStyle('A' . $excel_row . ':N' . $excel_row)->getFont()->setBold(true);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Price');
+							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TPrice);
+						}
+						if ($NetWeight == '1') {
+							$object->getActiveSheet()->getStyle('A' . $excel_row . ':N' . $excel_row . '')->getFont()->setBold(true);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, 'Total NetWeight');
+							$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $TNetWeight);
+							$excel_row++;
+	
+							$object->getActiveSheet()->getStyle('A' . $excel_row . ':M' . $excel_row . '')->getFont()->setBold(true);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, "Total Price");
+							$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $TNPrice);
+						}
+						$excel_row++;
+						if ($NetWeight != '1') {
+							$object->getActiveSheet()->getStyle('A' . $excel_row . ':N' . $excel_row . '')->getFont()->setBold(true);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(9, 'Total Loads');
+							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TLoad);
+						}
+	
+						for ($x = 'A'; $x != $object->getActiveSheet()->getHighestColumn(); $x++) {
+							$object->getActiveSheet()->getColumnDimension($x)->setAutoSize(TRUE);
+						}
+	
+						$FileName = $cname . "@" . $oname . "@" . date("YmdHis") . "@" . rand() . ".xls";
+						$FileName = mb_ereg_replace("([^\w\s\d\-_~@&,;\[\]\(\).'])", '', $FileName);
+						$FileName = mb_ereg_replace("([\.]{2,})", '', $FileName);
+						$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
+	
+						header('Content-Type: application/vnd.ms-excel');
+						header('Content-Disposition: attachment;filename="' . $FileName . '"');
+	
+						ob_start();
+						$object_writer->save("SplitXLS/" . $FileName);
+						$xlsfiles[] = $FileName;
+						$xlsData = ob_get_contents();
+						ob_end_clean();
+					}
 				}
-				if($NetWeight=='1'){ 
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row.'')->getFont()->setBold( true ); 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, 'Total NetWeight' );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $TNetWeight );	
-					$excel_row++;
-					
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':M'.$excel_row.'')->getFont()->setBold( true );		
-					$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, "Total Price" );   
-					$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $TNPrice );  
+	
+				foreach ($xlsfiles as $xls) {
+					$this->zip->read_file('SplitXLS/' . $xls);
 				}
-				$excel_row++;
-				if($NetWeight!='1'){ 
-					$object->getActiveSheet()->getStyle('A'.$excel_row.':N'.$excel_row.'')->getFont()->setBold( true );	 
-					$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Loads' );
-					$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TLoad );	
-				}
-				/* Export Start Excel  */		
-				for ($x = 'A'; $x !=  $object->getActiveSheet()->getHighestColumn(); $x++) {
-					$object->getActiveSheet()->getColumnDimension($x)->setAutoSize(TRUE);
-				}
-				
-				
-                $FileName = $cname."@".$oname."@".date("YmdHis")."@".rand().".xls";		
-				
-				$FileName = mb_ereg_replace("([^\w\s\d\-_~@&,;\[\]\(\).'])", '', $FileName);
-
-                // Remove any runs of periods (thanks falstro!)
-                $FileName = mb_ereg_replace("([\.]{2,})", '', $FileName);
-			  
-				//$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
-				$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
-
-				
-				header('Content-Type: application/vnd.ms-excel');
-				//header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				//application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-				header('Content-Disposition: attachment;filename="'.$FileName.'"');
-				//$object_writer->save('php://output'); 
-				
-				ob_start();
-				//$object_writer->save("php://output");
-				//$object_writer->save(str_replace(__FILE__,'SplitXLS/'.$FileName,__FILE__)); 
-				$object_writer->save("SplitXLS/".$FileName); 
-				
-				//$this->zip->add_data($FileName,$object_writer->save("SplitXLS/".$FileName)); 
-				$xlsfiles[] = $FileName;
-				$xlsData = ob_get_contents();
-				ob_end_clean();  
-				/* Export End Excel  */			  
-				}
-				 
-				foreach($xlsfiles as $xls){ 
-				  $this->zip->read_file('SplitXLS/'.$xls);
-				}
-				$zname = date("YmdHis")."-".rand().".zip";  
-				$this->zip->archive("SplitXLS/".$zname);  
-				//$this->zip->download($zname);
-  
-//exit;
- //$zipFile = base_url("SplitXLS/".$zname); 
-			$response =  array(
+				$zname = date("YmdHis") . "-" . rand() . ".zip";
+				$this->zip->archive("SplitXLS/" . $zname);
+	
+				$response = array(
 					'op' => 'ok',
-					'FileName' => "SplitXLS/".$zname ,
-					'file' => "data:application/zip;base64,".$zname
-			); 
-			die(json_encode($response)); 
-			//'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
-			
-        }
-    }
+					'FileName' => "SplitXLS/" . $zname,
+					'file' => "data:application/zip;base64," . $zname
+				);
+				die(json_encode($response));
+			}
+		}
+	}
+	
+	
 	
 	function WaitTimeSplitExcelConvAjax(){
         if($this->isEdit == 0){
