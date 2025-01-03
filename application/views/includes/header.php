@@ -125,6 +125,13 @@
 		</a>
 		<div class="navbar-custom-menu">
 			<ul class="nav navbar-nav">
+			<li class="dropdown messages-menu">
+					<a title="Version 1.0.0">
+					  <span> <strong> VU.25.01.1.0 </strong></span> 
+					</a> 
+				</li>  
+			</ul>
+			<ul class="nav navbar-nav">
 					<li class="dropdown messages-menu">
 					<a href="<?php echo base_url('DeliveryHoldTickets'); ?>"   title="Delivery PDA Hold Tickets">
 					  <i class="fa fa-truck fa-flip-horizontal"></i><span class="label label-danger" id="holdtkt" > <?php echo $DeliveryHoldTicket; ?></span> 
