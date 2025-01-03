@@ -56,7 +56,6 @@ Thumbs.db
 /application/logs
 /application/cache
 /application/pdf_file
-/application/views/errors
 /assets/tiptickets
 /assets/Uploads
 /assets/conveyance
