@@ -976,8 +976,8 @@ class Booking extends BaseController
 								$NetWeight1 = bcdiv($row['Net'], 1000, 2);
 								$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $NetWeight1);
 								$TNetWeight = bcadd($TNetWeight, $NetWeight1, 4);
-								$NPrice = bcmul($NetWeight1, $row['Price'], 3);
-								$TNPrice = bcadd($TNPrice, $NPrice, 3);
+								$NPrice = bcmul($NetWeight1, $row['Price'], 2);
+								$TNPrice = bcadd($TNPrice, $NPrice, 2);
 								$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice);
 							}
 
@@ -1220,14 +1220,28 @@ class Booking extends BaseController
 							$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $min);
 							$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $tickets[$i]['Status']);
 							if ($NetWeight == '1') {
-								$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, round($tickets[$i]['Net'] / 1000, 2));
-								$NetWeight1 = floor(($tickets[$i]['Net'] / 1000) * 100) / 100;
-								$TNetWeight = floor(($TNetWeight + $NetWeight1) * 100) / 100;
-								$NPrice = floor(($NetWeight1 * $tickets[$i]['Price']) * 100) / 100;
-								$TNPrice = floor(($TNPrice + $NPrice) * 100) / 100;
+								$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, round($tickets[$i]['Net'] / 1000, 3));
+							
+								// Calculate NetWeight1 with bcmul
+								$NetWeight1 = bcmul($tickets[$i]['Net'], '0.001', 3);
+								// Apply floor adjustment for NetWeight1
+								$NetWeight1 = floor(bcmul($NetWeight1, '100', 2)) / 100;
+							
+								// Update TNetWeight using bcadd and floor adjustment
+								$TNetWeight = bcadd($TNetWeight, $NetWeight1, 4);
+								$TNetWeight = floor(bcmul($TNetWeight, '100', 2)) / 100;
+							
+								// Calculate NPrice using bcmul and apply floor adjustment
+								$NPrice = bcmul($NetWeight1, $tickets[$i]['Price'], 4);
+								$NPrice = floor(bcmul($NPrice, '100', 2)) / 100;
+							
+								// Update TNPrice using bcadd and floor adjustment
+								$TNPrice = bcadd($TNPrice, $NPrice, 4);
+								$TNPrice = floor(bcmul($TNPrice, '100', 2)) / 100;
+							
 								$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice);
 							}
-
+							
 							$excel_row++;
 							$TLoad = $TLoad + 1;
 							$cname = $tickets[$i]['CompanyName'];
