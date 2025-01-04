@@ -600,12 +600,6 @@ Append += '<td><input type="text" class="form-control" id="PurchaseOrderNo'+rowI
 				if(BookingDateTime!="" && LoadType ==1){
 					var DateRequired = temp[0]; 
 					var HitUrl = baseURL + "ShowOppoProductPriceAJAX"; 
-					console.log('HitUrl:', HitUrl);
-                        console.log('LorryType:', LorryType);
-                        console.log('OpportunityID:', OpportunityID);
-                        console.log('BookingType:', BookingType);
-                        console.log('MaterialID:', MaterialID);
-                        console.log('DateRequired:', DateRequired);
 					$.ajax({
 						type : "POST",
 						dataType : "json",
