@@ -4,6 +4,9 @@
 																																?></a>. All rights reserved.</strong>
 </footer>
 
+<script>
+    const baseURL = '<?= base_url() ?>';
+</script>
 
 <script src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>" type="text/javascript"></script>
 <script src="<?php echo base_url('assets/dist/js/app.min.js'); ?>" type="text/javascript"></script>

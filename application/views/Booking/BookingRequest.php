@@ -94,7 +94,7 @@ var mdataArray = [];
 var ColumnData;  
 var defaultcol = "";
   
-var apiUrl = '/';   //Url for Server API
+var apiUrl = baseURL;   //Url for Server API
  
 var GetTableMetaApiEndpoint = 'BookingRequestTableMeta';//Endpoint returning Table Metadata 
 var GetTableDataApiEndpoint = 'AjaxBookingsRequest1';//Endpoint processing and return Table Data

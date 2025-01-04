@@ -1,102 +1,109 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet"/>
-<div class="content-wrapper"> 
-    <section class="content-header"> <h1> <i class="fa fa-users"></i> Incompleted Tickets </h1>    </section> 
-    <section class="content"> 
-	<div class="msg"></div>
-		<?php 
-			$error = $this->session->flashdata('error');
-			if($error){
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
+<div class="content-wrapper">
+	<section class="content-header">
+		<h1> <i class="fa fa-users"></i> Incompleted Tickets </h1>
+	</section>
+	<section class="content">
+		<div class="msg"></div>
+		<?php
+		$error = $this->session->flashdata('error');
+		if ($error) {
 		?>
-		<div class="alert alert-danger alert-dismissable">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-			<?php echo $this->session->flashdata('error'); ?>                    
-		</div>
-		<?php } ?>
-		<?php  
-			$success = $this->session->flashdata('success');
-			if($success){
-		?>
-		<div class="alert alert-success alert-dismissable">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-			<?php echo $this->session->flashdata('success'); ?>
-		</div>
-		<?php } ?>  
-		<div class="modal fade" id="empModal" role="dialog">
-			<div class="modal-dialog" style="width:1200px">  
-				<div class="modal-content">
-				  <div class="modal-header">
-					<h4 class="modal-title">Material Update </h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				  </div>				  
-				  <div class="modal-body"> 
-				  </div> 
-				  <div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				  </div> 
-				</div> 
+			<div class="alert alert-danger alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<?php echo $this->session->flashdata('error'); ?>
 			</div>
-		</div> 
-		 
-        <div class="row">
-            <div class="col-xs-12">
+		<?php } ?>
+		<?php
+		$success = $this->session->flashdata('success');
+		if ($success) {
+		?>
+			<div class="alert alert-success alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<?php echo $this->session->flashdata('success'); ?>
+			</div>
+		<?php } ?>
+		<div class="modal fade" id="empModal" role="dialog">
+			<div class="modal-dialog" style="width:1200px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Material Update </h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12">
 				<div class="box">
 					<div class="box-header">
-						<h3 class="box-title"><b>Incompleted Tickets List</b></h3> 
-						<a class="btn btn-primary" href="<?php echo base_url(); ?>Collection-Tickets"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Add Collection Ticket</a>
-						<a class="btn btn-success" href="<?php echo base_url(); ?>Out-Tickets"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Add Out Ticket</a> 
-						<a class="btn btn-danger" href="<?php echo base_url(); ?>In-Tickets"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Add In Ticket</a>
-						<?php if($CountInCompletedTicketsPDF[0]['ccnt']>0){ ?>
-						<a class="btn btn-danger" href="<?php echo base_url(); ?>IncompletedPDF" target="_blank" style="float:right;margin: 6px "><i class="fa fa-plus"></i> Create PDFs (<?php echo $CountInCompletedTicketsPDF[0]['ccnt']; ?>)</a>
+						<h3 class="box-title"><b>Incompleted Tickets List</b></h3>
+						<a class="btn btn-primary" href="<?php echo base_url(); ?>Collection-Tickets" style="float:right;margin: 6px "><i class="fa fa-plus"></i> Add Collection Ticket</a>
+						<a class="btn btn-success" href="<?php echo base_url(); ?>Out-Tickets" style="float:right;margin: 6px "><i class="fa fa-plus"></i> Add Out Ticket</a>
+						<a class="btn btn-danger" href="<?php echo base_url(); ?>In-Tickets" style="float:right;margin: 6px "><i class="fa fa-plus"></i> Add In Ticket</a>
+						<?php if ($CountInCompletedTicketsPDF[0]['ccnt'] > 0) { ?>
+							<a class="btn btn-danger" href="<?php echo base_url(); ?>IncompletedPDF" target="_blank" style="float:right;margin: 6px "><i class="fa fa-plus"></i> Create PDFs (<?php echo $CountInCompletedTicketsPDF[0]['ccnt']; ?>)</a>
 						<?php } ?>
-					</div> 
+					</div>
 					<div class="box-body">
-					  <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap table-responsive"><div class="row"><div class="col-sm-6"></div><div class="col-sm-6"></div></div><div class="row"><div class="col-sm-12">                  
-						  <!-- <input type="text" class="  required BookingDateTime" data-BID='1' id="BookingDateTime1" autocomplete="off" value="" name="BookingDateTime[]" maxlength="65"> -->
-						  
-						  <table id="dtexample" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
-							<thead id="headD">
-								<tr></tr>
-								<tr></tr>
-							</thead>
-								<tbody id="dataD" runat="server"></tbody>
-							<tfoot>
-								<tr> </tr>
-							</tfoot>
-						</table>   
-					  </div>
-					</div>
-					</div>
-					</div> 
-				</div> 
-            </div>
-        </div>
-    </section>
-</div> 
-<script type="text/javascript" language="javascript" >
+						<div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap table-responsive">
+							<div class="row">
+								<div class="col-sm-6"></div>
+								<div class="col-sm-6"></div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<!-- <input type="text" class="  required BookingDateTime" data-BID='1' id="BookingDateTime1" autocomplete="off" value="" name="BookingDateTime[]" maxlength="65"> -->
 
-var mdataArray = []; 
+									<table id="dtexample" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
+										<thead id="headD">
+											<tr></tr>
+											<tr></tr>
+										</thead>
+										<tbody id="dataD" runat="server"></tbody>
+										<tfoot>
+											<tr> </tr>
+										</tfoot>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+<script type="text/javascript" language="javascript">
+	var mdataArray = [];
 
-var ColumnData;   
-var defaultcol = "";
-  
-var apiUrl = '/'; 
- 
-var GetTableMetaApiEndpoint = 'IncompletedTicketsTableMeta';//Endpoint returning Table Metadata 
-var GetTableDataApiEndpoint = 'AJAXIncompletedTickets';//Endpoint processing and return Table Data
-  
+	var ColumnData;
+	var defaultcol = "";
+
+	var apiUrl = baseURL;
+
+	var GetTableMetaApiEndpoint = 'IncompletedTicketsTableMeta'; //Endpoint returning Table Metadata 
+	var GetTableDataApiEndpoint = 'AJAXIncompletedTickets'; //Endpoint processing and return Table Data
+
 	function getTableMeta() {
 		$.ajax({
 			type: 'POST',
 			url: apiUrl + GetTableMetaApiEndpoint,
 			dataType: 'json',
-			success: function (data) {
+			success: function(data) {
 				console.log(data);
 				ColumnData = data.Column;
-				
-				$.each(data.Column, function (index, element) {
+
+				$.each(data.Column, function(index, element) {
 					$('#dtexample thead tr:first-child').append($('<th>', {
 						text: element.Title
-					})); 
+					}));
 					//search
 					if (element.Searchable == true)
 						$('#dtexample thead tr:nth-child(2)').append($('<th>', {
@@ -105,7 +112,10 @@ var GetTableDataApiEndpoint = 'AJAXIncompletedTickets';//Endpoint processing and
 					else $('#dtexample thead tr:nth-child(2)').append($('<th>', {
 						text: ''
 					}));
-					mdataArray.push({ mData: element.Name, class: element.Name });
+					mdataArray.push({
+						mData: element.Name,
+						class: element.Name
+					});
 				});
 				if (data.Action == true) {
 					// Create First Row Title 
@@ -118,27 +128,30 @@ var GetTableDataApiEndpoint = 'AJAXIncompletedTickets';//Endpoint processing and
 					}));
 					// Push default content for all nth rows  
 					//mdataArray.push({ defaultContent: '<span class="deleteBtn"><img src="./Icons/delete.png" style="width:28px" /></span>', class: 'DeleteRow' });
-					mdataArray.push({ defaultContent: ' ', class: '' });
+					mdataArray.push({
+						defaultContent: ' ',
+						class: ''
+					});
 
 				}
-			   
+
 				defaultcol = data.Column[0].Title;
 				//once table headers and table data property set, initialize DT
 				initializeDataTable();
 
 			}
 		});
-	} 
-   
+	}
+
 	function initializeDataTable() {
 		//put Input textbox for filtering
-		$('#dtexample thead tr:nth-child(2) th').each(function () {
+		$('#dtexample thead tr:nth-child(2) th').each(function() {
 			var title = $(this).text();
 			if (title != '')
 				$(this).html('<input type="text" class="sorthandle" style="width:100%;" />');
 		});
 		//don't sort when user clicks on input textbox to type for filter
-		$('#dtexample').find('thead th').click(function (event) {
+		$('#dtexample').find('thead th').click(function(event) {
 			if ($(event.target).hasClass('sorthandle')) {
 				event.stopImmediatePropagation()
 			}
@@ -146,27 +159,30 @@ var GetTableDataApiEndpoint = 'AJAXIncompletedTickets';//Endpoint processing and
 		table = $('#dtexample').DataTable({
 			"pageLength": 100,
 			"ajax": {
-				"url" : apiUrl +GetTableDataApiEndpoint, 
+				"url": apiUrl + GetTableDataApiEndpoint,
 				"type": "POST",
-				data: function (data) {
+				data: function(data) {
 					editIndexTable = -1;
 					var colname;
-					
+
 					var sort = data.order[0].column;
 					if (!data['columns'][sort]['data'] == '')
 						colname = data['columns'][sort]['data'] + ' ' + data.order[0].dir;
 					//in case no sorted col is there, sort by first col
 					else colname = defaultcol + " asc";
-					
+
 					var colarr = [];
 					//colname = 'TicketNo DESC ';
 					var colfilter, col;
 					var arr = {
-						'draw': data.draw, 'length': data.length,
-						'sort': colname, 'start': data.start, 'search': data.search.value
+						'draw': data.draw,
+						'length': data.length,
+						'sort': colname,
+						'start': data.start,
+						'search': data.search.value
 					};
 					//add each column as formdata key/value for filtering
-					data['columns'].forEach(function (items, index) {
+					data['columns'].forEach(function(items, index) {
 						col = data['columns'][index]['data'];
 						colfilter = data['columns'][index]['search']['value'];
 						arr[col] = colfilter;
@@ -174,47 +190,77 @@ var GetTableDataApiEndpoint = 'AJAXIncompletedTickets';//Endpoint processing and
 					return arr;
 				}
 			},
-			"lengthMenu": [10, 50, 100], "searching": true,
-			"order": [[ 1, "desc" ]],
-			"columnDefs": [
-				   { "width": "60px", "targets": 0 },
-				  { "width": "80px", "targets": 1 }, 
-				  { "width": "20px", "targets": 5 },
-				  { "width": "50px", "targets": 6 },
-				  { "width": "100px", "targets": 7 }, 
-				  { "width": "30px", "targets": 9 },
-				  { "width": "30px", "targets": 10 },
-				  { "width": "30px", "targets": 11 },
-				   { "width": "30px", "targets": 12 },
-				],
+			"lengthMenu": [10, 50, 100],
+			"searching": true,
+			"order": [
+				[1, "desc"]
+			],
+			"columnDefs": [{
+					"width": "60px",
+					"targets": 0
+				},
+				{
+					"width": "80px",
+					"targets": 1
+				},
+				{
+					"width": "20px",
+					"targets": 5
+				},
+				{
+					"width": "50px",
+					"targets": 6
+				},
+				{
+					"width": "100px",
+					"targets": 7
+				},
+				{
+					"width": "30px",
+					"targets": 9
+				},
+				{
+					"width": "30px",
+					"targets": 10
+				},
+				{
+					"width": "30px",
+					"targets": 11
+				},
+				{
+					"width": "30px",
+					"targets": 12
+				},
+			],
 			//rowId required when doing update, can put any unique value for each row instead of ID
 			rowId: 'TicketNo',
 			dom: '<"toolbar">frtip',
-			createdRow: function (row, data, dataIndex) {  
-				$(row).find("td:eq(2)").html(' <a href="'+baseURL+'view-company/'+data["CompanyID"]+'" target="_blank" title="'+data["CompanyName"]+'">'+data["CompanyName"]+'</a> ');
-				$(row).find("td:eq(1)").html('<input type="text" class="GridDate  "  data-TicketNo="'+data["TicketNo"]+'"  id="TicketDate'+data["TicketNo"]+'" style="text-align:right;width:120px" value="'+data["TicketDate"]+'" name="TicketDate'+data["TicketNo"]+'"   maxlength="20"  >');	
-				$(row).find("td:eq(9)").html('<input type="text" class="GridGross"  data-TicketNo="'+data["TicketNo"]+'"   data-Tare="'+data["Tare"]+'"  id="Gross'+data["TicketNo"]+'" style="text-align:right;width:70px" value="'+data["GrossWeight"]+'" name="Gross'+data["TicketNo"]+'"   maxlength="10"  >');	
-				$(row).find("td:eq(3)").html(' <a href="'+baseURL+'View-Opportunity/'+data["OpportunityID"]+'" target="_blank" title="'+data["OpportunityName"]+'">'+data["OpportunityName"]+'</a> ');
-				$(row).find("td:eq(-1)").html('<a class="btn btn-sm btn-info" href="'+baseURL+'EditInCompleted/'+data["TicketNo"]+'" title="Edit Incompleted Ticket"><i class="fa fa-pencil"></i></a> <a class="btn btn-sm btn-danger deleteTicket" href="#" data-ticketno="'+data["TicketNo"]+'" title="Delete"><i class="fa fa-trash"></i></a>');
+			createdRow: function(row, data, dataIndex) {
+				$(row).find("td:eq(2)").html(' <a href="' + baseURL + 'view-company/' + data["CompanyID"] + '" target="_blank" title="' + data["CompanyName"] + '">' + data["CompanyName"] + '</a> ');
+				$(row).find("td:eq(1)").html('<input type="text" class="GridDate  "  data-TicketNo="' + data["TicketNo"] + '"  id="TicketDate' + data["TicketNo"] + '" style="text-align:right;width:120px" value="' + data["TicketDate"] + '" name="TicketDate' + data["TicketNo"] + '"   maxlength="20"  >');
+				$(row).find("td:eq(9)").html('<input type="text" class="GridGross"  data-TicketNo="' + data["TicketNo"] + '"   data-Tare="' + data["Tare"] + '"  id="Gross' + data["TicketNo"] + '" style="text-align:right;width:70px" value="' + data["GrossWeight"] + '" name="Gross' + data["TicketNo"] + '"   maxlength="10"  >');
+				$(row).find("td:eq(3)").html(' <a href="' + baseURL + 'View-Opportunity/' + data["OpportunityID"] + '" target="_blank" title="' + data["OpportunityName"] + '">' + data["OpportunityName"] + '</a> ');
+				$(row).find("td:eq(-1)").html('<a class="btn btn-sm btn-info" href="' + baseURL + 'EditInCompleted/' + data["TicketNo"] + '" title="Edit Incompleted Ticket"><i class="fa fa-pencil"></i></a> <a class="btn btn-sm btn-danger deleteTicket" href="#" data-ticketno="' + data["TicketNo"] + '" title="Delete"><i class="fa fa-trash"></i></a>');
 				//$(row).find("td:eq(-1)").html('<a class="btn btn-sm btn-info" href="'+baseURL+'EditInCompleted/'+data["TicketNo"]+'" title="Edit Incompleted Ticket"><i class="fa fa-pencil"></i></a>');
 				$(row).find('td:eq(0)').attr('data-sort', data['TicketNumber_sort']);
 				$(row).find('td:eq(1)').attr('data-sort', data['TicketDate1']);
-				$(row).find("td:eq(4)").html('<button  class="btn btn-warning  btn-info TicketMaterialUpdate" data-MaterialID = "'+data["MaterialID"]+'" data-TicketNo = "'+data["TicketNo"]+'" title="Click To Update Material ">'+data["MaterialName"]+'</button> ');	
-				},  
-			serverSide: true, "processing": true,
+				$(row).find("td:eq(4)").html('<button  class="btn btn-warning  btn-info TicketMaterialUpdate" data-MaterialID = "' + data["MaterialID"] + '" data-TicketNo = "' + data["TicketNo"] + '" title="Click To Update Material ">' + data["MaterialName"] + '</button> ');
+			},
+			serverSide: true,
+			"processing": true,
 			aoColumns: mdataArray
 		});
 
 		//call search api when user types in filter input
-		table.columns().every(function () {
+		table.columns().every(function() {
 			var that = this;
-			$('input', this.header()).on('keyup change', function () {
+			$('input', this.header()).on('keyup change', function() {
 				if (that.search() !== this.value) {
 					that.search(this.value).draw();
 				}
 			});
-		}); 
-	}  
+		});
+	}
 
 
 	$(document).ready(function() {
@@ -225,119 +271,134 @@ var GetTableDataApiEndpoint = 'AJAXIncompletedTickets';//Endpoint processing and
 			daysOfWeekDisabled  : [0], 
 			multidate: 6, 
 			closeOnDateSelect: true
-		}); */  
-			
-		jQuery(document).on("change", ".GridGross", function(){ 
-			event.preventDefault();  
-			var TicketNo = $(this).attr("data-TicketNo"),    
-				Tare = $(this).attr("data-Tare"),    
-				Gross = $(this).val(),  
+		}); */
+
+		jQuery(document).on("change", ".GridGross", function() {
+			event.preventDefault();
+			var TicketNo = $(this).attr("data-TicketNo"),
+				Tare = $(this).attr("data-Tare"),
+				Gross = $(this).val(),
 				hitURLUP = baseURL + "AJAXUpdateGrossWeight",
-				currentRow = $(this);	    
-				//alert(BookingDateID);
-				//Price = $('#Price'+BookingDateID).val(),  
-				jQuery.ajax({
-					type : "POST",
-					dataType : "json",
-					url : hitURLUP,
-					data : { 'TicketNo' : TicketNo, 'Gross' : Gross, 'Tare' : Tare } 
-					}).success(function(data){ 
-						//alert(JSON.stringify(data)) 
-						if(data.status == true) {  
-							//$('.cls'+BookingID).val(Price); 
-							currentRow.parents('tr').remove();
-							$('.msg').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Gross Weight has been Updated Successfully !!! </div>') 
-						}else{ 
-							$('.msg').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Please Try Again Later !!! </div>')
-							//alert("Oooops, Please try again later"); 
-						} 
-						
-					});  
-			 
-		});
-		
-		jQuery(document).on("change", ".GridDate", function(){ 
-			event.preventDefault();  
-			var TicketNo = $(this).attr("data-TicketNo"),     
-				TicketDate = $(this).val(),  
-				hitURLUP1 = baseURL + "AJAXUpdateTicketDate",
-				currentRow = $(this);	    
-				//alert(BookingDateID);
-				//Price = $('#Price'+BookingDateID).val(),  
-				jQuery.ajax({
-					type : "POST",
-					dataType : "json",
-					url : hitURLUP1,
-					data : { 'TicketNo' : TicketNo, 'TicketDate' : TicketDate  } 
-					}).success(function(data){ 
-						//alert(JSON.stringify(data)) 
-						if(data.status == true) {  
-							//$('.cls'+BookingID).val(Price); 
-							//currentRow.parents('tr').remove();
-							//alert("asdfasdfadf");
-							$('.msg').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Ticket Date has been Updated Successfully !!! </div>') 
-						}else{ 
-							$('.msg').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Please Try Again Later !!! </div>')
-							//alert("Oooops, Please try again later"); 
-						} 
-						
-					});  
-			 
+				currentRow = $(this);
+			//alert(BookingDateID);
+			//Price = $('#Price'+BookingDateID).val(),  
+			jQuery.ajax({
+				type: "POST",
+				dataType: "json",
+				url: hitURLUP,
+				data: {
+					'TicketNo': TicketNo,
+					'Gross': Gross,
+					'Tare': Tare
+				}
+			}).success(function(data) {
+				//alert(JSON.stringify(data)) 
+				if (data.status == true) {
+					//$('.cls'+BookingID).val(Price); 
+					currentRow.parents('tr').remove();
+					$('.msg').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Gross Weight has been Updated Successfully !!! </div>')
+				} else {
+					$('.msg').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Please Try Again Later !!! </div>')
+					//alert("Oooops, Please try again later"); 
+				}
+
+			});
+
 		});
 
-		jQuery(document).on("click", ".TicketMaterialUpdate", function(){  
-			var TicketNo = $(this).attr("data-TicketNo"),  
-				MaterialID = $(this).attr("data-MaterialID"),  
-				hitURL1 = baseURL + "TicketMaterialUpdateAjax",
-				currentRow = $(this); 
-				//alert(LoadType);  
-				jQuery.ajax({
-				type : "POST",
-				dataType : "json",
-				url : hitURL1,
-				data : { 'TicketNo' : TicketNo,'MaterialID' : MaterialID  } 
-				}).success(function(data){ 
-					//alert(data)
-					$('.modal-body').html(data); 
-					$('#empModal .modal-title').html("Update Material Name ");
-					$('#empModal .modal-dialog').width(500); 
-					$('#empModal').modal('show');  
-					
-					//alert(JSON.stringify( data ));   
-					//console.log(data);   
-				}); 
-					 
+		jQuery(document).on("change", ".GridDate", function() {
+			event.preventDefault();
+			var TicketNo = $(this).attr("data-TicketNo"),
+				TicketDate = $(this).val(),
+				hitURLUP1 = baseURL + "AJAXUpdateTicketDate",
+				currentRow = $(this);
+			//alert(BookingDateID);
+			//Price = $('#Price'+BookingDateID).val(),  
+			jQuery.ajax({
+				type: "POST",
+				dataType: "json",
+				url: hitURLUP1,
+				data: {
+					'TicketNo': TicketNo,
+					'TicketDate': TicketDate
+				}
+			}).success(function(data) {
+				//alert(JSON.stringify(data)) 
+				if (data.status == true) {
+					//$('.cls'+BookingID).val(Price); 
+					//currentRow.parents('tr').remove();
+					//alert("asdfasdfadf");
+					$('.msg').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Ticket Date has been Updated Successfully !!! </div>')
+				} else {
+					$('.msg').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> Please Try Again Later !!! </div>')
+					//alert("Oooops, Please try again later"); 
+				}
+
+			});
+
 		});
-		
-		jQuery(document).on("click", ".deleteTicket", function(){
-			event.preventDefault(); 
+
+		jQuery(document).on("click", ".TicketMaterialUpdate", function() {
+			var TicketNo = $(this).attr("data-TicketNo"),
+				MaterialID = $(this).attr("data-MaterialID"),
+				hitURL1 = baseURL + "TicketMaterialUpdateAjax",
+				currentRow = $(this);
+			//alert(LoadType);  
+			jQuery.ajax({
+				type: "POST",
+				dataType: "json",
+				url: hitURL1,
+				data: {
+					'TicketNo': TicketNo,
+					'MaterialID': MaterialID
+				}
+			}).success(function(data) {
+				//alert(data)
+				$('.modal-body').html(data);
+				$('#empModal .modal-title').html("Update Material Name ");
+				$('#empModal .modal-dialog').width(500);
+				$('#empModal').modal('show');
+
+				//alert(JSON.stringify( data ));   
+				//console.log(data);   
+			});
+
+		});
+
+		jQuery(document).on("click", ".deleteTicket", function() {
+			event.preventDefault();
 			var TicketNo = $(this).attr("data-TicketNo"),
 				hitURL = baseURL + "deleteNotes",
-				currentRow = $(this);			
-				//alert(hitURL);	
+				currentRow = $(this);
+			//alert(hitURL);	
 			var confirmation = prompt("Why do you want to delete?", "");
 
 			//var confirmation = confirm("Are you sure to delete this record ?");
 			//console.log(confirmation);
-			if(confirmation!=null){ 
-				if(confirmation!=""){
+			if (confirmation != null) {
+				if (confirmation != "") {
 					//console.log("Your comment:"+confirmation);
 					//alert(confirmation);
 					jQuery.ajax({
-					type : "POST",
-					dataType : "json",
-					url : hitURL,
-					data : { 'TicketNo' : TicketNo,'confirmation' :confirmation } 
-					}).success(function(data){
+						type: "POST",
+						dataType: "json",
+						url: hitURL,
+						data: {
+							'TicketNo': TicketNo,
+							'confirmation': confirmation
+						}
+					}).success(function(data) {
 						//console.log(data); 					
 						currentRow.parents('tr').remove();
-						if(data.status != "") { alert("Record successfully deleted"); }
-						else{ alert("Record deletion failed"); } 
-					}); 
+						if (data.status != "") {
+							alert("Record successfully deleted");
+						} else {
+							alert("Record deletion failed");
+						}
+					});
 				}
 			}
 		});
-		
-	} );
-	
+
+	});
 </script>

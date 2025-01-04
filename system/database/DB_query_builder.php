@@ -2669,8 +2669,8 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 			$qb_variable	= 'qb_'.$val;
 			$qb_cache_var	= 'qb_cache_'.$val;
 			$qb_new 	= $this->$qb_cache_var;
-			// Nilay Update 	
-			//for ($i = 0, $c = count((is_countable($this->$qb_variable)?$this->$qb_variable:[])); $i < $c; $i++)
+
+			//for ($i = 0, $c = count($this->$qb_variable); $i < $c; $i++) // Nilay Update 
 			for ($i = 0, $c = count($this->$qb_variable?$this->$qb_variable:[]); $i < $c; $i++)
 			{
 				if ( ! in_array($this->{$qb_variable}[$i], $qb_new, TRUE))

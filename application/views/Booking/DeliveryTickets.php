@@ -99,7 +99,8 @@ var mdataArray1 = [];
 var ColumnData1;   
 var defaultcol = "";
   
-var apiUrl = '/'; 
+const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
+var apiUrl = baseUrl; 
 
 var GetTableMetaApiEndpoint1 = 'DeliveryTicketsTableMeta';//Endpoint returning Table Metadata 
 var GetTableDataApiEndpoint1 = 'AjaxDeliveryTickets';//Endpoint processing and return Table Data
@@ -231,6 +232,9 @@ var GetTableDataApiEndpoint1 = 'AjaxDeliveryTickets';//Endpoint processing and r
 				if(data["Status"]=="Finished"){ Status = '<button class="btn   btn-success StatusUpdate" data-PDF = "'+data["ReceiptName"]+'" data-Status = "4" data-TicketNo = "'+data["TicketNo"]+'"  data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">Finished</button> '; }  	 
 				if(data["Status"]=="Cancelled"){ Status = '<button class="btn   btn-danger StatusUpdate" data-PDF = "'+data["ReceiptName"]+'"  data-Status = "5" data-TicketNo = "'+data["TicketNo"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">Cancelled</button> ';  } 
 				if(data["Status"]=="Wasted"){ Status = '<button class="btn   btn-warning StatusUpdate" data-PDF = "'+data["ReceiptName"]+'"  data-Status = "6" data-TicketNo = "'+data["TicketNo"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status "> Wasted </button> '; } 
+				if(data["Status"] == "Invoice Cancelled") { 
+                    Status = '<button class="btn btn-secondary StatusUpdate" data-PDF="' + data["ReceiptName"] + '" data-Status="' + data["Status"] + '" data-LoadID="' + data["LoadID"] + '" title="Click To Update Status">' + data["Status"] + '</button>';
+                } 
 				if(data["Status"]=="Finished" ){
 					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-TicketNo = "'+data["TicketNo"]+'"    data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime"]+'</button> ');	
 					$(row).find("td:eq(5)").html('<button  class="btn btn-warning  btn-info MaterialUpdate" data-MaterialID = "'+data["MaterialID"]+'" data-TicketNo = "'+data["TicketNo"]+'"  data-LoadID = "'+data["LoadID"]+'" title="Click To Update Material ">'+data["MaterialName"]+'</button> ');	

@@ -2546,9 +2546,10 @@ class Booking_model extends CI_Model{
 		$this->db->start_cache();  
 		 
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
-             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
-             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+				when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+				when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+				when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+		end) as Status");
 		//$this->db->select("(case when (tbl_booking_loads1.ReceiptName <> '') then 'Finished'
         ///     when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
         //     when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
@@ -7460,7 +7461,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+        end) as Status");  
 		
 		
 		$this->db->select(' td3.GUID as ConveyanceGUID ');  
@@ -7690,7 +7692,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+        end) as Status");  
 		 
 		$this->db->select(' td3.GUID as ConveyanceGUID ');  
 		$this->db->select(' tbl_tickets.Conveyance as TicketConveyance ');  
@@ -8275,7 +8278,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Cancelled Invoice'
+        end) as Status");  
 		$this->db->select(' tbl_tickets.TicketNumber ');      
 		$this->db->select(' tbl_tickets.Net ');  
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
@@ -8727,7 +8731,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+        end) as Status");
 		$this->db->select(' tbl_tickets.TicketNumber ');      
 		$this->db->select(' tbl_tickets.Net ');  
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
@@ -9863,6 +9868,7 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
         end) as Status"); 
 		   
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
@@ -10188,7 +10194,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+        end) as Status");  
 		 
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
 		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
@@ -10817,7 +10824,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+        end) as Status");  
 		  
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
 		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
@@ -11153,7 +11161,8 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+             when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled'
+        end) as Status");
 		 
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
 		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
