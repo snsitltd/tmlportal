@@ -259,6 +259,9 @@ var GetTableDataApiEndpoint = 'AjaxHaulageTickets';//Endpoint processing and ret
 				if(data["Status"]=="Finished"){ Status = '<button  class="btn   btn-success StatusUpdate" data-PDF = "'+data["ReceiptName"]+'" data-Status = "'+data["Status"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">'+data["Status"]+'</button> '; }  	 
 				if(data["Status"]=="Cancelled"){ Status = '<button  class="btn   btn-danger StatusUpdate" data-PDF = "'+data["ReceiptName"]+'"  data-Status = "'+data["Status"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">'+data["Status"]+'</button> ';  } 
 				if(data["Status"]=="Wasted"){ Status = '<button  class="btn   btn-warning StatusUpdate" data-PDF = "'+data["ReceiptName"]+'"  data-Status = "'+data["Status"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">'+data["Status"]+'</button> '; } 
+				if(data["Status"] == "Invoice Cancelled") { 
+                    Status = '<button class="btn btn-secondary StatusUpdate" data-PDF="' + data["ReceiptName"] + '" data-Status="' + data["Status"] + '" data-LoadID="' + data["LoadID"] + '" title="Click To Update Status">' + data["Status"] + '</button>';
+                } 
  				if(data["Status"]=="Finished"){ 
 					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'" data-HaulageInDateTime = "'+data["HaulageIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-HaulageOutDateTime = "'+data["HaulageOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime2"]+'</button> ');	
 				}else{

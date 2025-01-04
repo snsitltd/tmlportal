@@ -19,6 +19,9 @@
 					<?php if($Status!='Wasted'){ ?>
 						<option value="6" >Wasted Journey</option> 
 					<?php } ?>
+					<?php if($Status!='8'){ ?>
+						<option value="8" >Invoice Cancelled</option> 
+					<?php } ?>
 			</select>
 		</div> 
 	</div>  
