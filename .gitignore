@@ -78,3 +78,5 @@ Thumbs.db
 /vendors
 application/.htaccess
 .htaccess
+/SplitXLS
+/ConveyanceExcelExport
