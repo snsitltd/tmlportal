@@ -963,10 +963,8 @@ class Booking extends BaseController
 							} else {
 								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
 							}
-							// print_r($row);
-							// die();
 
-							$Price = ($row['BookingMaterialID'] == $row['MaterialID']) ? $row['Price'] : 0;
+							$Price = ($row['BookingMaterialID'] == $row['MaterialID']) ? (is_numeric($row['Price']) ? $row['Price'] : 0) : 0;
 							$TPrice = bcadd($TPrice, $Price, 3);
 
 							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);
@@ -975,9 +973,9 @@ class Booking extends BaseController
 							$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $row['Status']);
 
 							if ($NetWeight == '1') {
-								$NetWeight1 = bcdiv($row['Net'], 1000, 3);
+								$NetWeight1 = bcdiv($row['Net'], 1000, 2);
 								$object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $NetWeight1);
-								$TNetWeight = bcadd($TNetWeight, $NetWeight1, 3);
+								$TNetWeight = bcadd($TNetWeight, $NetWeight1, 4);
 								$NPrice = bcmul($NetWeight1, $row['Price'], 3);
 								$TNPrice = bcadd($TNPrice, $NPrice, 3);
 								$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $NPrice);
