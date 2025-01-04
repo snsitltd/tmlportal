@@ -489,9 +489,6 @@ Append += '<td><input type="text" class="form-control" id="PurchaseOrderNo'+rowI
 		$("body").on("change", ".LoadType", function(){ 
 		//$(".LoadType").on('change',function(){
 		  var LoadType = $(this).val();  
-		  if(LoadType==2){
-			$(".Price").val(0);  
-		  } 
 		  $('.Price').change();
 		  $('.BookingDateTime').click();
 		  
@@ -511,7 +508,7 @@ Append += '<td><input type="text" class="form-control" id="PurchaseOrderNo'+rowI
 			var temp_count = temp.length; 
 			var Loads = document.getElementById('Loads'+RID).value; 
 			var LoadType = document.getElementById('LoadType'+RID).value; 
-			if(LoadType==2){ PriceVal = 0.00; } 
+			// if(LoadType==2){ PriceVal = 0.00; } 
 			//alert(PriceVal)
 			if(PriceVal!=''){   		
 				$( "#Total"+RID).html(parseFloat(PriceVal*Loads*temp_count).toFixed(2)); 
