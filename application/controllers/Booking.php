@@ -1265,8 +1265,8 @@ class Booking extends BaseController
 						}
 						$excel_row++;
 						if ($NetWeight != '1') {
-							$object->getActiveSheet()->getStyle('A' . $excel_row . ':N' . $excel_row . '')->getFont()->setBold(true);
-							$object->getActiveSheet()->setCellValueByColumnAndRow(9, 'Total Loads');
+							$object->getActiveSheet()->getStyle('A' . $excel_row . ':N' . $excel_row)->getFont()->setBold(true);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, 'Total Loads');
 							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $TLoad);
 						}
 
