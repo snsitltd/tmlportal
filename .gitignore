@@ -77,5 +77,10 @@ Thumbs.db
 /vendors
 application/.htaccess
 .htaccess
+<<<<<<< HEAD
+/SplitXLS
+/ConveyanceExcelExport
+=======
 Splitxls/
 ConveyanceExcelExport/
+>>>>>>> main
