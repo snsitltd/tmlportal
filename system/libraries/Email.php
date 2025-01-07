@@ -1037,8 +1037,9 @@ class CI_Email {
 		if (function_exists('idn_to_ascii') && strpos($email, '@'))
 		{
 			list($account, $domain) = explode('@', $email, 2);
-			$domain = idn_to_ascii($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-
+			$domain = defined('INTL_IDNA_VARIANT_UTS46')
+				? idn_to_ascii($domain, 0, INTL_IDNA_VARIANT_UTS46)
+				: idn_to_ascii($domain);
 			$email = $account.'@'.$domain;
 		}
 		return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);

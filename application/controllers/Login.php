@@ -237,7 +237,7 @@ class Login extends CI_Controller
 					$this->email->message($message1);  
 */					
                         $config['protocol'] = 'sendmail';
-                        //$config['mailpath'] = '/usr/sbin/sendmail';
+                        $config['mailpath'] = '/usr/sbin/sendmail';
                         $config['charset'] = 'iso-8859-1';
                         $config['wordwrap'] = TRUE;
                         $config['mailtype'] = 'html';
@@ -248,7 +248,7 @@ class Login extends CI_Controller
                         $mailHTML = $this->load->view('email/resetPassword', $data1, TRUE);  
                         $this->load->library('email');
                         $this->email->from(EMAIL_FROM,FROM_NAME);
-                        $this->email->to($data1["email"],$data1["name"]); 
+                        $this->email->to($email,$data1["name"]); 
                         $this->email->subject($subject1); 
                         $this->email->message($mailHTML);  					
 					

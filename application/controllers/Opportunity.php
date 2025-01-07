@@ -282,7 +282,7 @@ class Opportunity extends BaseController
 					$OpenDate =   date('Y-m-d  H:i:s',strtotime($date)); 
 					//$date1 = str_replace('/', '-', $CloseDate); 
 					//$CloseDate =   date('Y-m-d  H:i:s',strtotime($date1)); 
-					
+					$cr = "";
 					if(trim($careof)!=""){ $cr = ", ".trim($careof); } 
 					
 					$OpportunityName = $Street1.", ".$Street2.", ".$Town.", ".$County.", ".$PostCode.$cr;
