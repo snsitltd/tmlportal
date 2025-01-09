@@ -3845,85 +3845,80 @@ class Booking extends REST_Controller
 
 
     public function update_signature_post(){
-        $conveyanceNumber = $this->post('conveyanceNumber') ?? ""; // Assuming a single conveyance number is passed
+        $conveyanceNumbers = $this->post('conveyanceNumbers') ?? "";
+  
+        foreach ($conveyanceNumbers as $conveyanceNumber) {
+            // Fetch Load Information based on Conveyance Number
+            // $this->Drivers_API_Model->getRows($con);
+            // $loadInfo = $this->Booking_API_Model->getLoadInfoByConveyanceNo($conveyanceNumber); // Custom function to fetch load info by conveyance number
+            // if (!$loadInfo) {
+            //     echo "No data found for Conveyance Number: " . $conveyanceNumber;
+            //     continue;
+            // }
+
+            $conveyanceNumber = $this->db->escape($conveyanceNumber); // Escape the input to prevent SQL injection
+            $query = $this->db->query("SELECT * FROM tbl_booking_loads1 WHERE ConveyanceNo = $conveyanceNumber");
+            
+            $loadInfo = ($query->num_rows() > 0) ? $query->result_array() : false;
+            
+            // print_r($LoadInfo);
+            
+            // Fetch PDF Content Settings
+            $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
+            $PDFContent = $PDFContentQRY->row();
     
-        if (empty($conveyanceNumber)) {
-            $this->response([
-                'status' => "400",
-                'message' => "Conveyance Number is required",
-                'data' => null
-            ], REST_Controller::HTTP_BAD_REQUEST);
-            return;
-        }
+            print_r($PDFContent);
+            // Determine Lorry Type
+            $lorryType = '';
+            switch ($loadInfo->LorryType) {
+                case 1:
+                    $lorryType = 'Tipper';
+                    break;
+                case 2:
+                    $lorryType = 'Grab';
+                    break;
+                case 3:
+                    $lorryType = 'Bin';
+                    break;
+            }
     
-        // Escape the input to prevent SQL injection
-        $conveyanceNumber = $this->db->escape($conveyanceNumber);
-    
-        // Fetch Load Information based on Conveyance Number
-        $query = $this->db->query("SELECT * FROM tbl_booking_loads1 WHERE ConveyanceNo = $conveyanceNumber");
-        $loadInfo = ($query->num_rows() > 0) ? $query->row() : false;
-    
-        if (!$loadInfo) {
-            $this->response([
-                'status' => "404",
-                'message' => "No data found for Conveyance Number: $conveyanceNumber",
-                'data' => null
-            ], REST_Controller::HTTP_NOT_FOUND);
-            return;
-        }
-    
-        // Fetch PDF Content Settings
-        $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
-        $PDFContent = $PDFContentQRY->row();
-    
-        // Determine Lorry Type
-        $lorryType = '';
-        switch ($loadInfo->LorryType) {
-            case 1:
-                $lorryType = 'Tipper';
-                break;
-            case 2:
-                $lorryType = 'Grab';
-                break;
-            case 3:
-                $lorryType = 'Bin';
-                break;
-        }
-    
-        // Determine Tonnage or Load
-        $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
-    
-        // Prepare HTML content for the PDF
-        $html = '<!DOCTYPE html>
+            // Determine Tonnage or Load
+            $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
+
+            // Prepare HTML content for the PDF
+            $html = '<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="utf-8">
     </head>
-    <body>
-        <div style="width:100%;margin-bottom:0px;margin-top:0px;font-size:10px;">
+    <body> 
+        <div style="width:100%;margin-bottom:0px;margin-top:0px;font-size:10px;">	
             <div style="width:100%;">
-                <div style="width:65%;float:right;text-align:right;"> 
-                    <b>' . $PDFContent->outpdf_title . '</b><br/>
-                    ' . $PDFContent->address . ' <br/>
-                    <b>Phone:</b> ' . $PDFContent->outpdf_phone . ' 
+                <div style="width:35%;float:left;"> 		
+                    <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width="80"> 
+                </div>
+                <div style="width:65%;float:right;text-align:right;"> 		 
+                    <b>' . $PDFContent->outpdf_title . '</b><br/> 		
+                    ' . $PDFContent->address . ' <br/> 
+                    <b>Phone:</b> ' . $PDFContent->outpdf_phone . ' 												
                 </div>
             </div>
             <div style="width:100%;float:left;">   
-                <b>Email:</b> ' . $PDFContent->email . ' <br/>       
-                <b>Web:</b> ' . $PDFContent->website . ' <br/>         
+                <b>Email:</b> ' . $PDFContent->email . ' <br/>		
+                <b>Web:</b> ' . $PDFContent->website . ' <br/>		  
                 <b>Waste License No: </b>' . $PDFContent->waste_licence . ' <br/> <hr>
                 <b>' . $PDFContent->head1 . '</b><br/> <br>
                 <b>' . $PDFContent->head2 . '</b><br/> <br>
                 <div style="text-align:center;"><b>CONVEYANCE NOTE </b></div><br>
-                <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>     
-                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>         
+                <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>		
+                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>		 
                 <b>In Time: </b>' . $loadInfo->SIDateTime . ' <br>
                 <b>Out Time: </b>' . $loadInfo->SODateTime . ' <br>
-                <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>     
-                <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>             
+                <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>		
+                <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>		 		
                 <b>Tip Address: </b>' . $loadInfo->TipName . ',' . $loadInfo->Street1 . ',' . $loadInfo->Street2 . ',
-                ' . $loadInfo->Town . ',' . $loadInfo->County . ',' . $loadInfo->PostCode . '<br>     
-                <b>Permit Reference No: </b>' . $loadInfo->PermitRefNo . ' <br/>                            
+                ' . $loadInfo->Town . ',' . $loadInfo->County . ',' . $loadInfo->PostCode . '<br>	 
+                <b>Permit Reference No: </b>' . $loadInfo->PermitRefNo . ' <br/>							
                 <b>Material: </b>' . $loadInfo->MaterialName . ' Collected ' . $lorryType . ' ' . $tonBook . '<br> 
                 <b>SicCode: </b>' . $loadInfo->LoadSICCODE . ' <br>  
                 <b>Vehicle Reg. No. </b>' . $loadInfo->VehicleRegNo . '<br> 
@@ -3945,25 +3940,31 @@ class Booking extends REST_Controller
     </body>
     </html>';
     
-        // Generate PDF file
-        $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $loadInfo->ReceiptName;
-    
-        $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
-    
-        $mpdf->showWatermarkImage = true;
-        $mpdf->watermarkImgBehind = false;
-        $mpdf->watermarkImageAlpha = 0.7;
-    
-        $mpdf->keep_table_proportions = false;
-        $mpdf->WriteHTML($html);
-        $mpdf->Output($pdfFilePath);
+            // Generate PDF file
+            $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $loadInfo->ReceiptName;
+            $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 
+            // $mpdf->SetWatermarkImage($stampImage);
+            $mpdf->showWatermarkImage = true;
+            $mpdf->watermarkImgBehind = false;
+            $mpdf->watermarkImageAlpha = 0.7;
+
+            //$mpdf->_setPageSize(array(70,180),'P');
+            //$mpdf->AddPage('P','','','','',5,5,5,5,5,5);
+            //$mpdf->AddPage();
+
+            $mpdf->keep_table_proportions = false;
+            $mpdf->WriteHTML($html);
+            $mpdf->Output($pdfFilePath);
+            // Log Site Activity
+
+            echo "PDF generated for Conveyance Number: " . $conveyanceNumber . "<br>";
+        }
         $this->response([
             'status' => "200",
-            'message' => "PDF generated successfully for Conveyance Number: $conveyanceNumber",
-            'data' => null
+            'message' => "Hello Working",
+            'data' => "Hello"
         ], REST_Controller::HTTP_OK);
     }
-    
 
 }
