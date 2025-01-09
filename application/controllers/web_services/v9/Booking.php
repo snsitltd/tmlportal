@@ -3949,8 +3949,8 @@ class Booking extends REST_Controller
             }
 
             // Generate PDF file
-            print_r(WEB_ROOT_PATH);
-            // print_r($loadInfo->ReceiptName);
+            // print_r(WEB_ROOT_PATH);
+            print_r($loadInfo->ReceiptName);
             die();
             $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $loadInfo->ReceiptName;
 
