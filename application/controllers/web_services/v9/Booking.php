@@ -3867,8 +3867,7 @@ class Booking extends REST_Controller
             // Fetch PDF Content Settings
             $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
             $PDFContent = $PDFContentQRY->row();
-    
-            print_r($PDFContent);
+
             // Determine Lorry Type
             $lorryType = '';
             switch ($loadInfo->LorryType) {
