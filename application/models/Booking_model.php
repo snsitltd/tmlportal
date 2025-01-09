@@ -3494,6 +3494,7 @@ class Booking_model extends CI_Model{
 	}
 	
 	function BookingLoadInfo1($id){
+
 		$this->db->select('tbl_booking_loads1.LoadID');  
 		$this->db->select('tbl_booking_loads1.Status');   
 		$this->db->select('tbl_booking_loads1.ConveyanceNo');   

@@ -11,10 +11,83 @@ class Booking_API_Model extends CI_Model
         $this->Tbl = 'tbl_booking';
     }
 
-    function getLoadInfoByConveyanceNo($conveyanceNumber){
-        print_r($conveyanceNumber);
-        die();
-    }
+    function BookingLoadInfoApi($id){
+		$this->db->select('tbl_booking_loads1.LoadID');  
+		$this->db->select('tbl_booking_loads1.Status');   
+		$this->db->select('tbl_booking_loads1.ConveyanceNo');   
+		$this->db->select('tbl_booking_loads1.DriverName');   
+		$this->db->select('tbl_booking_loads1.VehicleRegNo');   
+		$this->db->select('tbl_booking_loads1.Signature');   
+		$this->db->select('tbl_booking_loads1.Signature2');
+		$this->db->select('tbl_booking_loads1.DriverID');   
+		$this->db->select('tbl_booking_loads1.DriverLoginID');   
+		$this->db->select('tbl_booking_loads1.Tare');    
+		$this->db->select('tbl_booking_loads1.Net');    
+		$this->db->select('tbl_booking_loads1.CustomerName');  
+		$this->db->select('tbl_booking_loads1.CustomerName2');  
+		$this->db->select('tbl_booking_loads1.ReceiptName');   
+		$this->db->select('tbl_booking_loads1.BookingID');   
+		$this->db->select('tbl_booking_loads1.BookingRequestID'); 
+		$this->db->select('tbl_booking_loads1.TipID ');	
+		$this->db->select('tbl_booking_loads1.TicketID ');	
+		$this->db->select('tbl_booking_loads1.TipNumber ');	
+		$this->db->select('tbl_booking_loads1.GrossWeight ');	
+		$this->db->select('tbl_booking_loads1.TipAddressUpdate ');
+		$this->db->select('tbl_booking_loads1.SiteInDateTime ');
+		$this->db->select('tbl_booking_loads1.SiteOutDateTime ');		
+		$this->db->select('tbl_booking_loads1.TicketUniqueID ');		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %H:%i") as SIDateTime ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %H:%i") as SODateTime ');  
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime2,"%d-%m-%Y %H:%i") as HSIDateTime ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y %H:%i") as HSODateTime ');  
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %H:%i") as CDateTime ');  
+		  
+		
+		$this->db->select('tbl_booking1.LoadType');   
+		$this->db->select('tbl_booking1.LorryType');  
+		$this->db->select('tbl_booking1.TonBook'); 		
+		$this->db->select('tbl_booking_request.CompanyID ');	
+		$this->db->select('tbl_booking1.BookingType');   
+		$this->db->select('tbl_booking_request.OpportunityID ');	 
+		
+		$this->db->select(' tbl_materials.MaterialName ');			
+		$this->db->select(' tbl_materials.MaterialID ');		
+		$this->db->select(' tbl_materials.SicCode ');			 
+        $this->db->select(' tbl_booking1.SICCode as LoadSICCODE ');		
+		
+		$this->db->select(' tbl_booking_request.CompanyName ');    
+		$this->db->select(' tbl_booking_request.OpportunityName ');	  
+		 
+		$this->db->select(' tbl_tipaddress.TipName ');	 
+		$this->db->select(' tbl_tipaddress.PermitRefNo ');	
+		$this->db->select(' tbl_tipaddress.Street1 ');	
+		$this->db->select(' tbl_tipaddress.Street2 ');	
+		$this->db->select(' tbl_tipaddress.Town ');	
+		$this->db->select(' tbl_tipaddress.County ');	
+		$this->db->select(' tbl_tipaddress.PostCode ');	
+		
+		$this->db->select(' tbl_drivers.Haulier ');	 
+		$this->db->select(' tbl_drivers.DriverName as lorry_driver_name ');	 
+		$this->db->select(' tbl_drivers.RegNumber as lorry_RegNumber');	 
+		$this->db->select(' tbl_drivers.Tare  as lorry_tare');	  
+		$this->db->select(' tbl_drivers.ltsignature as lorry_signature');	 
+		
+		$this->db->select(' tbl_drivers_login.Signature as dsignature ');	 
+		$this->db->from('tbl_booking_loads1'); 
+		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT");  
+		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT");  
+		$this->db->join(' tbl_drivers', 'tbl_booking_loads1.DriverID = tbl_drivers.LorryNo  ',"LEFT");  
+		$this->db->join(' tbl_drivers_login', 'tbl_booking_loads1.DriverLoginID = tbl_drivers_login.DriverID  ',"LEFT"); 
+		$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID = tbl_tipaddress.TipID ',"LEFT"); 
+		$this->db->join(' tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ',"LEFT");   
+		 
+        $this->db->where('tbl_booking_loads1.LoadID ',$id);		
+		$query = $this->db->get(); 
+		return $query->row();
+		//return $query->row_array();
+	}
 
     /*
      * Get rows from the Driver table

@@ -3848,16 +3848,16 @@ class Booking extends REST_Controller
         $conveyanceNumbers = $this->post('conveyanceNumbers') ?? "";
         
         foreach ($conveyanceNumbers as $conveyanceNumber) {
-            $conveyanceNumber = $this->db->escape($conveyanceNumber); // Escape the input to prevent SQL injection
+            // $conveyanceNumber = $this->db->escape($conveyanceNumber); // Escape the input to prevent SQL injection
     
-            $query = $this->db->query("SELECT * FROM tbl_booking_loads1 WHERE ConveyanceNo = $conveyanceNumber");
-            
-            if ($query->num_rows() == 0) {
-                echo "No data found for Conveyance Number: " . $conveyanceNumber . "<br>";
-                continue;
-            }
+            $loadInfo = $this->Booking1_API_Model->BookingLoadInfoApi($conveyanceNumber);
+
+            // if ($loadInfo->num_rows() == 0) {
+            //     echo "No data found for Conveyance Number: " . $conveyanceNumber . "<br>";
+            //     continue;
+            // }
     
-            $loadInfo = $query->row(); // Get data as object for easier access
+            // $loadInfo = $query->row(); // Get data as object for easier access
     
             // Fetch PDF Content Settings
             $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
@@ -3879,8 +3879,7 @@ class Booking extends REST_Controller
     
             // Determine Tonnage or Load
             $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
-            // print_r($loadInfo);
-            // Prepare HTML content for the PDF
+          // Prepare HTML content for the PDF
             $html = '<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -3906,9 +3905,9 @@ class Booking extends REST_Controller
                 <b>' . $PDFContent->head2 . '</b><br/> <br>
                 <div style="text-align:center;"><b>CONVEYANCE NOTE </b></div><br>
                 <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>     
-                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>         
-                <b>In Time: </b>' . $loadInfo->SIDateTime . ' <br>
-                <b>Out Time: </b>' . $loadInfo->SODateTime . ' <br>
+                <b>Date Time: </b>' . $loadInfo->CreateDateTime . '<br>         
+                <b>In Time: </b>' . $loadInfo->SiteInDateTime . ' <br>
+                <b>Out Time: </b>' . $loadInfo->SiteOutDateTime . ' <br>
                 <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>        
                 <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>              
                 <b>Tip Address: </b>' . $loadInfo->TipName . ',' . $loadInfo->Street1 . ',' . $loadInfo->Street2 . ',
@@ -3919,7 +3918,7 @@ class Booking extends REST_Controller
                 <b>Vehicle Reg. No. </b>' . $loadInfo->VehicleRegNo . '<br> 
                 <b>Driver Name: </b>' . $loadInfo->DriverName . '<br><br/>   
             </div>
-            <div><img src="/assets/DriverSignature/' . $loadInfo->dsignature . '" width="100" height="40" style="float:left"></div>  
+            <div><img src="/assets/DriverSignature/' . $loadInfo->driver_signature . '" width="100" height="40" style="float:left"></div>  
             <br>
             <div style="width:100%;float:left;">
                 <b>Produced By: </b><br>
