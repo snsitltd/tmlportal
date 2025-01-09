@@ -3941,7 +3941,7 @@ class Booking extends REST_Controller
     </html>';
     
             // Generate PDF file
-            $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $loadInfo->ReceiptName;
+            $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $loadInfo->ReceiptName;
             $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 
             // $mpdf->SetWatermarkImage($stampImage);
