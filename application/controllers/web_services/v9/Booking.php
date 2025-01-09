@@ -3876,7 +3876,8 @@ class Booking extends REST_Controller
                     $lorryType = 'Bin';
                     break;
             }
-    
+            print_r($loadInfo);
+            die();
             // Determine Tonnage or Load
             $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
           // Prepare HTML content for the PDF

@@ -91,7 +91,8 @@ class Booking1_API_Model extends CI_Model
 
         // Debug: Output the query to verify it
         // echo $this->db->last_query();
-    
+        print_r($query->result());
+        die();
         // Return the result
         return $query->row();
 	}
