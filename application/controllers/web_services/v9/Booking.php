@@ -3846,7 +3846,8 @@ class Booking extends REST_Controller
 
     public function update_signature_post(){
         $conveyanceNumbers = $this->post('conveyanceNumbers') ?? "";
-  
+        // print_r($conveyanceNumbers);
+        // die();
         foreach ($conveyanceNumbers as $conveyanceNumber) {
             // Fetch Load Information based on Conveyance Number
             // $this->Drivers_API_Model->getRows($con);
@@ -3857,12 +3858,12 @@ class Booking extends REST_Controller
             // }
 
             $conveyanceNumber = $this->db->escape($conveyanceNumber); // Escape the input to prevent SQL injection
+
             $query = $this->db->query("SELECT * FROM tbl_booking_loads1 WHERE ConveyanceNo = $conveyanceNumber");
             
             $loadInfo = ($query->num_rows() > 0) ? $query->result_array() : false;
             
-            // print_r($LoadInfo);
-            
+
             // Fetch PDF Content Settings
             $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
             $PDFContent = $PDFContentQRY->row();
