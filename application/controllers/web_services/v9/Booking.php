@@ -3,6 +3,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // Load the Rest Controller library
 require APPPATH . '/libraries/REST_Controller.php';
 include_once APPPATH . '/third_party/mpdf/mpdf.php';
+require APPPATH . '/libraries/BaseController.php';
 //include_once APPPATH.'/third_party/mpdf/mpdf01.php';
 class Booking extends REST_Controller
 {
@@ -3840,5 +3841,129 @@ class Booking extends REST_Controller
             'data' => $data
         ], REST_Controller::HTTP_OK);
     }
+
+
+
+    public function update_signature_post(){
+        $conveyanceNumber = $this->post('conveyanceNumber') ?? ""; // Assuming a single conveyance number is passed
+    
+        if (empty($conveyanceNumber)) {
+            $this->response([
+                'status' => "400",
+                'message' => "Conveyance Number is required",
+                'data' => null
+            ], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+    
+        // Escape the input to prevent SQL injection
+        $conveyanceNumber = $this->db->escape($conveyanceNumber);
+    
+        // Fetch Load Information based on Conveyance Number
+        $query = $this->db->query("SELECT * FROM tbl_booking_loads1 WHERE ConveyanceNo = $conveyanceNumber");
+        $loadInfo = ($query->num_rows() > 0) ? $query->row() : false;
+    
+        if (!$loadInfo) {
+            $this->response([
+                'status' => "404",
+                'message' => "No data found for Conveyance Number: $conveyanceNumber",
+                'data' => null
+            ], REST_Controller::HTTP_NOT_FOUND);
+            return;
+        }
+    
+        // Fetch PDF Content Settings
+        $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
+        $PDFContent = $PDFContentQRY->row();
+    
+        // Determine Lorry Type
+        $lorryType = '';
+        switch ($loadInfo->LorryType) {
+            case 1:
+                $lorryType = 'Tipper';
+                break;
+            case 2:
+                $lorryType = 'Grab';
+                break;
+            case 3:
+                $lorryType = 'Bin';
+                break;
+        }
+    
+        // Determine Tonnage or Load
+        $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
+    
+        // Prepare HTML content for the PDF
+        $html = '<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div style="width:100%;margin-bottom:0px;margin-top:0px;font-size:10px;">
+            <div style="width:100%;">
+                <div style="width:65%;float:right;text-align:right;"> 
+                    <b>' . $PDFContent->outpdf_title . '</b><br/>
+                    ' . $PDFContent->address . ' <br/>
+                    <b>Phone:</b> ' . $PDFContent->outpdf_phone . ' 
+                </div>
+            </div>
+            <div style="width:100%;float:left;">   
+                <b>Email:</b> ' . $PDFContent->email . ' <br/>       
+                <b>Web:</b> ' . $PDFContent->website . ' <br/>         
+                <b>Waste License No: </b>' . $PDFContent->waste_licence . ' <br/> <hr>
+                <b>' . $PDFContent->head1 . '</b><br/> <br>
+                <b>' . $PDFContent->head2 . '</b><br/> <br>
+                <div style="text-align:center;"><b>CONVEYANCE NOTE </b></div><br>
+                <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>     
+                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>         
+                <b>In Time: </b>' . $loadInfo->SIDateTime . ' <br>
+                <b>Out Time: </b>' . $loadInfo->SODateTime . ' <br>
+                <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>     
+                <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>             
+                <b>Tip Address: </b>' . $loadInfo->TipName . ',' . $loadInfo->Street1 . ',' . $loadInfo->Street2 . ',
+                ' . $loadInfo->Town . ',' . $loadInfo->County . ',' . $loadInfo->PostCode . '<br>     
+                <b>Permit Reference No: </b>' . $loadInfo->PermitRefNo . ' <br/>                            
+                <b>Material: </b>' . $loadInfo->MaterialName . ' Collected ' . $lorryType . ' ' . $tonBook . '<br> 
+                <b>SicCode: </b>' . $loadInfo->LoadSICCODE . ' <br>  
+                <b>Vehicle Reg. No. </b>' . $loadInfo->VehicleRegNo . '<br> 
+                <b>Driver Name: </b>' . $loadInfo->DriverName . '<br><br/>   
+            </div>
+            <div><img src="/assets/DriverSignature/' . $loadInfo->dsignature . '" width="100" height="40" style="float:left"></div>  
+            <br>
+            <div style="width:100%;float:left;">
+                <b>Produced By: </b><br>
+                <div><img src="/uploads/Signature/' . $loadInfo->Signature . '" width="100" height="40" style="float:left"></div>
+                ' . $loadInfo->CustomerName . '<br><br>
+                <div style="font-size:9px;"> 
+                    <b>VAT Reg. No: </b>' . $PDFContent->VATRegNo . '<br>
+                    <b>Company Reg. No: </b>' . $PDFContent->CompanyRegNo . '<br>  
+                    ' . $PDFContent->FooterText . '  
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>';
+    
+        // Generate PDF file
+        $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $loadInfo->ReceiptName;
+    
+        $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+    
+        $mpdf->showWatermarkImage = true;
+        $mpdf->watermarkImgBehind = false;
+        $mpdf->watermarkImageAlpha = 0.7;
+    
+        $mpdf->keep_table_proportions = false;
+        $mpdf->WriteHTML($html);
+        $mpdf->Output($pdfFilePath);
+
+        $this->response([
+            'status' => "200",
+            'message' => "PDF generated successfully for Conveyance Number: $conveyanceNumber",
+            'data' => null
+        ], REST_Controller::HTTP_OK);
+    }
+    
 
 }

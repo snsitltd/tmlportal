@@ -11,6 +11,11 @@ class Booking_API_Model extends CI_Model
         $this->Tbl = 'tbl_booking';
     }
 
+    function getLoadInfoByConveyanceNo($conveyanceNumber){
+        print_r($conveyanceNumber);
+        die();
+    }
+
     /*
      * Get rows from the Driver table
      */
