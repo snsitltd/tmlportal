@@ -3844,31 +3844,25 @@ class Booking extends REST_Controller
 
 
 
-    public function update_signature_post(){
+    public function update_signature_post() {
         $conveyanceNumbers = $this->post('conveyanceNumbers') ?? "";
-        // print_r($conveyanceNumbers);
-        // die();
+        
         foreach ($conveyanceNumbers as $conveyanceNumber) {
-            // Fetch Load Information based on Conveyance Number
-            // $this->Drivers_API_Model->getRows($con);
-            // $loadInfo = $this->Booking_API_Model->getLoadInfoByConveyanceNo($conveyanceNumber); // Custom function to fetch load info by conveyance number
-            // if (!$loadInfo) {
-            //     echo "No data found for Conveyance Number: " . $conveyanceNumber;
-            //     continue;
-            // }
-
             $conveyanceNumber = $this->db->escape($conveyanceNumber); // Escape the input to prevent SQL injection
-
+    
             $query = $this->db->query("SELECT * FROM tbl_booking_loads1 WHERE ConveyanceNo = $conveyanceNumber");
             
-            $loadInfo = ($query->num_rows() > 0) ? $query->result_array() : false;
-            
-
+            if ($query->num_rows() == 0) {
+                echo "No data found for Conveyance Number: " . $conveyanceNumber . "<br>";
+                continue;
+            }
+    
+            $loadInfo = $query->row(); // Get data as object for easier access
+    
             // Fetch PDF Content Settings
             $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
             $PDFContent = $PDFContentQRY->row();
-            print_r($loadInfo['ReceiptName']);
-            die();
+            
             // Determine Lorry Type
             $lorryType = '';
             switch ($loadInfo->LorryType) {
@@ -3885,7 +3879,7 @@ class Booking extends REST_Controller
     
             // Determine Tonnage or Load
             $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
-
+            // print_r($loadInfo);
             // Prepare HTML content for the PDF
             $html = '<!DOCTYPE html>
     <html lang="en">
@@ -3893,33 +3887,33 @@ class Booking extends REST_Controller
         <meta charset="utf-8">
     </head>
     <body> 
-        <div style="width:100%;margin-bottom:0px;margin-top:0px;font-size:10px;">	
+        <div style="width:100%;margin-bottom:0px;margin-top:0px;font-size:10px;">    
             <div style="width:100%;">
-                <div style="width:35%;float:left;"> 		
+                <div style="width:35%;float:left;">         
                     <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width="80"> 
                 </div>
-                <div style="width:65%;float:right;text-align:right;"> 		 
-                    <b>' . $PDFContent->outpdf_title . '</b><br/> 		
+                <div style="width:65%;float:right;text-align:right;">      
+                    <b>' . $PDFContent->outpdf_title . '</b><br/>       
                     ' . $PDFContent->address . ' <br/> 
-                    <b>Phone:</b> ' . $PDFContent->outpdf_phone . ' 												
+                    <b>Phone:</b> ' . $PDFContent->outpdf_phone . '                                               
                 </div>
             </div>
             <div style="width:100%;float:left;">   
-                <b>Email:</b> ' . $PDFContent->email . ' <br/>		
-                <b>Web:</b> ' . $PDFContent->website . ' <br/>		  
+                <b>Email:</b> ' . $PDFContent->email . ' <br/>     
+                <b>Web:</b> ' . $PDFContent->website . ' <br/>          
                 <b>Waste License No: </b>' . $PDFContent->waste_licence . ' <br/> <hr>
                 <b>' . $PDFContent->head1 . '</b><br/> <br>
                 <b>' . $PDFContent->head2 . '</b><br/> <br>
                 <div style="text-align:center;"><b>CONVEYANCE NOTE </b></div><br>
-                <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>		
-                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>		 
+                <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>     
+                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>         
                 <b>In Time: </b>' . $loadInfo->SIDateTime . ' <br>
                 <b>Out Time: </b>' . $loadInfo->SODateTime . ' <br>
-                <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>		
-                <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>		 		
+                <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>        
+                <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>              
                 <b>Tip Address: </b>' . $loadInfo->TipName . ',' . $loadInfo->Street1 . ',' . $loadInfo->Street2 . ',
-                ' . $loadInfo->Town . ',' . $loadInfo->County . ',' . $loadInfo->PostCode . '<br>	 
-                <b>Permit Reference No: </b>' . $loadInfo->PermitRefNo . ' <br/>							
+                ' . $loadInfo->Town . ',' . $loadInfo->County . ',' . $loadInfo->PostCode . '<br>     
+                <b>Permit Reference No: </b>' . $loadInfo->PermitRefNo . ' <br/>                            
                 <b>Material: </b>' . $loadInfo->MaterialName . ' Collected ' . $lorryType . ' ' . $tonBook . '<br> 
                 <b>SicCode: </b>' . $loadInfo->LoadSICCODE . ' <br>  
                 <b>Vehicle Reg. No. </b>' . $loadInfo->VehicleRegNo . '<br> 
@@ -3940,45 +3934,42 @@ class Booking extends REST_Controller
         </div>
     </body>
     </html>';
-
-            if (!is_writable("/home/tmlsnsitltdco/public_html/assets/conveyance/")) {
-                die("Error: Directory is not writable.");
+    
+            // Check directory permissions and existence
+            $directory = "/home/tmlsnsitltdco/public_html/assets/conveyance/";
+            if (!is_writable($directory)) {
+                echo "Error: Directory is not writable: " . $directory . "<br>";
+                continue;
             }
             
-            if (!file_exists("/home/tmlsnsitltdco/public_html/assets/conveyance/")) {
-                die("Error: Directory does not exist.");
+            if (!file_exists($directory)) {
+                echo "Error: Directory does not exist: " . $directory . "<br>";
+                continue;
             }
-
+    
             // Generate PDF file
-            // print_r(WEB_ROOT_PATH);
-            print_r($loadInfo->ReceiptName);
-            die();
             $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $loadInfo->ReceiptName;
-
-            
-
-            $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
-
-            // $mpdf->SetWatermarkImage($stampImage);
-            $mpdf->showWatermarkImage = true;
-            $mpdf->watermarkImgBehind = false;
-            $mpdf->watermarkImageAlpha = 0.7;
-
-            //$mpdf->_setPageSize(array(70,180),'P');
-            //$mpdf->AddPage('P','','','','',5,5,5,5,5,5);
-            //$mpdf->AddPage();
-
-            $mpdf->keep_table_proportions = false;
-            $mpdf->WriteHTML($html);
-            $mpdf->Output($pdfFilePath);
-            // Log Site Activity
-
-            echo "PDF generated for Conveyance Number: " . $conveyanceNumber . "<br>";
+    
+            try {
+                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                $mpdf->showWatermarkImage = true;
+                $mpdf->watermarkImgBehind = false;
+                $mpdf->watermarkImageAlpha = 0.7;
+                $mpdf->keep_table_proportions = false;
+                $mpdf->WriteHTML($html);
+                $mpdf->Output($pdfFilePath);
+                
+                echo "PDF generated successfully for Conveyance Number: " . $conveyanceNumber . "<br>";
+            } catch (Exception $e) {
+                echo "Error generating PDF for Conveyance Number: " . $conveyanceNumber . ": " . $e->getMessage() . "<br>";
+                continue;
+            }
         }
+    
         $this->response([
             'status' => "200",
-            'message' => "Hello Working",
-            'data' => "Hello"
+            'message' => "PDF generation completed",
+            'data' => "Success"
         ], REST_Controller::HTTP_OK);
     }
 
