@@ -89,10 +89,7 @@ class Booking1_API_Model extends CI_Model
         $this->db->where('tbl_booking_loads1.ConveyanceNo', $conveyanceNo);
         $query = $this->db->get();
 
-        // Debug: Output the query to verify it
-        // echo $this->db->last_query();
-        print_r($query->result());
-        die();
+
         // Return the result
         return $query->row();
 	}
