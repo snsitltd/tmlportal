@@ -3940,15 +3940,18 @@ class Booking extends REST_Controller
     </body>
     </html>';
 
-    if (!is_writable("/home/tmlsnsitltdco/public_html/assets/conveyance/")) {
-        die("Error: Directory is not writable.");
-    }
-    
-    if (!file_exists("/home/tmlsnsitltdco/public_html/assets/conveyance/")) {
-        die("Error: Directory does not exist.");
-    }
+            if (!is_writable("/home/tmlsnsitltdco/public_html/assets/conveyance/")) {
+                die("Error: Directory is not writable.");
+            }
+            
+            if (!file_exists("/home/tmlsnsitltdco/public_html/assets/conveyance/")) {
+                die("Error: Directory does not exist.");
+            }
 
             // Generate PDF file
+            print_r(WEB_ROOT_PATH);
+            print_r($loadInfo->ReceiptName);
+            die();
             $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $loadInfo->ReceiptName;
 
             
