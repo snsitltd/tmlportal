@@ -3905,7 +3905,7 @@ class Booking extends REST_Controller
                 <b>' . $PDFContent->head2 . '</b><br/> <br>
                 <div style="text-align:center;"><b>CONVEYANCE NOTE </b></div><br>
                 <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>     
-                <b>Date Time: </b>' . $loadInfo->CreateDateTime . '<br>         
+                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>         
                 <b>In Time: </b>' . $loadInfo->SiteInDateTime . ' <br>
                 <b>Out Time: </b>' . $loadInfo->SiteOutDateTime . ' <br>
                 <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>        
