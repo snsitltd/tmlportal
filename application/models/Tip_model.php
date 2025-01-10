@@ -212,8 +212,10 @@ class Tip_model extends CI_Model
 		$this->db->select('tbl_tipticket.TipID');
         $this->db->select('tbl_tipaddress.TipName');
 		$this->db->select('tbl_tipticket.Remarks');  
+		$this->db->select('tbl_tickets.pdf_name');
 		
 		$this->db->join('tbl_booking_loads1', 'tbl_tipticket.LoadID = tbl_booking_loads1.LoadID', "LEFT" ); 
+		$this->db->join('tbl_tickets', 'tbl_tickets.LoadID = tbl_booking_loads1.LoadID', "LEFT" ); 
 		$this->db->where('tbl_tipticket.TipID', $TipID);   		 
 		$this->db->join('tbl_tipaddress', 'tbl_tipticket.TipID = tbl_tipaddress.TipID', 'LEFT');
 		

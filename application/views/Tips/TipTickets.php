@@ -247,7 +247,9 @@
 			],
 			rowId: 'LoadID',
 			createdRow: function(row, data, dataIndex) {
+				console.log(data);
 				var lk1 = baseURL + 'assets/conveyance/' + data["ReceiptName"];
+				var lk2 = baseURL + 'assets/tiptickets/' + data["TipTicketID"];
 				var conveyanceNo = data["ConveyanceNo"] ? data["ConveyanceNo"] : 'N/A'; // Use 'N/A' or a default value for null
 				$(row).find("td:eq(2)").html('<a class="btn btn-sm btn-warning" target="_blank" href="' + lk1 + '" title="View Conveyance Ticket"><i class="fa fa-file-pdf-o"></i> ' + conveyanceNo + ' </a>');
 
@@ -312,7 +314,7 @@
 						statusBadge = '<span class="badge bg-dark">Unknown</span>';
 				}
 				$(row).find("td:eq(7)").html(statusBadge);
-				$(row).find("td:eq(-1)").html('<a class="btn btn-sm btn-warning" target="blank" href="' + lk1 + '" title="View PDF"><i class="fa fa-file-pdf-o"></i></a> ' + TP);
+				$(row).find("td:eq(-1)").html('<a class="btn btn-sm btn-warning" target="blank" href="' + lk2 + '.pdf" title="View PDF"><i class="fa fa-file-pdf-o"></i></a> ' + TP);
 			},
 
 			serverSide: true,
