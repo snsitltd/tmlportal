@@ -3880,8 +3880,6 @@ class Booking extends REST_Controller
             // Determine Tonnage or Load
             $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
           // Prepare HTML content for the PDF
-          print_r($loadInfo);
-          die();
             $html = '<!DOCTYPE html>
     <html lang="en">
     <head>
