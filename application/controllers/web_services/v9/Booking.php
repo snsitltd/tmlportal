@@ -3914,7 +3914,7 @@ class Booking extends REST_Controller
                 ' . $loadInfo->Town . ',' . $loadInfo->County . ',' . $loadInfo->PostCode . '<br>     
                 <b>Permit Reference No: </b>' . $loadInfo->PermitRefNo . ' <br/>                            
                 <b>Material: </b>' . $loadInfo->MaterialName . ' Collected ' . $lorryType . ' ' . $tonBook . '<br> 
-                <b>SicCode: </b>' . $loadInfo->LoadSICCODE . ' <br>  
+                <b>SicCode: </b>' . $loadInfo->SicCode . ' <br>  
                 <b>Vehicle Reg. No. </b>' . $loadInfo->VehicleRegNo . '<br> 
                 <b>Driver Name: </b>' . $loadInfo->DriverName . '<br><br/>   
             </div>
