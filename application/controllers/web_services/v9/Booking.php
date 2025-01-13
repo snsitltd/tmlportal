@@ -1,5 +1,6 @@
 <?php
-if (!defined('BASEPATH')) exit('No direct script access allowed');
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
 // Load the Rest Controller library
 require APPPATH . '/libraries/REST_Controller.php';
 include_once APPPATH . '/third_party/mpdf/mpdf.php';
@@ -17,8 +18,9 @@ class Booking extends REST_Controller
         //$this->load->model('Common_model');
         $this->load->database();
     }
-    
-    private function log_api_data($data) {
+
+    private function log_api_data($data)
+    {
         // Load the database library (if not already loaded)
         $this->load->database();
         try {
@@ -550,9 +552,9 @@ class Booking extends REST_Controller
 
                     if ($dataar->BookingType == 1) {
                         $BookingTypeName = 'Collection';
-                    }elseif ($dataar->BookingType == 3) {
+                    } elseif ($dataar->BookingType == 3) {
                         $BookingTypeName = 'Daywork';
-                    }elseif ($dataar->BookingType == 4) {
+                    } elseif ($dataar->BookingType == 4) {
                         $BookingTypeName = 'Haulage';
                     } else {
                         $BookingTypeName = 'Delivery';
@@ -562,7 +564,7 @@ class Booking extends REST_Controller
                     $this->db->select('ImageName');
                     $this->db->from('tbl_booking_loads_photos1');
                     $this->db->where('LoadID', $dataar->LoadID);
-					$this->db->where('is_ticket_photo', 0);
+                    $this->db->where('is_ticket_photo', 0);
                     $imagesQRY = $this->db->get();
                     if ($imagesQRY->num_rows() > 0) {
                         $imgs = $imagesQRY->result();
@@ -630,7 +632,8 @@ class Booking extends REST_Controller
                         if ($dataar->ReceiptName == '') {
                             $TicketPDFGET = '';
                         } else {
-                            $TicketPDFGET = base_url() . 'assets/conveyance/' . $dataar->ReceiptName;;
+                            $TicketPDFGET = base_url() . 'assets/conveyance/' . $dataar->ReceiptName;
+                            ;
                         }
                         $GrossWeight = $dataar->blGrossWeight;
                         $Tare = $dataar->blTare;
@@ -685,22 +688,22 @@ class Booking extends REST_Controller
                         foreach ($acceptdataarr as $acceptdata) {
                             if ($acceptdata->BookingType == 3) {
                                 $checkDayWorkJobRunning = true;
-                            }else{
+                            } else {
                                 $checkOtherJobRunning = true;
                             }
                         }
                         $_is_accept_now = 1; // Allow for accept all job // last changed
-                        if($query_is_accept_now->num_rows() > 1){
+                        if ($query_is_accept_now->num_rows() > 1) {
                             $_is_accept_now = 1;
                             $currentRunningJob = 'both';
-                        }elseif($checkDayWorkJobRunning){
+                        } elseif ($checkDayWorkJobRunning) {
                             $_is_accept_now = 0; // Allow to accept other jobs if daywork is running
                             $currentRunningJob = 'daywork';
-                        }elseif($checkOtherJobRunning){
+                        } elseif ($checkOtherJobRunning) {
                             $_is_accept_now = 1; // Allow to accept other jobs if daywork is running
                             $currentRunningJob = 'collection_delivery';
                         }
-                        
+
                     } else {
                         $_is_accept_now = 0;
                     }
@@ -719,55 +722,55 @@ class Booking extends REST_Controller
                         $tipticketId = 0;
                     }
 
-					if ($dataar->BookingType == 3) {
-						if ($dataar->DayWorkType == 1) {
-							$dataar->MaterialName = $dataar->MaterialName.', Day';
-						}elseif ($dataar->DayWorkType == 2) {
-							$dataar->MaterialName = $dataar->MaterialName.', Night';
-						}elseif ($dataar->DayWorkType == 3) {
-							$dataar->MaterialName = $dataar->MaterialName.', Hourly';
-						}
-					}
-					
-					//Traffic Management Code Start
-					$this->db->select('tbl_documents.*');
+                    if ($dataar->BookingType == 3) {
+                        if ($dataar->DayWorkType == 1) {
+                            $dataar->MaterialName = $dataar->MaterialName . ', Day';
+                        } elseif ($dataar->DayWorkType == 2) {
+                            $dataar->MaterialName = $dataar->MaterialName . ', Night';
+                        } elseif ($dataar->DayWorkType == 3) {
+                            $dataar->MaterialName = $dataar->MaterialName . ', Hourly';
+                        }
+                    }
+
+                    //Traffic Management Code Start
+                    $this->db->select('tbl_documents.*');
                     $this->db->from('tbl_documents');
                     $this->db->join('tbl_opportunity_to_document', 'tbl_opportunity_to_document.DocumentID = tbl_documents.DocumentID');
                     $this->db->where('tbl_opportunity_to_document.OpportunityID', $dataar->OpportunityID);
-					$this->db->order_by('tbl_documents.CreateDateTime','DESC');
+                    $this->db->order_by('tbl_documents.CreateDateTime', 'DESC');
                     $allDocuments = $this->db->get();
-					$trafficDocument = '';
+                    $trafficDocument = '';
                     if ($allDocuments->num_rows() > 0) {
                         $allDocuments = $allDocuments->result();
-						foreach ($allDocuments as $allDocument) {
-							if($allDocument->DocumentType == 6){
-								if(empty($trafficDocument)){
-									$trafficDocument = $allDocument->DocumentAttachment;									
-								}
-							}
-						}
-					}
-					if(!empty($trafficDocument)){
-						$trafficDocument = base_url() . '/assets/Documents/' . $trafficDocument;					
-					}
-					
-					//Traffic Management Code End
-					
-					
-					//Tip Ticket Photos
-					$this->db->select('*');
+                        foreach ($allDocuments as $allDocument) {
+                            if ($allDocument->DocumentType == 6) {
+                                if (empty($trafficDocument)) {
+                                    $trafficDocument = $allDocument->DocumentAttachment;
+                                }
+                            }
+                        }
+                    }
+                    if (!empty($trafficDocument)) {
+                        $trafficDocument = base_url() . '/assets/Documents/' . $trafficDocument;
+                    }
+
+                    //Traffic Management Code End
+
+
+                    //Tip Ticket Photos
+                    $this->db->select('*');
                     $this->db->from('tbl_booking_loads_photos1');
                     $this->db->where('LoadID', $dataar->LoadID);
-					$this->db->where('is_ticket_photo', 1);
+                    $this->db->where('is_ticket_photo', 1);
                     $alltipTicketPhotos = $this->db->get();
-					$tipticketPhotos = array();
+                    $tipticketPhotos = array();
                     if ($alltipTicketPhotos->num_rows() > 0) {
                         $alltipTicketPhotos = $alltipTicketPhotos->result();
-						foreach ($alltipTicketPhotos as $allDocument) {
-							$allDocument->ImageName = base_url().'/uploads/Photo/'.$allDocument->ImageName;
-							$tipticketPhotos[] = $allDocument;
-						}
-					}
+                        foreach ($alltipTicketPhotos as $allDocument) {
+                            $allDocument->ImageName = base_url() . '/uploads/Photo/' . $allDocument->ImageName;
+                            $tipticketPhotos[] = $allDocument;
+                        }
+                    }
 
 
                     $data[] = array(
@@ -841,7 +844,7 @@ class Booking extends REST_Controller
                         "SiteInDateTime" => $dataar->SiteInDateTime,
                         "SiteOutDateTime" => $dataar->SiteOutDateTime,
                         "TrafficDocument" => $trafficDocument,
-						"tipticketPhotos" => $tipticketPhotos,
+                        "tipticketPhotos" => $tipticketPhotos,
                         "opp_lat" => $dataar->opp_lat,
                         "opp_long" => $dataar->opp_long,
                         "opp_updated_lat" => $dataar->opp_updated_lat,
@@ -854,7 +857,7 @@ class Booking extends REST_Controller
                         "tip_latlong_updated_by" => $dataar->tip_latlong_updated_by
                     );
                 }
-				
+
                 // }
 
             } else {
@@ -869,29 +872,30 @@ class Booking extends REST_Controller
             'data' => $data
         ], REST_Controller::HTTP_OK);
     }
-    
+
     // Material List EA
-    
-    public function material_ea_list_post() {
+
+    public function material_ea_list_post()
+    {
         $this->db->select('MaterialID,MaterialName,EAProduct,');
         $this->db->from('tbl_materials');
-        $this->db->where('EAProduct',1);
+        $this->db->where('EAProduct', 1);
         $query = $this->db->get();
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         // Check if query was successful
         if ($query) {
             // Retrieve results
             $data = $query->result_array();
-            
+
             // Return response with data
             $this->response([
                 'status' => true,
@@ -908,22 +912,23 @@ class Booking extends REST_Controller
     }
 
     // Check Expense
-    
-    public function check_expense_post() {
-        
+
+    public function check_expense_post()
+    {
+
         $token = $this->post('token');
         $conv_no = $this->post('conveyence_number');
-        
-        
+
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         if (REST_Controller::TOKEKEYS != $token) {
             $status = "0";
             $message = 'Invalid API Key';
@@ -931,27 +936,27 @@ class Booking extends REST_Controller
             // Conveyance number is required but not provided
             $status = "0";
             $message = 'Conveyance Number Is Required';
-            
+
             // Return the error response immediately
             $this->response([
                 'status' => false,
                 'message' => $message
             ], REST_Controller::HTTP_BAD_REQUEST);
-            
+
             return; // Exit the function to prevent further execution
         }
-        
+
         // Proceed with database query only if conveyance number is provided
-        
+
         $this->db->select('TicketID, Expenses,is_expense_edit');
         $this->db->from('tbl_booking_loads1');
         $this->db->where('ConveyanceNo', $conv_no);
         $this->db->limit(1);
         $query = $this->db->get();
-        
+
         // Retrieve result data
         $rowData = $query->row_array(); // Assuming you want an array of results 
-        
+
         if (!empty($rowData)) {
             // Expense found in database
             $message = "Expense Found";
@@ -959,31 +964,32 @@ class Booking extends REST_Controller
             // Expense not found in database
             $message = "Expense Not Found";
         }
-        
+
         $this->response([
             'status' => true,
             'message' => $message,
             'data' => $rowData
         ], REST_Controller::HTTP_OK);
     }
-    
+
     // Add Expense
-    
-    public function add_expense_post() {
-        
+
+    public function add_expense_post()
+    {
+
         $token = $this->post('token');
         $conv_no = $this->post('conveyence_number');
         $expense = $this->post('expense');
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         if (REST_Controller::TOKEKEYS != $token) {
             $status = "0";
             $message = 'Invalid API Key';
@@ -991,39 +997,38 @@ class Booking extends REST_Controller
             // Conveyance number is required but not provided
             $status = "0";
             $message = 'Conveyance Number Is Required';
-            
+
             // Return the error response immediately
             $this->response([
                 'status' => false,
                 'message' => $message
             ], REST_Controller::HTTP_BAD_REQUEST);
-            
+
             return; // Exit the function to prevent further execution
-        }
-        else if (!isset($expense) || empty($expense)) {
+        } else if (!isset($expense) || empty($expense)) {
             // Conveyance number is required but not provided
             $status = "0";
             $message = 'Expense Is Required';
-            
+
             // Return the error response immediately
             $this->response([
                 'status' => false,
                 'message' => $message
             ], REST_Controller::HTTP_BAD_REQUEST);
-            
+
             return; // Exit the function to prevent further execution
         }
-        
+
         $data = array(
             'Expenses' => $expense
         );
-        
+
         // Fetch the current expense value from the database
         $this->db->select('Expenses');
         $this->db->where('ConveyanceNo', $conv_no);
         $query = $this->db->get('tbl_booking_loads1');
         $result = $query->row();
-        
+
         if ($result && $result->Expenses == '0.00') {
             // If expense in the database is 0.00, set is_expense_edit to 1
             $this->db->set('is_expense_edit', '1');
@@ -1031,11 +1036,11 @@ class Booking extends REST_Controller
             // If expense in the database is not 0.00, set is_expense_edit to 2
             $this->db->set('is_expense_edit', '2');
         }
-        
+
         $this->db->set('expense_update_time', 'NOW()', FALSE);
         $this->db->where('ConveyanceNo', $conv_no);
         $this->db->update('tbl_booking_loads1', $data);
-        
+
         // Check if the expense was successfully updated
         if ($this->db->affected_rows() > 0) {
             $status = "1";
@@ -1046,13 +1051,13 @@ class Booking extends REST_Controller
         }
 
 
-        
+
         // Return the response
         $this->response([
             'status' => $status,
             'message' => $message
         ], REST_Controller::HTTP_OK);
-        
+
     }
 
 
@@ -1066,14 +1071,14 @@ class Booking extends REST_Controller
         $driver_id = $this->post('driver_id');
         $lorry_no = $DriverID = $this->post('lorry_no');
         $data = [];
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id'),
-	        'lorry_no' => $this->post('lorry_no'),
+            'driver_id' => $this->post('driver_id'),
+            'lorry_no' => $this->post('lorry_no'),
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
 
         // Check user exists with the given credentials
@@ -1168,9 +1173,9 @@ class Booking extends REST_Controller
 
                     if ($dataar->BookingType == 1) {
                         $BookingTypeName = 'Collection';
-                    }elseif ($dataar->BookingType == 3) {
+                    } elseif ($dataar->BookingType == 3) {
                         $BookingTypeName = 'Daywork';
-                    }elseif ($dataar->BookingType == 4) {
+                    } elseif ($dataar->BookingType == 4) {
                         $BookingTypeName = 'Haulage';
                     } else {
                         $BookingTypeName = 'Delivery';
@@ -1219,32 +1224,32 @@ class Booking extends REST_Controller
                     $years = floor($date_diff / (365 * 60 * 60 * 24));
                     $months = floor(($date_diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
                     $days = floor(($date_diff - $years * 365 * 60 * 60 * 24 - $months * 30 * 60 * 60 * 24) / (60 * 60 * 24));
-					
-					
-					//Traffic Management Code Start
-					$this->db->select('tbl_documents.*');
+
+
+                    //Traffic Management Code Start
+                    $this->db->select('tbl_documents.*');
                     $this->db->from('tbl_documents');
                     $this->db->join('tbl_opportunity_to_document', 'tbl_opportunity_to_document.DocumentID = tbl_documents.DocumentID');
                     $this->db->where('tbl_opportunity_to_document.OpportunityID', $dataar->OpportunityID);
-					$this->db->order_by('tbl_documents.CreateDateTime','DESC');
+                    $this->db->order_by('tbl_documents.CreateDateTime', 'DESC');
                     $allDocuments = $this->db->get();
-					$trafficDocument = '';
+                    $trafficDocument = '';
                     if ($allDocuments->num_rows() > 0) {
                         $allDocuments = $allDocuments->result();
-						foreach ($allDocuments as $allDocument) {
-							if($allDocument->DocumentType == 6){
-								if(empty($trafficDocument)){
-									$trafficDocument = $allDocument->DocumentAttachment;									
-								}
-							}
-						}
-					}
-					if(!empty($trafficDocument)){
-						$trafficDocument = base_url() . '/assets/Documents/' . $trafficDocument;					
-					}
+                        foreach ($allDocuments as $allDocument) {
+                            if ($allDocument->DocumentType == 6) {
+                                if (empty($trafficDocument)) {
+                                    $trafficDocument = $allDocument->DocumentAttachment;
+                                }
+                            }
+                        }
+                    }
+                    if (!empty($trafficDocument)) {
+                        $trafficDocument = base_url() . '/assets/Documents/' . $trafficDocument;
+                    }
 
-					
-					//Traffic Management Code End
+
+                    //Traffic Management Code End
 
                     //$dataar->LoadType == 2 AND $days <= $dataar->Days AND $dataar->Load_status != 4
                     //     if($dataar->LoadType == 2 AND $days >= $dataar->Days AND $dataar->Load_status != 4){
@@ -1354,14 +1359,14 @@ class Booking extends REST_Controller
         $post_site_out_time = $this->post('post_site_out_time');
 
         $logData = [
-	        'driver_id' => $this->post('driver_id'),
-	        'lorry_no' => $this->post('lorry_no'),
+            'driver_id' => $this->post('driver_id'),
+            'lorry_no' => $this->post('lorry_no'),
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $TipID = $this->post('TipID');
 
         $wastedJourney = $this->post('wasted_journey');
@@ -1489,7 +1494,7 @@ class Booking extends REST_Controller
                 $NewLoadID = 0;
                 $con_finish = 0;
                 $dataarr = $query->result();
-                if(!isset($TipID) || empty($TipID)){
+                if (!isset($TipID) || empty($TipID)) {
                     $TipID = $dataarr[0]->TipID;
                 }
                 //echo $dataarr[0]->Email; exit();
@@ -1517,9 +1522,9 @@ class Booking extends REST_Controller
                         $this->db->query("update tbl_tickets set GrossWeight = '$GrossWeight',Net = $net where LoadID = '$LoadID'");
                     } */
 
-                    if(isset($post_site_in_time) && !empty($post_site_in_time)){
+                    if (isset($post_site_in_time) && !empty($post_site_in_time)) {
                         $post_site_in_time = date("Y-m-d H:i:s", strtotime($post_site_in_time));
-                    }else{
+                    } else {
                         $post_site_in_time = date("Y-m-d H:i:s");
                     }
 
@@ -1554,18 +1559,20 @@ class Booking extends REST_Controller
                         //Add Ticket Table
                         $BookingID = $dataarr[0]->BookingID;
                         $Booking = $this->Booking1_API_Model->GetBookingInfo($BookingID);
-                        $TicketUniqueID =  $this->Ticket_API_Model->generateRandomString();
-                        $LastTicketNumber =  $this->Ticket_API_Model->LastTicketNo();
+                        $TicketUniqueID = $this->Ticket_API_Model->generateRandomString();
+                        $LastTicketNumber = $this->Ticket_API_Model->LastTicketNo();
                         if ($LastTicketNumber) {
                             $TicketNumber = $LastTicketNumber['TicketNumber'] + 1;
                         } else {
                             $TicketNumber = 1;
                         }
-                        
-                        
+
+
                         if ($dataarr[0]->BookingType == 3) {
                             $ticketsInfo = array(
-                                'TicketUniqueID' => $TicketUniqueID, 'LoadID' => $LoadID, 'TicketNumber' => $TicketNumber,
+                                'TicketUniqueID' => $TicketUniqueID,
+                                'LoadID' => $LoadID,
+                                'TicketNumber' => $TicketNumber,
                                 'TicketDate' => date('Y-m-d H:i:s'),
                                 'Conveyance' => $dataarr[0]->ConveyanceNo,
                                 'OpportunityID' => $Booking->OpportunityID,
@@ -1588,11 +1595,11 @@ class Booking extends REST_Controller
                             );
                             $TicketID = $this->Ticket_API_Model->insert('tbl_tickets', $ticketsInfo);
 
-                        }elseif ($dataarr[0]->BookingType == 1) {
+                        } elseif ($dataarr[0]->BookingType == 1) {
 
                             if ($TipID == 1) {
                                 $IsInBoundC = 1;
-								sleep(2);
+                                sleep(2);
                                 $this->db->select('TicketNo,TypeOfTicket');
                                 $this->db->from('tbl_tickets');
                                 $this->db->where('tbl_tickets.Conveyance', $dataarr[0]->ConveyanceNo);
@@ -1605,7 +1612,9 @@ class Booking extends REST_Controller
                                     $TicketID = $dataarrss[0]->TicketNo;
                                 } else {
                                     $ticketsInfo = array(
-                                        'TicketUniqueID' => $TicketUniqueID, 'LoadID' => $LoadID, 'TicketNumber' => $TicketNumber,
+                                        'TicketUniqueID' => $TicketUniqueID,
+                                        'LoadID' => $LoadID,
+                                        'TicketNumber' => $TicketNumber,
                                         'TicketDate' => date('Y-m-d H:i:s'),
                                         'Conveyance' => $dataarr[0]->ConveyanceNo,
                                         'OpportunityID' => $Booking->OpportunityID,
@@ -1649,10 +1658,10 @@ class Booking extends REST_Controller
                         //exit();
 
                         //Singnature
-                        $config['upload_path']   = './uploads/Signature/';
+                        $config['upload_path'] = './uploads/Signature/';
                         $config['allowed_types'] = 'gif|jpg|png';
                         $config['encrypt_name'] = TRUE;
-                        $config['overwrite']     = FALSE;
+                        $config['overwrite'] = FALSE;
                         $this->load->library('upload', $config);
                         if (!$this->upload->do_upload('Signature')) {
                             $SignatureUpload = '';
@@ -1682,27 +1691,27 @@ class Booking extends REST_Controller
                         $tipadQRY = $tipadQRY->row_array();
 
                         $siteOutDateTimeInDB = date("Y-m-d H:i:s");
-						if ($dataarr[0]->BookingType == 3) {
-							if(isset($post_site_out_time) && !empty($post_site_out_time)){
-								$siteOutDateTimeInDB = date("Y-m-d H:i:s", strtotime($post_site_out_time));
-							}else{
-								$siteOutDateTimeInDB = date("Y-m-d H:i:s");
-							}
-							
-							if(isset($post_site_in_time) && !empty($post_site_in_time)){
-								$siteInDateTimeInDB = date("Y-m-d H:i:s", strtotime($post_site_in_time));
-							}else{
-								$siteInDateTimeInDB = date("Y-m-d H:i:s");
-							}
-							$dataarr[0]->SiteInDateTime = $siteInDateTimeInDB;
-						}
-                        
+                        if ($dataarr[0]->BookingType == 3) {
+                            if (isset($post_site_out_time) && !empty($post_site_out_time)) {
+                                $siteOutDateTimeInDB = date("Y-m-d H:i:s", strtotime($post_site_out_time));
+                            } else {
+                                $siteOutDateTimeInDB = date("Y-m-d H:i:s");
+                            }
+
+                            if (isset($post_site_in_time) && !empty($post_site_in_time)) {
+                                $siteInDateTimeInDB = date("Y-m-d H:i:s", strtotime($post_site_in_time));
+                            } else {
+                                $siteInDateTimeInDB = date("Y-m-d H:i:s");
+                            }
+                            $dataarr[0]->SiteInDateTime = $siteInDateTimeInDB;
+                        }
+
 
 
 
                         $dataarr[0]->SiteOutDateTime = $siteOutDateTimeInDB;
                         $dataarr[0]->SiteOutDateTime2 = $siteOutDateTimeInDB;
-						
+
 
 
 
@@ -1717,7 +1726,7 @@ class Booking extends REST_Controller
                         } else {
                             $siteOutDateTime = "Out Time: Time Not Found <br>";
                         }
-                        
+
                         $siteInDateTime2 = $siteOutDateTime2 = '';
                         if (isset($dataarr[0]->SiteInDateTime2) && !empty($dataarr[0]->SiteInDateTime2)) {
                             $siteInDateTime2 = '<b>In Time: </b>' . date("d-m-Y H:i", strtotime($dataarr[0]->SiteInDateTime2)) . ' <br>';
@@ -1754,28 +1763,28 @@ class Booking extends REST_Controller
                         $tonBook = $dataarr[0]->TonBook;
                         if ($tonBook == 1 || $tonBook == "1") {
                             $tonBook = "Tonnage";
-                        }elseif ($tonBook == 0 || $tonBook == "0") {
+                        } elseif ($tonBook == 0 || $tonBook == "0") {
                             $tonBook = "Load";
-                        }else{
+                        } else {
                             $tonBook = "Load";
                         }
-						$dayWorkType = '';
-						if ($dataarr[0]->BookingType == 3) {
-							if ($dataarr[0]->DayWorkType == 1) {
-								$dayWorkType = 'Day';
-							}elseif ($dataarr[0]->DayWorkType == 2) {
-								$dayWorkType = 'Night';
-							}elseif ($dataarr[0]->DayWorkType == 3) {
-								$dayWorkType = 'Hourly';
-							}
-						}
+                        $dayWorkType = '';
+                        if ($dataarr[0]->BookingType == 3) {
+                            if ($dataarr[0]->DayWorkType == 1) {
+                                $dayWorkType = 'Day';
+                            } elseif ($dataarr[0]->DayWorkType == 2) {
+                                $dayWorkType = 'Night';
+                            } elseif ($dataarr[0]->DayWorkType == 3) {
+                                $dayWorkType = 'Hourly';
+                            }
+                        }
 
 
                         //Daywork
                         if ($dataarr[0]->BookingType == 3) {
                             $journeyTime = $dataarr[0]->JourneyTime;
-                            $journeyTime = explode(":",$journeyTime);
-                            if(!isset($journeyTime[1])){
+                            $journeyTime = explode(":", $journeyTime);
+                            if (!isset($journeyTime[1])) {
                                 $journeyTime[1] = 0;
                             }
                             if ($wastedJourney) {
@@ -1802,7 +1811,7 @@ class Booking extends REST_Controller
                                         <b>Date Time: </b>' . date("d-m-Y H:i") . ' <br>		 
                                         ' . $siteInDateTime . '
                                         ' . $siteOutDateTime . '
-                                        <b>Journey Time: </b> '.$journeyTime[0].' Hours '.$journeyTime[1].' Minutes <br>	
+                                        <b>Journey Time: </b> ' . $journeyTime[0] . ' Hours ' . $journeyTime[1] . ' Minutes <br>	
                                         <b>Company Name: </b> ' . $dataarr[0]->CompanyName . ' <br>		
                                         <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . '<br>		
                                         <b>Permit Reference No: </b>' . $tipadQRY['PermitRefNo'] . ' <br/>
@@ -1825,7 +1834,7 @@ class Booking extends REST_Controller
 
                                 $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $UniqCodeGen . ".pdf";
 
-                                $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 
                                 $mpdf->SetWatermarkImage($stampImage);
                                 $mpdf->showWatermarkImage = true;
@@ -1864,11 +1873,11 @@ class Booking extends REST_Controller
                                         <b>Date Time: </b>' . date("d-m-Y H:i") . ' <br>		 
                                         ' . $siteInDateTime . '
                                         ' . $siteOutDateTime . '
-                                        <b>Journey Time: </b> '.$journeyTime[0].' Hours '.$journeyTime[1].' Minutes <br>	
+                                        <b>Journey Time: </b> ' . $journeyTime[0] . ' Hours ' . $journeyTime[1] . ' Minutes <br>	
                                         <b>Company Name: </b> ' . $dataarr[0]->CompanyName . ' <br>		
                                         <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . '<br>		
                                         <b>Permit Reference No: </b>' . $tipadQRY['PermitRefNo'] . ' <br/>
-                                        <b>Material:  </b>'.$MaterialnameQRY['MaterialName'].' '.$dayWorkType.' <br> 
+                                        <b>Material:  </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $dayWorkType . ' <br> 
                                         <b>SicCode: </b> ' . $dataarr[0]->Booking_SICCode . '  <br>  
                                         <b>Vehicle Reg. No. </b> ' . $user['RegNumber'] . '  <br> 
                                         <b>Lorry Type </b> ' . $lorryType . '  <br> 
@@ -1890,7 +1899,7 @@ class Booking extends REST_Controller
 
                                 $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $UniqCodeGen . ".pdf";
 
-                                $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
                                 //$mpdf->_setPageSize(array(70,180),'P');
                                 //$mpdf->AddPage('P','','','','',5,5,5,5,5,5);
                                 //$mpdf->AddPage();
@@ -1905,7 +1914,7 @@ class Booking extends REST_Controller
                         if ($dataarr[0]->BookingType == 4) {
                             $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
                             $tipadQRYForHau = $tipadQRYForHau->row_array();
-                            
+
                             $haulageAddress = '';
                             if ($TipID == 1) {
                                 // Combine address fields
@@ -1914,7 +1923,7 @@ class Booking extends REST_Controller
                                 // Show TipName
                                 $haulageAddress = $tipadQRYForHau['TipName'];
                             }
-                            
+
                             if ($wastedJourney) {
                                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body> 
                                 <div style="width:100%;margin-bottom: 0px;margin-top: 0px;font-size: 10px;" >	
@@ -1961,7 +1970,7 @@ class Booking extends REST_Controller
 
                                 $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $UniqCodeGen . ".pdf";
 
-                                $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 
                                 $mpdf->SetWatermarkImage($stampImage);
                                 $mpdf->showWatermarkImage = true;
@@ -2004,7 +2013,7 @@ class Booking extends REST_Controller
                                         <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . '<br>		 			
                                         <b>Haulage Address: </b> ' . $haulageAddress . '<br>   	
                                         <b>Permit Reference No: </b>' . $tipadQRY['PermitRefNo'] . ' <br/>
-                                        <b>Material:  </b>'.$MaterialnameQRY['MaterialName'].' '.$LT.' Collected '.$lorryType.' '.$tonBook.' <br> 
+                                        <b>Material:  </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $LT . ' Collected ' . $lorryType . ' ' . $tonBook . ' <br> 
                                         <b>SicCode: </b> ' . $dataarr[0]->Booking_SICCode . '  <br>  
                                         <b>Vehicle Reg. No. </b> ' . $user['RegNumber'] . '  <br> 
                                         <b>Driver Name: </b> ' . $user['DriverName'] . '<br> <br/>   
@@ -2026,7 +2035,7 @@ class Booking extends REST_Controller
 
                                 $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $UniqCodeGen . ".pdf";
 
-                                $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
                                 //$mpdf->_setPageSize(array(70,180),'P');
                                 //$mpdf->AddPage('P','','','','',5,5,5,5,5,5);
                                 //$mpdf->AddPage();
@@ -2087,7 +2096,7 @@ class Booking extends REST_Controller
 
                                 $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $UniqCodeGen . ".pdf";
 
-                                $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 
                                 $mpdf->SetWatermarkImage($stampImage);
                                 $mpdf->showWatermarkImage = true;
@@ -2130,7 +2139,7 @@ class Booking extends REST_Controller
                                         <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . '<br>		 		
                                         <b>Tip Address: </b> ' . $tipadQRY['Street1'] . ' ' . $tipadQRY['Street2'] . ' ' . $tipadQRY['Town'] . ' ' . $tipadQRY['County'] . ' ' . $tipadQRY['PostCode'] . '<br>		
                                         <b>Permit Reference No: </b>' . $tipadQRY['PermitRefNo'] . ' <br/>
-                                        <b>Material:  </b>'.$MaterialnameQRY['MaterialName'].' '.$LT.' Collected '.$lorryType.' '.$tonBook.' <br> 
+                                        <b>Material:  </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $LT . ' Collected ' . $lorryType . ' ' . $tonBook . ' <br> 
                                         <b>SicCode: </b> ' . $dataarr[0]->Booking_SICCode . '  <br>  
                                         <b>Vehicle Reg. No. </b> ' . $user['RegNumber'] . '  <br> 
                                         <b>Driver Name: </b> ' . $user['DriverName'] . '<br> <br/>   
@@ -2151,7 +2160,7 @@ class Booking extends REST_Controller
 
                                 $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $UniqCodeGen . ".pdf";
 
-                                $mpdf =  new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
+                                $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
                                 //$mpdf->_setPageSize(array(70,180),'P');
                                 //$mpdf->AddPage('P','','','','',5,5,5,5,5,5);
                                 //$mpdf->AddPage();
@@ -2169,7 +2178,7 @@ class Booking extends REST_Controller
                                 if ($TipID == 1) {
                                     $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app($ticketId);
 
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2196,7 +2205,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $data1['tickets']['CompanyName'] . ' <br>		 
                                             <b>Site Address: </b> ' . $data1['tickets']['OpportunityName'] . ' <br>	 
                                             <b>Tip Address: </b> ' . $tipadQRY['Street1'] . ' ' . $tipadQRY['Street2'] . ' ' . $tipadQRY['Town'] . ' ' . $tipadQRY['County'] . ' ' . $tipadQRY['PostCode'] . '<br>
-                                            <b>Material:  </b>'.$data1['tickets']['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.' <br> 
+                                            <b>Material:  </b>' . $data1['tickets']['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                                             <b>SIC Code: </b> ' . $data1['tickets']['SicCode'] . ' <br> 
                                             <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
                                             <b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
@@ -2210,8 +2219,8 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->SetWatermarkImage($stampImage);
                                     $mpdf->showWatermarkImage = true;
                                     $mpdf->watermarkImgBehind = false;
@@ -2220,7 +2229,7 @@ class Booking extends REST_Controller
                                     $mpdf->WriteHTML($html);
                                     $mpdf->Output($pdfFilePath);
                                 } else {
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2246,7 +2255,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $dataarr[0]->CompanyName . ' <br>		 
                                             <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . ' <br>	 
                                             <b>Tip Address: </b> ' . $tipadQRY['Street1'] . ' ' . $tipadQRY['Street2'] . ' ' . $tipadQRY['Town'] . ' ' . $tipadQRY['County'] . ' ' . $tipadQRY['PostCode'] . '<br>
-                                            <b>Material:   </b>'.$MaterialnameQRY['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.'<br> 
+                                            <b>Material:   </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . '<br> 
                                             <b>SIC Code: </b> ' . $dataarr[0]->Booking_SICCode . '  <br> 
                                             <b>Gross Weight: </b> ' . round($GrossWeight) . ' KGs<br>	
                                             <b>Tare Weight: </b> ' . round($user['Tare']) . ' KGs <br>		 
@@ -2260,8 +2269,8 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->SetWatermarkImage($stampImage);
                                     $mpdf->showWatermarkImage = true;
                                     $mpdf->watermarkImgBehind = false;
@@ -2274,7 +2283,7 @@ class Booking extends REST_Controller
                                 if ($TipID == 1) {
                                     $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app($ticketId);
 
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2300,7 +2309,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $data1['tickets']['CompanyName'] . ' <br>		 
                                             <b>Site Address: </b> ' . $data1['tickets']['OpportunityName'] . ' <br>	 
                                             <b>Tip Address: </b> ' . $tipadQRY['Street1'] . ' ' . $tipadQRY['Street2'] . ' ' . $tipadQRY['Town'] . ' ' . $tipadQRY['County'] . ' ' . $tipadQRY['PostCode'] . '<br>
-                                            <b>Material:  </b>'.$data1['tickets']['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.' <br> 
+                                            <b>Material:  </b>' . $data1['tickets']['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                                             <b>SIC Code: </b> ' . $data1['tickets']['SicCode'] . ' <br> 
                                             <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
                                             <b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
@@ -2317,13 +2326,13 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 220), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 220), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->keep_table_proportions = false;
                                     $mpdf->WriteHTML($html);
                                     $mpdf->Output($pdfFilePath);
                                 } else {
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2349,7 +2358,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $dataarr[0]->CompanyName . ' <br>		 
                                             <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . ' <br>	 
                                             <b>Tip Address: </b> ' . $tipadQRY['Street1'] . ' ' . $tipadQRY['Street2'] . ' ' . $tipadQRY['Town'] . ' ' . $tipadQRY['County'] . ' ' . $tipadQRY['PostCode'] . '<br>
-                                            <b>Material:  </b>'.$MaterialnameQRY['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.' <br> 
+                                            <b>Material:  </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                                             <b>SIC Code: </b> ' . $dataarr[0]->Booking_SICCode . '  <br> 
                                             <b>Gross Weight: </b> ' . round($GrossWeight) . ' KGs<br>	
                                             <b>Tare Weight: </b> ' . round($user['Tare']) . ' KGs <br>		 
@@ -2366,8 +2375,8 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->keep_table_proportions = false;
                                     $mpdf->WriteHTML($html);
                                     $mpdf->Output($pdfFilePath);
@@ -2387,7 +2396,7 @@ class Booking extends REST_Controller
 
                                 $ticketId = $TicketID = '';
                             }
-                        }elseif ($dataarr[0]->BookingType == 3) {
+                        } elseif ($dataarr[0]->BookingType == 3) {
                             $pdf_nameG = $TicketUniqueID . '.pdf';
                             $this->db->query("update tbl_tickets set GrossWeight = '$GrossWeight', pdf_name = '$pdf_nameG' where LoadID = '$LoadID'");
                         } else {
@@ -2412,15 +2421,15 @@ class Booking extends REST_Controller
                             "Notes2" => $Notes,
                             "Status" => 3,
                             //"SiteOutDateTime" => date("Y-m-d H:i:s"),
-							//"SiteInDateTime" => $siteInDateTimeInDB,
+                            //"SiteInDateTime" => $siteInDateTimeInDB,
                             "SiteOutDateTime" => $siteOutDateTimeInDB,
                             "SiteOutLat" => $LogInLat,
                             "SiteOutLong" => $LogInLong,
                             "SiteOutLoc" => $LogInLoc,
                         );
-						if(isset($siteInDateTimeInDB) && !empty($siteInDateTimeInDB)){
-							$udateData['SiteInDateTime'] = $siteInDateTimeInDB;
-						}
+                        if (isset($siteInDateTimeInDB) && !empty($siteInDateTimeInDB)) {
+                            $udateData['SiteInDateTime'] = $siteInDateTimeInDB;
+                        }
                         $this->db->where('LoadID', $LoadID);
                         $this->db->update("tbl_booking_loads1", $udateData);
 
@@ -2481,10 +2490,10 @@ class Booking extends REST_Controller
 
                     //New Load add
                     $LBookingID = $dataarr[0]->BookingID;
-                    $ILID =  $dataarr[0]->LID;
+                    $ILID = $dataarr[0]->LID;
                     $ITicketID = $dataarr[0]->TicketID;
                     $LTicketUniqueID = $dataarr[0]->TicketUniqueID;
-                    $LastConNumber =  $this->Booking1_API_Model->LastConNumber();
+                    $LastConNumber = $this->Booking1_API_Model->LastConNumber();
                     $LConveyanceNo = $LastConNumber['ConveyanceNo'] + 1;
                     //$LConveyanceNo = $dataarr[0]->ConveyanceNo + 1;
                     $LBookingID = $dataarr[0]->BookingID;
@@ -2524,8 +2533,8 @@ class Booking extends REST_Controller
 
                         $BookingID = $dataarr[0]->BookingID;
                         $Booking = $this->Booking1_API_Model->GetBookingInfo($BookingID);
-                        $TicketUniqueID =  $this->Ticket_API_Model->generateRandomString();
-                        $LastTicketNumber =  $this->Ticket_API_Model->LastTicketNo();
+                        $TicketUniqueID = $this->Ticket_API_Model->generateRandomString();
+                        $LastTicketNumber = $this->Ticket_API_Model->LastTicketNo();
                         if ($LastTicketNumber) {
                             $TicketNumber = $LastTicketNumber['TicketNumber'] + 1;
                         } else {
@@ -2548,7 +2557,9 @@ class Booking extends REST_Controller
                                     $TicketID = $dataarrss[0]->TicketNo;
                                 } else {
                                     $ticketsInfo = array(
-                                        'TicketUniqueID' => $TicketUniqueID, 'LoadID' => $NewLoadID, 'TicketNumber' => $TicketNumber,
+                                        'TicketUniqueID' => $TicketUniqueID,
+                                        'LoadID' => $NewLoadID,
+                                        'TicketNumber' => $TicketNumber,
                                         'TicketDate' => date('Y-m-d H:i:s'),
                                         'Conveyance' => $LConveyanceNo,
                                         'OpportunityID' => $Booking->OpportunityID,
@@ -2603,11 +2614,11 @@ class Booking extends REST_Controller
                 } else if ($Load_status == 6) {
                     $status = "0";
                     $message = 'Status not available now';
-                }else if ($Load_status == 7) {
+                } else if ($Load_status == 7) {
                     // Haulage Reached On Second Location
-                    if(isset($post_site_in_time) && !empty($post_site_in_time)){
+                    if (isset($post_site_in_time) && !empty($post_site_in_time)) {
                         $post_site_in_time = date("Y-m-d H:i:s", strtotime($post_site_in_time));
-                    }else{
+                    } else {
                         $post_site_in_time = date("Y-m-d H:i:s");
                     }
                     $udateData = array(
@@ -2622,7 +2633,7 @@ class Booking extends REST_Controller
                     $this->db->update("tbl_booking_loads1", $udateData);
                     $status = "1";
                     $message = 'Status changed successfully';
-                }else if ($Load_status == 8) {
+                } else if ($Load_status == 8) {
                     $net = $GrossWeight - $user['Tare'];
                     //echo base_url().'uploads/Signature/'.$dataarr[0]->DriverSign; exit();
                     if (empty($_FILES['Signature']['name']) and $dataarr[0]->BookingType == 4 and !$wastedJourney) {
@@ -2635,15 +2646,15 @@ class Booking extends REST_Controller
                         //Add Ticket Table
                         $BookingID = $dataarr[0]->BookingID;
                         $Booking = $this->Booking1_API_Model->GetBookingInfo($BookingID);
-                        $TicketUniqueID =  $this->Ticket_API_Model->generateRandomString();
-                        $LastTicketNumber =  $this->Ticket_API_Model->LastTicketNo();
+                        $TicketUniqueID = $this->Ticket_API_Model->generateRandomString();
+                        $LastTicketNumber = $this->Ticket_API_Model->LastTicketNo();
                         if ($LastTicketNumber) {
                             $TicketNumber = $LastTicketNumber['TicketNumber'] + 1;
                         } else {
                             $TicketNumber = 1;
                         }
-                        
-                       
+
+
                         if ($TipID == 1) {
                             $TickIDQRY = $this->db->query("select TicketNo from  tbl_tickets where LoadID = '$LoadID'");
                             $TickIDQRY = $TickIDQRY->row_array();
@@ -2656,16 +2667,16 @@ class Booking extends REST_Controller
                         } else {
                             $TicketID = '0';
                         }
-                        
+
 
                         //echo $TicketID;
                         //exit();
 
                         //Singnature
-                        $config['upload_path']   = './uploads/Signature/';
+                        $config['upload_path'] = './uploads/Signature/';
                         $config['allowed_types'] = 'gif|jpg|png';
                         $config['encrypt_name'] = TRUE;
-                        $config['overwrite']     = FALSE;
+                        $config['overwrite'] = FALSE;
                         $this->load->library('upload', $config);
                         if (!$this->upload->do_upload('Signature')) {
                             $SignatureUpload = '';
@@ -2697,7 +2708,7 @@ class Booking extends REST_Controller
                         $siteOutDateTimeInDB = date("Y-m-d H:i:s");
                         //$dataarr[0]->SiteOutDateTime = $siteOutDateTimeInDB;
                         $dataarr[0]->SiteOutDateTime2 = $siteOutDateTimeInDB;
-						
+
 
 
 
@@ -2741,21 +2752,21 @@ class Booking extends REST_Controller
                         $tonBook = $dataarr[0]->TonBook;
                         if ($tonBook == 1 || $tonBook == "1") {
                             $tonBook = "Tonnage";
-                        }elseif ($tonBook == 0 || $tonBook == "0") {
+                        } elseif ($tonBook == 0 || $tonBook == "0") {
                             $tonBook = "Load";
-                        }else{
+                        } else {
                             $tonBook = "Load";
                         }
-						$dayWorkType = '';
-						if ($dataarr[0]->BookingType == 3) {
-							if ($dataarr[0]->DayWorkType == 1) {
-								$dayWorkType = 'Day';
-							}elseif ($dataarr[0]->DayWorkType == 2) {
-								$dayWorkType = 'Night';
-							}elseif ($dataarr[0]->DayWorkType == 3) {
-								$dayWorkType = 'Hourly';
-							}
-						}
+                        $dayWorkType = '';
+                        if ($dataarr[0]->BookingType == 3) {
+                            if ($dataarr[0]->DayWorkType == 1) {
+                                $dayWorkType = 'Day';
+                            } elseif ($dataarr[0]->DayWorkType == 2) {
+                                $dayWorkType = 'Night';
+                            } elseif ($dataarr[0]->DayWorkType == 3) {
+                                $dayWorkType = 'Hourly';
+                            }
+                        }
 
 
                         //PDF GEN //
@@ -2775,7 +2786,7 @@ class Booking extends REST_Controller
                                 if ($TipID == 1) {
                                     $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app($ticketId);
 
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2803,7 +2814,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $data1['tickets']['CompanyName'] . ' <br>		 
                                             <b>Site Address: </b> ' . $data1['tickets']['OpportunityName'] . ' <br>	 
                                             <b>Haulage Address: </b> ' . $haulageAddress . '<br>
-                                            <b>Material:  </b>'.$data1['tickets']['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.' <br> 
+                                            <b>Material:  </b>' . $data1['tickets']['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                                             <b>SIC Code: </b> ' . $data1['tickets']['SicCode'] . ' <br> 
                                             <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
                                             <b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
@@ -2817,8 +2828,8 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->SetWatermarkImage($stampImage);
                                     $mpdf->showWatermarkImage = true;
                                     $mpdf->watermarkImgBehind = false;
@@ -2827,7 +2838,7 @@ class Booking extends REST_Controller
                                     $mpdf->WriteHTML($html);
                                     $mpdf->Output($pdfFilePath);
                                 } else {
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2855,7 +2866,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $dataarr[0]->CompanyName . ' <br>		 
                                             <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . ' <br>	 
                                             <b>Haulage Address: </b> ' . $haulageAddress . ' <br>
-                                            <b>Material:   </b>'.$MaterialnameQRY['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.'<br> 
+                                            <b>Material:   </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . '<br> 
                                             <b>SIC Code: </b> ' . $dataarr[0]->Booking_SICCode . '  <br> 
                                             <b>Gross Weight: </b> ' . round($GrossWeight) . ' KGs<br>	
                                             <b>Tare Weight: </b> ' . round($user['Tare']) . ' KGs <br>		 
@@ -2869,8 +2880,8 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->SetWatermarkImage($stampImage);
                                     $mpdf->showWatermarkImage = true;
                                     $mpdf->watermarkImgBehind = false;
@@ -2883,7 +2894,7 @@ class Booking extends REST_Controller
                                 if ($TipID == 1) {
                                     $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app($ticketId);
 
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2911,7 +2922,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $data1['tickets']['CompanyName'] . ' <br>		 
                                             <b>Site Address: </b> ' . $data1['tickets']['OpportunityName'] . ' <br>	 
                                             <b>Haulage Address: </b> ' . $haulageAddress . '<br>
-                                            <b>Material:  </b>'.$data1['tickets']['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.' <br> 
+                                            <b>Material:  </b>' . $data1['tickets']['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                                             <b>SIC Code: </b> ' . $data1['tickets']['SicCode'] . ' <br> 
                                             <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
                                             <b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
@@ -2934,13 +2945,13 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                                     $mpdf->keep_table_proportions = false;
                                     $mpdf->WriteHTML($html);
                                     $mpdf->Output($pdfFilePath);
                                 } else {
-                                    $html =  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+                                    $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                                     <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                                         <div style="width:100%;" ><div style="width:35%;float: left;" >
                                         <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
@@ -2968,7 +2979,7 @@ class Booking extends REST_Controller
                                             <b>Company Name: </b> ' . $dataarr[0]->CompanyName . ' <br>		 
                                             <b>Site Address: </b> ' . $dataarr[0]->OpportunityName . ' <br>	 
                                             <b>Haulage Address: </b> ' . $haulageAddress . '<br>
-                                            <b>Material:  </b>'.$MaterialnameQRY['MaterialName'].' '.$LT.' Delivered '.$lorryType.' '.$tonBook.' <br> 
+                                            <b>Material:  </b>' . $MaterialnameQRY['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                                             <b>SIC Code: </b> ' . $dataarr[0]->Booking_SICCode . '  <br> 
                                             <b>Gross Weight: </b> ' . round($GrossWeight) . ' KGs<br>	
                                             <b>Tare Weight: </b> ' . round($user['Tare']) . ' KGs <br>		 
@@ -2991,9 +3002,9 @@ class Booking extends REST_Controller
                                                 <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
                                                 ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-                                    $pdfFilePath =  WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-                                    $mpdf =  new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
-                                    $mpdf->keep_table_proportions = false;  
+                                    $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                                    $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                                    $mpdf->keep_table_proportions = false;
                                     $mpdf->WriteHTML($html);
                                     $mpdf->Output($pdfFilePath);
                                 }
@@ -3027,7 +3038,7 @@ class Booking extends REST_Controller
                             "SiteOutLong2" => $LogInLong,
                             "SiteOutLoc2" => $LogInLoc,
                         );
-						
+
                         $this->db->where('LoadID', $LoadID);
                         $this->db->update("tbl_booking_loads1", $udateData);
 
@@ -3056,7 +3067,7 @@ class Booking extends REST_Controller
             'data' => $data
         ], REST_Controller::HTTP_OK);
     }
-    
+
     public function photoUpload_post()
     {
 
@@ -3066,21 +3077,21 @@ class Booking extends REST_Controller
         $LoadID = $this->post('LoadID');
         $driver_id = $this->post('driver_id');
         $lorry_no = $DriverID = $this->post('lorry_no');
-		$is_ticket_photo = $this->post('is_ticket_photo');
-		if(isset($is_ticket_photo) && !empty($is_ticket_photo)){
-			$is_ticket_photo = 1;
-		}else{
-			$is_ticket_photo = 0;
-		}
+        $is_ticket_photo = $this->post('is_ticket_photo');
+        if (isset($is_ticket_photo) && !empty($is_ticket_photo)) {
+            $is_ticket_photo = 1;
+        } else {
+            $is_ticket_photo = 0;
+        }
         $data = [];
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
 
         // Check user exists with the given credentials
@@ -3116,18 +3127,18 @@ class Booking extends REST_Controller
 
                 $filesCount = count($_FILES['photos']['name']);
                 for ($i = 0; $i < $filesCount; $i++) {
-                    $_FILES['file']['name']     = $_FILES['photos']['name'][$i];
-                    $_FILES['file']['type']     = $_FILES['photos']['type'][$i];
+                    $_FILES['file']['name'] = $_FILES['photos']['name'][$i];
+                    $_FILES['file']['type'] = $_FILES['photos']['type'][$i];
                     $_FILES['file']['tmp_name'] = $_FILES['photos']['tmp_name'][$i];
-                    $_FILES['file']['error']     = $_FILES['photos']['error'][$i];
-                    $_FILES['file']['size']     = $_FILES['photos']['size'][$i];
+                    $_FILES['file']['error'] = $_FILES['photos']['error'][$i];
+                    $_FILES['file']['size'] = $_FILES['photos']['size'][$i];
 
                     // File upload configuration 
                     $uploadPath = './uploads/Photo';
                     $config['upload_path'] = $uploadPath;
                     $config['allowed_types'] = 'jpg|jpeg|png|gif';
                     $config['encrypt_name'] = TRUE;
-                    $config['overwrite']     = FALSE;
+                    $config['overwrite'] = FALSE;
 
                     // Load and initialize upload library 
                     $this->load->library('upload', $config);
@@ -3172,186 +3183,188 @@ class Booking extends REST_Controller
         ], REST_Controller::HTTP_OK);
     }
 
-    public function booking_update_opportunity_post(){
-        
+    public function booking_update_opportunity_post()
+    {
+
         $token = $this->post('token');
-		
-		$opp_updated_lat = $this->post('opp_updated_lat');
-		$opp_updated_long = $this->post('opp_updated_long');
-		$opportunityID = $this->post('OpportunityID');
-		$driver_id = $driverLoginID = $this->post('driver_id');
+
+        $opp_updated_lat = $this->post('opp_updated_lat');
+        $opp_updated_long = $this->post('opp_updated_long');
+        $opportunityID = $this->post('OpportunityID');
+        $driver_id = $driverLoginID = $this->post('driver_id');
         $lorry_no = $DriverID = $this->post('lorry_no');
 
-		$con['returnType'] = 'single';
+        $con['returnType'] = 'single';
         $con['conditions'] = array(
             'DriverID' => $driver_id,
             'Status' => 0
         );
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $user = $this->Drivers_API_Model->getRows($con);
 
-		if(REST_Controller::TOKEKEYS != $token){
+        if (REST_Controller::TOKEKEYS != $token) {
             $status = "0";
-            $message ='Invalid API Key';
-        }else if(!isset($lorry_no) || empty($lorry_no)){
+            $message = 'Invalid API Key';
+        } else if (!isset($lorry_no) || empty($lorry_no)) {
             $status = "0";
-            $message ='Invalid Request';
-        } else if(empty($driver_id)){
+            $message = 'Invalid Request';
+        } else if (empty($driver_id)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($opp_updated_lat)){
+            $message = 'Please check required fields';
+        } else if (empty($opp_updated_lat)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($opp_updated_long)){
+            $message = 'Please check required fields';
+        } else if (empty($opp_updated_long)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($opportunityID)){
+            $message = 'Please check required fields';
+        } else if (empty($opportunityID)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($user)){
+            $message = 'Please check required fields';
+        } else if (empty($user)) {
             $status = "0";
-            $message ='User id not found or account disabled';
-        }else{
-			$data = [];
-			// Check opportunity exists with the given credentials
+            $message = 'User id not found or account disabled';
+        } else {
+            $data = [];
+            // Check opportunity exists with the given credentials
             $this->db->select('*');
             $this->db->from('tbl_opportunities');
             $this->db->where('OpportunityID', $opportunityID);
             $get_opportunity = $this->db->get();
-            
-				
-			if(REST_Controller::TOKEKEYS != $token){
-				$status = "0";
-				$message ='Invalid API Key';
-			}else if ($get_opportunity->num_rows() > 0) {
+
+
+            if (REST_Controller::TOKEKEYS != $token) {
+                $status = "0";
+                $message = 'Invalid API Key';
+            } else if ($get_opportunity->num_rows() > 0) {
                 $udateData = array(
                     "opp_updated_lat" => $opp_updated_lat,
-                   'opp_updated_long'=>$opp_updated_long, 
-                   'opp_latlong_updated_by'=>$driver_id,
-                   'opp_latlong_updated_at'=>date('Y-m-d H:i:s')
-               ); 
-               
-               
-               $this->db->where('OpportunityID',$opportunityID);
-               $this->db->update("tbl_opportunities", $udateData);
-               
-               
-               $status = "1";
-               $message = 'Lat Long Updated Successfully.';
-                
-            }else {
-					
-				$status = "0";
-				$message ='Invalid Opportunity ID.';
-				 
-			}
-		}
+                    'opp_updated_long' => $opp_updated_long,
+                    'opp_latlong_updated_by' => $driver_id,
+                    'opp_latlong_updated_at' => date('Y-m-d H:i:s')
+                );
+
+
+                $this->db->where('OpportunityID', $opportunityID);
+                $this->db->update("tbl_opportunities", $udateData);
+
+
+                $status = "1";
+                $message = 'Lat Long Updated Successfully.';
+
+            } else {
+
+                $status = "0";
+                $message = 'Invalid Opportunity ID.';
+
+            }
+        }
         $this->response([
             'status' => $status,
             'message' => $message,
             'data' => $data
-        ], REST_Controller::HTTP_OK);   
+        ], REST_Controller::HTTP_OK);
     }
 
-    public function booking_update_tipaddress_post(){
-        
+    public function booking_update_tipaddress_post()
+    {
+
         $token = $this->post('token');
-		
-		$tip_updated_lat = $this->post('tip_updated_lat');
-		$tip_updated_long = $this->post('tip_updated_long');
-		$tipID = $this->post('TipID');
-		$driver_id = $driverLoginID = $this->post('driver_id');
+
+        $tip_updated_lat = $this->post('tip_updated_lat');
+        $tip_updated_long = $this->post('tip_updated_long');
+        $tipID = $this->post('TipID');
+        $driver_id = $driverLoginID = $this->post('driver_id');
         $lorry_no = $DriverID = $this->post('lorry_no');
 
-		$con['returnType'] = 'single';
+        $con['returnType'] = 'single';
         $con['conditions'] = array(
             'DriverID' => $driver_id,
             'Status' => 0
         );
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $user = $this->Drivers_API_Model->getRows($con);
 
-		if(REST_Controller::TOKEKEYS != $token){
+        if (REST_Controller::TOKEKEYS != $token) {
             $status = "0";
-            $message ='Invalid API Key';
-        }else if(!isset($lorry_no) || empty($lorry_no)){
+            $message = 'Invalid API Key';
+        } else if (!isset($lorry_no) || empty($lorry_no)) {
             $status = "0";
-            $message ='Invalid Request';
-        } else if(empty($driver_id)){
+            $message = 'Invalid Request';
+        } else if (empty($driver_id)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($tip_updated_lat)){
+            $message = 'Please check required fields';
+        } else if (empty($tip_updated_lat)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($tip_updated_long)){
+            $message = 'Please check required fields';
+        } else if (empty($tip_updated_long)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($tipID)){
+            $message = 'Please check required fields';
+        } else if (empty($tipID)) {
             $status = "0";
-            $message ='Please check required fields';
-        }else if(empty($user)){
+            $message = 'Please check required fields';
+        } else if (empty($user)) {
             $status = "0";
-            $message ='User id not found or account disabled';
-        }else{
-			$data = [];
-			// Check opportunity exists with the given credentials
+            $message = 'User id not found or account disabled';
+        } else {
+            $data = [];
+            // Check opportunity exists with the given credentials
             $this->db->select('*');
             $this->db->from('tbl_tipaddress');
             $this->db->where('TipID', $tipID);
             $get_opportunity = $this->db->get();
-            
-				
-			if(REST_Controller::TOKEKEYS != $token){
-				$status = "0";
-				$message ='Invalid API Key';
-			}else if ($get_opportunity->num_rows() > 0) {
+
+
+            if (REST_Controller::TOKEKEYS != $token) {
+                $status = "0";
+                $message = 'Invalid API Key';
+            } else if ($get_opportunity->num_rows() > 0) {
                 $udateData = array(
                     "tip_updated_lat" => $tip_updated_lat,
-                   'tip_updated_long'=>$tip_updated_long, 
-                   'tip_latlong_updated_by'=>$driver_id,
-                   'tip_latlong_updated_at'=>date('Y-m-d H:i:s')
-               ); 
-               
-               
-               $this->db->where('TipID',$tipID);
-               $this->db->update("tbl_tipaddress", $udateData);
-               
-               
-               $status = "1";
-               $message = 'Lat Long Updated Successfully.';
-                
-            }else {
-					
-				$status = "0";
-				$message ='Invalid Tip ID.';
-				 
-			}
-		}
+                    'tip_updated_long' => $tip_updated_long,
+                    'tip_latlong_updated_by' => $driver_id,
+                    'tip_latlong_updated_at' => date('Y-m-d H:i:s')
+                );
+
+
+                $this->db->where('TipID', $tipID);
+                $this->db->update("tbl_tipaddress", $udateData);
+
+
+                $status = "1";
+                $message = 'Lat Long Updated Successfully.';
+
+            } else {
+
+                $status = "0";
+                $message = 'Invalid Tip ID.';
+
+            }
+        }
         $this->response([
             'status' => $status,
             'message' => $message,
             'data' => $data
-        ], REST_Controller::HTTP_OK);   
+        ], REST_Controller::HTTP_OK);
     }
-    
+
     public function lorry_details_post()
     {
         $token = $this->post('token');
@@ -3359,14 +3372,14 @@ class Booking extends REST_Controller
         $RegNumber = $this->post('RegNumber');
         $driver_id = $this->post('driver_id');
         $lorry_no = $LorryNo = $DriverID = $this->post('lorry_no');
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
         /*$con['returnType'] = 'single';
         $con['conditions'] = array(
@@ -3383,9 +3396,9 @@ class Booking extends REST_Controller
             $status = "0";
             $message = 'Please check required fields';
         } /*else if (empty($user)) {
-            $status = "0";
-            $message = 'User id not found or account disabled';
-        }*/ else {
+           $status = "0";
+           $message = 'User id not found or account disabled';
+       }*/ else {
             $this->db->select('*');
             $this->db->from('tbl_drivers');
             if (!empty($LorryNo)) {
@@ -3481,7 +3494,7 @@ class Booking extends REST_Controller
             $this->db->select('*');
             $this->db->from('tbl_materials');
             $this->db->where('Operation', $Operation);
-             $this->db->where('Status', '1');
+            $this->db->where('Status', '1');
             $query = $this->db->get();
 
             if ($query->num_rows() > 0) {
@@ -3517,16 +3530,16 @@ class Booking extends REST_Controller
             'DriverID' => $driver_id,
             'Status' => 0
         );
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $user = $this->Drivers_API_Model->getRows($con);
 
 
@@ -3606,16 +3619,16 @@ class Booking extends REST_Controller
             'DriverID' => $driver_id,
             'Status' => 0
         );
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $user = $this->Drivers_API_Model->getRows($con);
 
 
@@ -3669,16 +3682,16 @@ class Booking extends REST_Controller
             'DriverID' => $driver_id,
             'Status' => 0
         );
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $user = $this->Drivers_API_Model->getRows($con);
 
         $data = [];
@@ -3719,16 +3732,16 @@ class Booking extends REST_Controller
 
         $token = $this->post('token');
         $lorry_no = $this->post('lorry_no');
-        
+
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         if (REST_Controller::TOKEKEYS != $token) {
             $status = "0";
             $message = 'Invalid API Key';
@@ -3759,14 +3772,14 @@ class Booking extends REST_Controller
         $lorry_no = $this->post('lorry_no');
 
         $logData = [
-	        'driver_id' => $this->post('driver_id') ?? "",
-	        'lorry_no' => $this->post('lorry_no') ?? "",
+            'driver_id' => $this->post('driver_id') ?? "",
+            'lorry_no' => $this->post('lorry_no') ?? "",
             'api_call' => __METHOD__, // Get current method name
             'api_request' => json_encode($this->post())
         ];
-        
+
         $this->log_api_data($logData);
-        
+
         $con['returnType'] = 'single';
         $con['conditions'] = array(
             'DriverID' => $driver_id,
@@ -3844,25 +3857,26 @@ class Booking extends REST_Controller
 
 
 
-    public function update_signature_post() {
+    public function update_signature_post()
+    {
         $conveyanceNumbers = $this->post('conveyanceNumbers') ?? "";
-        
+
         foreach ($conveyanceNumbers as $conveyanceNumber) {
             // $conveyanceNumber = $this->db->escape($conveyanceNumber); // Escape the input to prevent SQL injection
-    
+
             $loadInfo = $this->Booking1_API_Model->BookingLoadInfoApi($conveyanceNumber);
 
             // if ($loadInfo->num_rows() == 0) {
             //     echo "No data found for Conveyance Number: " . $conveyanceNumber . "<br>";
             //     continue;
             // }
-    
+
             // $loadInfo = $query->row(); // Get data as object for easier access
-    
+
             // Fetch PDF Content Settings
             $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
             $PDFContent = $PDFContentQRY->row();
-            
+
             // Determine Lorry Type
             $lorryType = '';
             switch ($loadInfo->LorryType) {
@@ -3879,7 +3893,7 @@ class Booking extends REST_Controller
 
             // Determine Tonnage or Load
             $tonBook = ($loadInfo->TonBook == 1) ? 'Tonnage' : 'Load';
-          // Prepare HTML content for the PDF
+            // Prepare HTML content for the PDF
             $html = '<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -3905,9 +3919,9 @@ class Booking extends REST_Controller
                 <b>' . $PDFContent->head2 . '</b><br/> <br>
                 <div style="text-align:center;"><b>CONVEYANCE NOTE </b></div><br>
                 <b>Conveyance Note No:</b> ' . $loadInfo->ConveyanceNo . '<br>     
-                <b>Date Time: </b>' . $loadInfo->CDateTime . '<br>         
-                <b>In Time: </b>' . $loadInfo->SiteInDateTime . ' <br>
-                <b>Out Time: </b>' . $loadInfo->SiteOutDateTime . ' <br>
+                <b>Date Time: </b>' . date('d-m-Y H:i', strtotime($loadInfo->CDateTime)) . '<br>
+                <b>In Time: </b>' . date('d-m-Y H:i', strtotime($loadInfo->SiteInDateTime)) . '<br>
+                <b>Out Time: </b>' . date('d-m-Y H:i', strtotime($loadInfo->SiteOutDateTime)) . '<br>
                 <b>Company Name: </b>' . $loadInfo->CompanyName . '<br>        
                 <b>Site Address: </b>' . $loadInfo->OpportunityName . '<br>              
                 <b>Tip Address: </b>' . $loadInfo->TipName . ',' . $loadInfo->Street1 . ',' . $loadInfo->Street2 . ',
@@ -3933,22 +3947,22 @@ class Booking extends REST_Controller
         </div>
     </body>
     </html>';
-    
+
             // Check directory permissions and existence
             $directory = "/home/tmlsnsitltdco/public_html/assets/conveyance/";
             if (!is_writable($directory)) {
                 echo "Error: Directory is not writable: " . $directory . "<br>";
                 continue;
             }
-            
+
             if (!file_exists($directory)) {
                 echo "Error: Directory does not exist: " . $directory . "<br>";
                 continue;
             }
-    
+
             // Generate PDF file
             $pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $loadInfo->ReceiptName;
-    
+
             try {
                 $mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->showWatermarkImage = true;
@@ -3957,14 +3971,14 @@ class Booking extends REST_Controller
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
-                
+
                 echo "PDF generated successfully for Conveyance Number: " . $conveyanceNumber . "<br>";
             } catch (Exception $e) {
                 echo "Error generating PDF for Conveyance Number: " . $conveyanceNumber . ": " . $e->getMessage() . "<br>";
                 continue;
             }
         }
-    
+
         $this->response([
             'status' => "200",
             'message' => "PDF generation completed",
