@@ -43,6 +43,26 @@ class Ticket_API_Model extends CI_Model
        // echo $this->db->last_query();       
         $result = $query->row_array();        
         return $result;
-    } 
+    }
+    
+    function get_pdf_data_app_script($invoice_id) {
+        $this->db->select('DATE_FORMAT(TicketDate, "%d/%m/%Y %T") as tdate');  
+        $this->db->select('tbl_tickets.TicketNumber, tbl_tickets.RegNumber, tbl_tickets.driver_id, tbl_tickets.Hulller, tbl_tickets.SicCode, tbl_tickets.GrossWeight, tbl_tickets.Tare, tbl_tickets.Net'); 
+        $this->db->select('tbl_company.CompanyName');
+        $this->db->select('tbl_opportunities.OpportunityName');
+        $this->db->select('tbl_materials.MaterialName');
+        $this->db->select('tbl_booking_loads1.*');
+        $this->db->from('tbl_tickets');
+        $this->db->join('tbl_booking_loads1', 'tbl_booking_loads1.TicketId = tbl_tickets.TicketNo'); 
+        $this->db->join('tbl_opportunities', 'tbl_opportunities.OpportunityID = tbl_tickets.OpportunityID'); 
+        $this->db->join('tbl_company', 'tbl_company.CompanyID = tbl_tickets.CompanyID'); 
+        $this->db->join('tbl_materials', 'tbl_tickets.MaterialID = tbl_materials.MaterialID'); 
+        $this->db->where("tbl_tickets.TicketNo", $invoice_id);                     
+        $query = $this->db->get(); 
+        // echo $this->db->last_query(); // For debugging SQL queries
+        $result = $query->row_array();        
+        return $result;
+    }
+    
 }
   
