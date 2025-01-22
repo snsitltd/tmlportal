@@ -78,3 +78,4 @@ Thumbs.db
 application/.htaccess
 /SplitXLS
 /ConveyanceExcelExport
+/application/config/config.php

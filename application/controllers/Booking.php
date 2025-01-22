@@ -394,6 +394,7 @@ class Booking extends BaseController
 
 	function ConveyanceExcelExportNew()
 	{
+
 		if ($this->isEdit == 0) {
 			$data = array();
 			$this->global['pageTitle'] = 'Error';
@@ -525,8 +526,21 @@ class Booking extends BaseController
 						$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row['OpportunityName']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row['TipName']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $row['TipAddress']);
-						$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row['SuppDate']);
-						$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row['SuppNo']);
+						// die();
+						if($row['TipID']==1){
+    						if($row['Net']!='0.00'){
+    							$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row['SuppDate'] );    
+    							$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row['SuppNo'] ); 
+    							if($row['pdf_name']!="" && $row['pdf_name']!='.pdf'){
+    								$object->getActiveSheet()->getCell('H'.$excel_row)->getHyperlink()->setUrl(base_url('assets/pdf_file/'.$row['pdf_name'])); 	
+    							}
+    						}
+    					}else{
+                            $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row['TipTicketNo']);
+                            $url = "http://193.117.210.98:8081/ticket/Supplier/" . rawurlencode($row['TipName'] . "-" . $row['TipTicketNo']) . ".pdf";
+		
+                            $object->getActiveSheet()->getCell('H' . $excel_row)->getHyperlink()->setUrl($url);
+    					}
 						$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row['PurchaseOrderNo']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);

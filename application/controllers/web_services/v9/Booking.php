@@ -3994,11 +3994,27 @@ class Booking extends REST_Controller
         $pdfFileNames = [];  // Array to store generated PDF filenames
         // print_r($ticketIds);
         // die();
+
+        $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
+        $PDFContent = $PDFContentQRY->row();
         foreach ($ticketIds as $ticketId) {
             // Fetch ticket data for each ticketId
-            $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app($ticketId);
-            print_r($data1['tickets']);
+            $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($ticketId);
+
+
+            $bookingId = $data1['tickets']['booking_id'];
+            $bookingQuery = $this->db->query("SELECT TipID FROM tbl_booking1 WHERE BookingID = ?", [$bookingId]);
+            $TipID = $bookingQuery->row()->TipID ?? 0;
+
+            $con['returnType'] = 'single';
+            $con['conditions'] = array(
+                'DriverID' => $data1['tickets']['driver_id'],
+                'Status' => 0
+            );
+            $user = $this->Drivers_API_Model->getRows($con);
+            print_r($data1);
             die();
+            
             // Generate a unique file name for each PDF
             $UniqCodeGen = uniqid('ticket_', true);  // Generating unique file name
         
@@ -4040,9 +4056,9 @@ class Booking extends REST_Controller
                         </div> 
                     <div style="width:100%;float: left;" >
                         <b>Produced By: </b><br>
-                        <div><img src="/uploads/Signature/' . $dataarr[0]->Signature . '" width ="100" height="40" style="float:left"></div>
-                        ' . $dataarr[0]->CustomerName . '<br><br>
-                    </div>      
+                        <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div>
+                        ' . $data1['tickets']['CustomerName'] . '<br><br>
+                    </div>         
                     <div style="width:100%;float: left;" > 
                         <b>Received By: </b><br> 
                         <div><img src="/uploads/Signature/' . $SignatureUploadfile_name . '" width ="100" height="40" style="float:left"></div> 

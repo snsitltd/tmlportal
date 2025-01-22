@@ -35,7 +35,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // $config['base_url'] = $base;
 
 
-$config['base_url'] = "https://localhost/tmlportal/";
+$config['base_url'] = "https://tml.snsitltd.co.uk/";
 /*
 |--------------------------------------------------------------------------
 | Index File
