@@ -3396,9 +3396,9 @@ class Booking extends REST_Controller
             $status = "0";
             $message = 'Please check required fields';
         } /*else if (empty($user)) {
-           $status = "0";
-           $message = 'User id not found or account disabled';
-       }*/ else {
+          $status = "0";
+          $message = 'User id not found or account disabled';
+      }*/ else {
             $this->db->select('*');
             $this->db->from('tbl_drivers');
             if (!empty($LorryNo)) {
@@ -3986,17 +3986,19 @@ class Booking extends REST_Controller
         ], REST_Controller::HTTP_OK);
     }
 
-    public function delivery_pdf_post(){
+    public function delivery_pdf_post()
+    {
 
         $ticketIds = $this->post('ticketIds') ?? "";
         $TipID = $this->input->post("TipID") ?? 0;  // Assuming TipID is passed in data
-        
+
         $pdfFileNames = [];  // Array to store generated PDF filenames
         // print_r($ticketIds);
         // die();
 
         $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
         $PDFContent = $PDFContentQRY->row();
+     
         foreach ($ticketIds as $ticketId) {
             // Fetch ticket data for each ticketId
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($ticketId);
@@ -4012,27 +4014,57 @@ class Booking extends REST_Controller
                 'Status' => 0
             );
             $user = $this->Drivers_API_Model->getRows($con);
-            print_r($data1);
-            die();
-            
+
+
             // Generate a unique file name for each PDF
             $UniqCodeGen = uniqid('ticket_', true);  // Generating unique file name
-        
+            $TipID = 1;
+            $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
+            $tipadQRYForHau = $tipadQRYForHau->row_array();
+
+            $haulageAddress = '';
+            if ($TipID == 1) {
+                // Combine address fields
+                $haulageAddress = $tipadQRYForHau['Street1'] . ' ' . $tipadQRYForHau['Street2'] . ' ' . $tipadQRYForHau['Town'] . ' ' . $tipadQRYForHau['County'] . ' ' . $tipadQRYForHau['PostCode'];
+            } else {
+                // Show TipName
+                $haulageAddress = $tipadQRYForHau['TipName'];
+            }
+
+            $siteOutDateTimeInDB = date("Y-m-d H:i:s");
+            //$dataarr[0]->SiteOutDateTime = $siteOutDateTimeInDB;
+            $data1['SiteOutDateTime2'] = $siteOutDateTimeInDB;
+
+            $siteInDateTime = $siteOutDateTime = '';
+            if (isset($data1['SiteInDateTime']) && !empty($data1['SiteInDateTime'])) {
+                $siteInDateTime = '<b>In Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteInDateTime'])) . ' <br>';
+            }
+            if (isset($data1['SiteOutDateTime']) && !empty($data1['SiteOutDateTime'])) {
+                $siteOutDateTime = '<b>Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteOutDateTime'])) . ' <br>';
+            }
+            
+            $siteInDateTime2 = $siteOutDateTime2 = '';
+            if (isset($data1['SiteInDateTime2']) && !empty($data1['SiteInDateTime2'])) {
+                $siteInDateTime2 = '<b>Haulage In Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteInDateTime2'])) . ' <br>';
+            }
+            if (isset($data1['SiteOutDateTime2']) && !empty($data1['SiteOutDateTime2'])) {
+                $siteOutDateTime2 = '<b>Haulage Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteOutDateTime2'])) . ' <br>';
+            }         
             // Check TipID to determine which PDF template to use
             if ($TipID == 1) {
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                 <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                     <div style="width:100%;" ><div style="width:35%;float: left;" >
-                    <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
+                    <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width ="80" ></div> 
                         <div style="width:65%;float: right;text-align: right;" > 		  
-                            <b>' . $PDFContent[0]->outpdf_title . '</b><br/>' . $PDFContent[0]->outpdf_address . '<br/> 		 
-                            <b>Phone:</b> ' . $PDFContent[0]->outpdf_phone . '
+                            <b>' . $PDFContent->outpdf_title . '</b><br/>' . $PDFContent->outpdf_address . '<br/> 		 
+                            <b>Phone:</b> ' . $PDFContent->outpdf_phone . '
                         </div> 
                     </div>	 
                     <div style="width:100%;float: left;" >    
-                        <b>Email:</b> ' . $PDFContent[0]->outpdf_email . '<br/>		 
-                        <b>Web:</b> ' . $PDFContent[0]->outpdf_website . ' <br/>		 
-                        <b>Waste License No: </b> ' . $PDFContent[0]->waste_licence . ' <br/><hr> 
+                        <b>Email:</b> ' . $PDFContent->outpdf_email . '<br/>		 
+                        <b>Web:</b> ' . $PDFContent->outpdf_website . ' <br/>		 
+                        <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
                         <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
                         <b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
                         <b>Date Time: </b> ' . $data1['tickets']['tdate'] . ' <br>	
@@ -4061,43 +4093,43 @@ class Booking extends REST_Controller
                     </div>         
                     <div style="width:100%;float: left;" > 
                         <b>Received By: </b><br> 
-                        <div><img src="/uploads/Signature/' . $SignatureUploadfile_name . '" width ="100" height="40" style="float:left"></div> 
-                        ' . $CustomerName . ' 
-                        <p style="font-size: 7px;"> ' . $PDFContent[0]->outpdf_para1 . ' <br>  
-                        ' . $PDFContent[0]->outpdf_para2 . '<br>  
-                        <b>' . $PDFContent[0]->outpdf_para3 . '</b></p>
-                        <p style="font-size: 7px;"><b> ' . $PDFContent[0]->outpdf_para4 . '</b><br><br> 
-                            <b>VAT Reg. No: </b> ' . $PDFContent[0]->VATRegNo . '<br> 
-                            <b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
-                            ' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
-        
+                        <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div> 
+                        ' . $data1['tickets']['CustomerName'] . ' 
+                        <p style="font-size: 7px;"> ' . $PDFContent->outpdf_para1 . ' <br>  
+                        ' . $PDFContent->outpdf_para2 . '<br>  
+                        <b>' . $PDFContent->outpdf_para3 . '</b></p>
+                        <p style="font-size: 7px;"><b> ' . $PDFContent->outpdf_para4 . '</b><br><br> 
+                            <b>VAT Reg. No: </b> ' . $PDFContent->VATRegNo . '<br> 
+                            <b>Company Reg. No: </b>' . $PDFContent->CompanyRegNo . '<br>
+                            ' . $PDFContent->FooterText . '</p></div></div></body></html>';
+
                 // Generate the PDF for TipID 1
                 $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
                 $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
-        
+
                 // Add the generated file name to the array
                 $pdfFileNames[] = $UniqCodeGen . ".pdf";
-        
+
             } else {
                 // Use a different template for other TipID
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                 <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                     <div style="width:100%;" ><div style="width:35%;float: left;" >
-                    <img src="/assets/Uploads/Logo/' . $PDFContent[0]->logo . '" width ="80" ></div> 
+                    <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width ="80" ></div> 
                         <div style="width:65%;float: right;text-align: right;" > 		  
-                            <b>' . $PDFContent[0]->outpdf_title . '</b><br/>' . $PDFContent[0]->outpdf_address . '<br/> 		 
-                            <b>Phone:</b> ' . $PDFContent[0]->outpdf_phone . '
+                            <b>' . $PDFContent->outpdf_title . '</b><br/>' . $PDFContent->outpdf_address . '<br/> 		 
+                            <b>Phone:</b> ' . $PDFContent->outpdf_phone . '
                         </div> 
                     </div>	 
                     <div style="width:100%;float: left;" >    
-                        <b>Email:</b> ' . $PDFContent[0]->outpdf_email . '<br/>		 
-                        <b>Web:</b> ' . $PDFContent[0]->outpdf_website . ' <br/>		 
-                        <b>Waste License No: </b> ' . $PDFContent[0]->waste_licence . ' <br/><hr> 
+                        <b>Email:</b> ' . $PDFContent->outpdf_email . '<br/>		 
+                        <b>Web:</b> ' . $PDFContent->outpdf_website . ' <br/>		 
+                        <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
                         <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
-                        <b>Conveyance Note No:</b> ' . $dataarr[0]->ConveyanceNo . '<br>	 
+                        <b>Conveyance Note No:</b> ' . $data1['ConveyanceNo'] . '<br>	 
                         <b>Date Time: </b>' . date("d-m-Y H:i") . ' <br>		 
                         ' . $siteInDateTime . '
                         ' . $siteOutDateTime . '
@@ -4117,22 +4149,22 @@ class Booking extends REST_Controller
                         </div> 
                     </div> 
                 </body></html>';
-        
+
                 // Generate the PDF for other TipIDs
                 $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
                 $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
-        
+
                 // Add the generated file name to the array
                 $pdfFileNames[] = $UniqCodeGen . ".pdf";
             }
         }
-        
+
         // Return all PDF file names as a response
-        return response()->json(['pdfFiles' => $pdfFileNames]);
-        
+        return $pdfFileNames;
+
     }
 
 }

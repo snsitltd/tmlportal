@@ -79,3 +79,4 @@ application/.htaccess
 /SplitXLS
 /ConveyanceExcelExport
 /application/config/config.php
+.htaccess
