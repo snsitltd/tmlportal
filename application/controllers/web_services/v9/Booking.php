@@ -4021,7 +4021,8 @@ class Booking extends REST_Controller
             $TipID = 1;
             $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
             $tipadQRYForHau = $tipadQRYForHau->row_array();
-
+            print_r($tipadQRYForHau);
+            die();
             $haulageAddress = '';
             if ($TipID == 1) {
                 // Combine address fields
