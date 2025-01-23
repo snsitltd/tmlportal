@@ -4017,7 +4017,7 @@ class Booking extends REST_Controller
         $pdfFileNames = [];
         foreach ($records as $record) {
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($record['TicketID']);
-  
+            
             $TipID = $data1['tickets']['TipID']; // Assuming TipID is part of the ticket data
             $UniqCodeGen = uniqid(); // Unique code for the PDF filename
 
@@ -4030,7 +4030,7 @@ class Booking extends REST_Controller
             $tonBook = $data1['tickets']['TonBook'] ?? '';
             $con['returnType'] = 'single';
             $con['conditions'] = array(
-                'DriverID' => $data1['tickets']['driver_id'],
+                'DriverID' => $data1['tickets']['DriverLoginID'],
                 'Status' => 0
             );
   
