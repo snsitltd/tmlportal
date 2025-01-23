@@ -4036,7 +4036,6 @@ class Booking extends REST_Controller
                 'DriverID' => $data1['tickets']['DriverLoginID'],
                 'Status' => 0
             );
-            date_default_timezone_set('Europe/London');
 
             $user = $this->Drivers_API_Model->getRows($con);// Assuming user data comes from the tickets array
 
@@ -4104,7 +4103,7 @@ class Booking extends REST_Controller
                     <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
                     <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
                     <b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
-                    <b>Date Time: </b> ' . date("d/m/Y H:i", strtotime($data1['tickets']['SiteInDateTime2'])) . ' <br>	
+                    <b>Date Time: </b> ' . $data1['tickets']['CreateDateTime'] . ' <br>	
                     ' . $siteInDateTime . '
                     ' . $siteOutDateTime . '
                     ' . $siteInDateTime2 . '
@@ -4137,7 +4136,7 @@ class Booking extends REST_Controller
 
                 // Generate the PDF for TipID 1
                 $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'];
-                $mpdf = new mPDF('utf-8', array(70, 230), '', '', 5, 5, 5, 5, 5, 5);
+                $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
