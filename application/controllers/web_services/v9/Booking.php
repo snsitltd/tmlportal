@@ -4132,14 +4132,14 @@ class Booking extends REST_Controller
                         ' . $PDFContent->FooterText . '</p></div></div></body></html>';
 
                 // Generate the PDF for TipID 1
-                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'] . ".pdf";
+                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'];
                 $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
 
                 // Add the generated file name to the array
-                $pdfFileNames[] = $data1['tickets']['ReceiptName'] . ".pdf";
+                $pdfFileNames[] = $data1['tickets']['ReceiptName'];
 
             } else {
                 // Use a different template for other TipID
@@ -4179,14 +4179,14 @@ class Booking extends REST_Controller
             </body></html>';
 
                 // Generate the PDF for other TipIDs
-                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'] . ".pdf";
+                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'];
                 $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
 
                 // Add the generated file name to the array
-                $pdfFileNames[] = $data1['tickets']['ReceiptName'] . ".pdf";
+                $pdfFileNames[] = $data1['tickets']['ReceiptName'];
             }
         }
 
