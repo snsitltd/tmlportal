@@ -4017,7 +4017,7 @@ class Booking extends REST_Controller
         $pdfFileNames = [];
         foreach ($records as $record) {
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($record['TicketID']);
-
+  
             $TipID = $data1['tickets']['TipID']; // Assuming TipID is part of the ticket data
             $UniqCodeGen = uniqid(); // Unique code for the PDF filename
 
@@ -4028,7 +4028,13 @@ class Booking extends REST_Controller
 
             $lorryType = $data1['tickets']['LorryType'] ?? '';
             $tonBook = $data1['tickets']['TonBook'] ?? '';
-            $user = $data1['tickets']; // Assuming user data comes from the tickets array
+            $con['returnType'] = 'single';
+            $con['conditions'] = array(
+                'DriverID' => $data1['tickets']['driver_id'],
+                'Status' => 0
+            );
+  
+            $user = $this->Drivers_API_Model->getRows($con);// Assuming user data comes from the tickets array
 
             $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
             $tipadQRYForHau = $tipadQRYForHau->row_array();
@@ -4112,12 +4118,7 @@ class Booking extends REST_Controller
                     <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
                     <b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
                     <b>Net Weight: </b> ' . round($data1['tickets']['Net']) . ' KGs <br> 
-                    </div> 
-                <div style="width:100%;float: left;" >
-                    <b>Produced By: </b><br>
-                    <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div>
-                    ' . $data1['tickets']['CustomerName'] . '<br><br>
-                </div>         
+                    </div>       
                 <div style="width:100%;float: left;" > 
                     <b>Received By: </b><br> 
                     <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div> 
@@ -4131,15 +4132,15 @@ class Booking extends REST_Controller
                         ' . $PDFContent->FooterText . '</p></div></div></body></html>';
 
                 // Generate the PDF for TipID 1
-                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'] . ".pdf";
                 $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
 
                 // Add the generated file name to the array
-                $pdfFileNames[] = $UniqCodeGen . ".pdf";
-                print_r($pdfFileNames);
+                $pdfFileNames[] = $data1['tickets']['ReceiptName'] . ".pdf";
+
             } else {
                 // Use a different template for other TipID
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
@@ -4178,14 +4179,14 @@ class Booking extends REST_Controller
             </body></html>';
 
                 // Generate the PDF for other TipIDs
-                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets'][''] . ".pdf";
+                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'] . ".pdf";
                 $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
 
                 // Add the generated file name to the array
-                $pdfFileNames[] = $UniqCodeGen . ".pdf";
+                $pdfFileNames[] = $data1['tickets']['ReceiptName'] . ".pdf";
             }
         }
 
