@@ -3986,7 +3986,7 @@ class Booking extends REST_Controller
         ], REST_Controller::HTTP_OK);
     }
 
-    public function delivery_pdf_post()
+    public function delivery_pdf_sign_post()
     {
 
         $ticketIds = $this->post('ticketIds') ?? "";
