@@ -3396,9 +3396,9 @@ class Booking extends REST_Controller
             $status = "0";
             $message = 'Please check required fields';
         } /*else if (empty($user)) {
-       $status = "0";
-       $message = 'User id not found or account disabled';
-   }*/ else {
+      $status = "0";
+      $message = 'User id not found or account disabled';
+  }*/ else {
             $this->db->select('*');
             $this->db->from('tbl_drivers');
             if (!empty($LorryNo)) {
@@ -4036,7 +4036,7 @@ class Booking extends REST_Controller
                 'DriverID' => $data1['tickets']['DriverLoginID'],
                 'Status' => 0
             );
-  
+
             $user = $this->Drivers_API_Model->getRows($con);// Assuming user data comes from the tickets array
 
             $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
@@ -4115,7 +4115,7 @@ class Booking extends REST_Controller
                     <div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width ="100" height="40" style="float:left"> </div>
                     <b>Company Name: </b> ' . $data1['tickets']['CompanyName'] . ' <br>		 
                     <b>Site Address: </b> ' . $data1['tickets']['OpportunityName'] . ' <br>	 
-                    <b>Haulage Address: </b> ' . $haulageAddress . '<br>
+                    <b>Tip Address: </b> ' . $haulageAddress . '<br>
                     <b>Material:  </b>' . $data1['tickets']['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
                     <b>SIC Code: </b> ' . $data1['tickets']['SicCode'] . ' <br> 
                     <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
@@ -4173,13 +4173,24 @@ class Booking extends REST_Controller
                     <div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width ="100" height="40" style="float:left"> </div>
                     <b>Company Name: </b> ' . $user['CompanyName'] . ' <br>		 
                     <b>Site Address: </b> ' . $user['SiteAddress'] . ' <br>	 
+                    <b>Tip Address: </b> ' . $haulageAddress . '<br>
                     <b>Material:  </b>' . $user['Material'] . ' <br> 
                     <b>Gross Weight: </b> ' . round($user['GrossWeight']) . ' KGs<br> 
                     <b>Tare Weight: </b> ' . round($user['TareWeight']) . ' KGs <br>		 
                     <b>Net Weight: </b> ' . round($user['NetWeight']) . ' KGs <br> 
-                    </div> 
-                </div> 
-            </body></html>';
+                    </div>       
+                <div style="width:100%;float: left;" > 
+                    <b>Received By: </b><br> 
+                    <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div> 
+                    ' . $data1['tickets']['CustomerName'] . ' 
+                    <p style="font-size: 7px;"> ' . $PDFContent->outpdf_para1 . ' <br>  
+                    ' . $PDFContent->outpdf_para2 . '<br>  
+                    <b>' . $PDFContent->outpdf_para3 . '</b></p>
+                    <p style="font-size: 7px;"><b> ' . $PDFContent->outpdf_para4 . '</b><br><br> 
+                        <b>VAT Reg. No: </b> ' . $PDFContent->VATRegNo . '<br> 
+                        <b>Company Reg. No: </b>' . $PDFContent->CompanyRegNo . '<br>
+                        ' . $PDFContent->FooterText . '</p></div></div></body></html>';
+
 
                 // Generate the PDF for other TipIDs
                 $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'];
