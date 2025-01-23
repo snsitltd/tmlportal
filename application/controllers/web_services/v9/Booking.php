@@ -3993,8 +3993,8 @@ class Booking extends REST_Controller
         $TipID = $this->input->post("TipID") ?? 0;  // Assuming TipID is passed in data
 
         $pdfFileNames = [];  // Array to store generated PDF filenames
-        // print_r($ticketIds);
-        // die();
+        print_r($ticketIds);
+        die();
 
         $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
         $PDFContent = $PDFContentQRY->row();
