@@ -4000,7 +4000,7 @@ class Booking extends REST_Controller
         foreach ($ticketIds as $ticketId) {
             // Fetch ticket data for each ticketId
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($ticketId);
-            print_r($ticketId);
+     
 
             $bookingId = $data1['tickets']['booking_id'];
             $bookingQuery = $this->db->query("SELECT TipID FROM tbl_booking1 WHERE BookingID = ?", [$bookingId]);
@@ -4011,16 +4011,16 @@ class Booking extends REST_Controller
                 'DriverID' => $data1['tickets']['driver_id'],
                 'Status' => 0
             );
-            print_r($con);
+  
             $user = $this->Drivers_API_Model->getRows($con);
-            print_r($user);
+
 
             // Generate a unique file name for each PDF
             $UniqCodeGen = uniqid('ticket_', true);  // Generating unique file name
             $TipID = 1;
             $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
             $tipadQRYForHau = $tipadQRYForHau->row_array();
-            print_r($tipadQRYForHau);
+
             $haulageAddress = '';
             if ($TipID == 1) {
                 // Combine address fields
@@ -4051,8 +4051,6 @@ class Booking extends REST_Controller
             }         
             // Check TipID to determine which PDF template to use
             if ($TipID == 1) {
-                print_r("Hola");
-                print_r($PDFContent);
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                 <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                     <div style="width:100%;" ><div style="width:35%;float: left;" >
@@ -4113,7 +4111,7 @@ class Booking extends REST_Controller
 
                 // Add the generated file name to the array
                 $pdfFileNames[] = $UniqCodeGen . ".pdf";
-
+                print_r( $pdfFileNames );
             } else {
                 // Use a different template for other TipID
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
