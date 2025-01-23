@@ -4000,7 +4000,7 @@ class Booking extends REST_Controller
         foreach ($ticketIds as $ticketId) {
             // Fetch ticket data for each ticketId
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($ticketId);
-            print_r($data1);
+            print_r($ticketId);
 
             $bookingId = $data1['tickets']['booking_id'];
             $bookingQuery = $this->db->query("SELECT TipID FROM tbl_booking1 WHERE BookingID = ?", [$bookingId]);
