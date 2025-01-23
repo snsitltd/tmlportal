@@ -4017,7 +4017,10 @@ class Booking extends REST_Controller
         $pdfFileNames = [];
         foreach ($records as $record) {
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($record['TicketID']);
-            
+            // echo "<pre>";
+            // print_r($data1);
+            // echo "</pre>";
+            // die();
             $TipID = $data1['tickets']['TipID']; // Assuming TipID is part of the ticket data
             $UniqCodeGen = uniqid(); // Unique code for the PDF filename
 
@@ -4069,19 +4072,19 @@ class Booking extends REST_Controller
             $data1['SiteOutDateTime2'] = $siteOutDateTimeInDB;
 
             $siteInDateTime = $siteOutDateTime = '';
-            if (isset($data1['SiteInDateTime']) && !empty($data1['SiteInDateTime'])) {
-                $siteInDateTime = '<b>In Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteInDateTime'])) . ' <br>';
+            if (isset($data1['tickets']['SiteInDateTime']) && !empty($data1['tickets']['SiteInDateTime'])) {
+                $siteInDateTime = '<b>In Time: </b>' . date("d-m-Y H:i", strtotime($data1['tickets']['SiteInDateTime'])) . ' <br>';
             }
-            if (isset($data1['SiteOutDateTime']) && !empty($data1['SiteOutDateTime'])) {
-                $siteOutDateTime = '<b>Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteOutDateTime'])) . ' <br>';
+            if (isset($data1['tickets']['SiteOutDateTime']) && !empty($data1['tickets']['SiteOutDateTime'])) {
+                $siteOutDateTime = '<b>Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['tickets']['SiteOutDateTime'])) . ' <br>';
             }
 
             $siteInDateTime2 = $siteOutDateTime2 = '';
-            if (isset($data1['SiteInDateTime2']) && !empty($data1['SiteInDateTime2'])) {
-                $siteInDateTime2 = '<b>Haulage In Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteInDateTime2'])) . ' <br>';
+            if (isset($data1['tickets']['SiteInDateTime2']) && !empty($data1['tickets']['SiteInDateTime2'])) {
+                $siteInDateTime2 = '<b>Haulage In Time: </b>' . date("d-m-Y H:i", strtotime($data1['tickets']['SiteInDateTime2'])) . ' <br>';
             }
-            if (isset($data1['SiteOutDateTime2']) && !empty($data1['SiteOutDateTime2'])) {
-                $siteOutDateTime2 = '<b>Haulage Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteOutDateTime2'])) . ' <br>';
+            if (isset($data1['tickets']['SiteOutDateTime2']) && !empty($data1['tickets']['SiteOutDateTime2'])) {
+                $siteOutDateTime2 = '<b>Haulage Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['tickets']['SiteOutDateTime2'])) . ' <br>';
             }
 
             if ($TipID == 1) {
