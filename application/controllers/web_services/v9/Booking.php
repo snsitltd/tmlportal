@@ -4051,6 +4051,7 @@ class Booking extends REST_Controller
             // Check TipID to determine which PDF template to use
             if ($TipID == 1) {
                 print_r("Hola");
+                print_r($PDFContent);
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                 <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                     <div style="width:100%;" ><div style="width:35%;float: left;" >
