@@ -4011,6 +4011,7 @@ class Booking extends REST_Controller
                 'DriverID' => $data1['tickets']['driver_id'],
                 'Status' => 0
             );
+            print_r($con);
             $user = $this->Drivers_API_Model->getRows($con);
             print_r($user);
 
