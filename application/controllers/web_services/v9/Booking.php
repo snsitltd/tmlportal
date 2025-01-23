@@ -3396,9 +3396,9 @@ class Booking extends REST_Controller
             $status = "0";
             $message = 'Please check required fields';
         } /*else if (empty($user)) {
-         $status = "0";
-         $message = 'User id not found or account disabled';
-     }*/ else {
+       $status = "0";
+       $message = 'User id not found or account disabled';
+   }*/ else {
             $this->db->select('*');
             $this->db->from('tbl_drivers');
             if (!empty($LorryNo)) {
@@ -3987,134 +3987,211 @@ class Booking extends REST_Controller
     }
 
     public function delivery_pdf_sign_post()
-{
-    $customerName = $this->post('customerName') ?? ""; // Get customer name from the request
-    $startDate = "2025-01-06 00:00:00";
-    $endDate = "2025-01-07 23:59:59";
+    {
+        $customerName = $this->post('customerName') ?? ""; // Get customer name from the request
+        $startDate = "2025-01-06 00:00:00";
+        $endDate = "2025-01-07 23:59:59";
 
-    if (empty($customerName)) {
-        // If no customer name is provided, return an error response
-        $this->response(['status' => false, 'message' => 'Customer name is required.'], 400);
-        return;
-    }
-
-    // Fetch records for the specified customer and date range
-    $this->db->select('CustomerName, Signature, LoadId, TicketID');
-    $this->db->from('tbl_booking_loads1');
-    $this->db->where('CustomerName', $customerName);
-    $this->db->where('CreateDateTime >=', $startDate);
-    $this->db->where('CreateDateTime <=', $endDate);
-
-    $query = $this->db->get();
-    $records = $query->result_array();
-
-    if (empty($records)) {
-        // If no records are found, return an empty response
-        $this->response(['status' => false, 'message' => 'No records found for the specified customer and date range.'], 404);
-        return;
-    }
-
-    $pdfFileNames = [];
-    foreach ($records as $record) {
-        $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($record['TicketID']);
-        $TipID = $data1['tickets']['TipID']; // Assuming TipID is part of the ticket data
-        $UniqCodeGen = uniqid(); // Unique code for the PDF filename
-
-        // Dynamic data for PDF
-        $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
-        $PDFContent = $PDFContentQRY->row();// Assuming this retrieves static content for PDF
-        $siteInDateTime = $data1['tickets']['SiteInDateTime'] ?? '';
-        $siteOutDateTime = $data1['tickets']['SiteOutDateTime'] ?? '';
-        $haulageAddress = $data1['tickets']['HaulageAddress'] ?? '';
-        $lorryType = $data1['tickets']['LorryType'] ?? '';
-        $tonBook = $data1['tickets']['TonBook'] ?? '';
-        $user = $data1['tickets']; // Assuming user data comes from the tickets array
-
-        if ($TipID == 1) {
-            // Template for TipID = 1
-            $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
-                <div style="width:100%; font-size: 10px;">	 
-                    <div style="width:100%;">
-                        <div style="width:35%; float:left;">
-                            <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width="80">
-                        </div> 
-                        <div style="width:65%; float:right; text-align:right;"> 		  
-                            <b>' . $PDFContent->outpdf_title . '</b><br>' . $PDFContent->outpdf_address . '<br> 		 
-                            <b>Phone:</b> ' . $PDFContent->outpdf_phone . '
-                        </div> 
-                    </div>	 
-                    <div style="width:100%;">    
-                        <b>Email:</b> ' . $PDFContent->outpdf_email . '<br>		 
-                        <b>Web:</b> ' . $PDFContent->outpdf_website . ' <br>		 
-                        <b>Waste License No:</b> ' . $PDFContent->waste_licence . ' <br><hr> 
-                        <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br>  
-                        <b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . '<br>		 
-                        <b>Date Time:</b> ' . $data1['tickets']['CreateDateTime'] . '<br>	
-                        <b>Vehicle Reg. No.:</b> ' . $data1['tickets']['RegNumber'] . '<br> 
-                        <b>Haulier:</b> ' . $data1['tickets']['Haulier'] . '<br> 
-                        <b>Driver Name:</b> ' . $user['DriverName'] . '<br> 
-                        <b>Driver Signature:</b> <br> 
-                        <div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width="100" height="40"></div>
-                        <b>Company Name:</b> ' . $data1['tickets']['CompanyName'] . '<br>		 
-                        <b>Site Address:</b> ' . $data1['tickets']['OpportunityName'] . '<br>	 
-                        <b>Haulage Address:</b> ' . $haulageAddress . '<br>
-                        <b>Material:</b> ' . $data1['tickets']['MaterialName'] . ' ' . $lorryType . ' Delivered ' . $tonBook . '<br> 
-                        <b>Gross Weight:</b> ' . round($data1['tickets']['GrossWeight']) . ' KGs<br>
-                        <b>Tare Weight:</b> ' . round($data1['tickets']['Tare']) . ' KGs<br>		 
-                        <b>Net Weight:</b> ' . round($data1['tickets']['Net']) . ' KGs<br> 
-                    </div>
-                </div>
-            </body></html>';
-        } else {
-            // Template for other TipIDs
-            $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
-                <div style="width:100%; font-size: 10px;">	 
-                    <div style="width:100%;">
-                        <div style="width:35%; float:left;">
-                            <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width="80">
-                        </div> 
-                        <div style="width:65%; float:right; text-align:right;"> 		  
-                            <b>' . $PDFContent->outpdf_title . '</b><br>' . $PDFContent->outpdf_address . '<br> 		 
-                            <b>Phone:</b> ' . $PDFContent->outpdf_phone . '
-                        </div> 
-                    </div>	 
-                    <div style="width:100%;">    
-                        <b>Email:</b> ' . $PDFContent->outpdf_email . '<br>		 
-                        <b>Web:</b> ' . $PDFContent->outpdf_website . ' <br>		 
-                        <b>Waste License No:</b> ' . $PDFContent->waste_licence . ' <br><hr> 
-                        <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br>  
-                        <b>Conveyance Note No:</b> ' . $data1['tickets']['ConveyanceNo'] . '<br>	 
-                        <b>Date Time:</b>' . date("d-m-Y H:i") . '<br>		 
-                        <b>Vehicle Reg. No.:</b> ' . $user['RegNumber'] . '<br> 
-                        <b>Haulier:</b> ' . $user['Haulier'] . '<br> 
-                        <b>Driver Name:</b> ' . $user['DriverName'] . '<br> 
-                        <b>Driver Signature:</b> <br> 
-                        <div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width="100" height="40"></div>
-                        <b>Company Name:</b> ' . $user['CompanyName'] . '<br>		 
-                        <b>Site Address:</b> ' . $user['SiteAddress'] . '<br>	 
-                        <b>Material:</b> ' . $user['Material'] . '<br> 
-                        <b>Gross Weight:</b> ' . round($user['GrossWeight']) . ' KGs<br> 
-                        <b>Tare Weight:</b> ' . round($user['TareWeight']) . ' KGs<br>		 
-                        <b>Net Weight:</b> ' . round($user['NetWeight']) . ' KGs<br> 
-                    </div>
-                </div>
-            </body></html>';
+        if (empty($customerName)) {
+            // If no customer name is provided, return an error response
+            $this->response(['status' => false, 'message' => 'Customer name is required.'], 400);
+            return;
         }
 
-        // Generate the PDF
-        $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
-        $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
-        $mpdf->keep_table_proportions = false;
-        $mpdf->WriteHTML($html);
-        $mpdf->Output($pdfFilePath);
+        // Fetch records for the specified customer and date range
+        $this->db->select('CustomerName, Signature, LoadId, TicketID');
+        $this->db->from('tbl_booking_loads1');
+        $this->db->where('CustomerName', $customerName);
+        $this->db->where('CreateDateTime >=', $startDate);
+        $this->db->where('CreateDateTime <=', $endDate);
 
-        // Add the generated file name to the array
-        $pdfFileNames[] = $UniqCodeGen . ".pdf";
+        $query = $this->db->get();
+        $records = $query->result_array();
+
+        if (empty($records)) {
+            // If no records are found, return an empty response
+            $this->response(['status' => false, 'message' => 'No records found for the specified customer and date range.'], 404);
+            return;
+        }
+
+        $pdfFileNames = [];
+        foreach ($records as $record) {
+            $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($record['TicketID']);
+
+            $TipID = $data1['tickets']['TipID']; // Assuming TipID is part of the ticket data
+            $UniqCodeGen = uniqid(); // Unique code for the PDF filename
+
+            // Dynamic data for PDF
+            $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
+            $PDFContent = $PDFContentQRY->row();// Assuming this retrieves static content for PDF
+
+
+            $lorryType = $data1['tickets']['LorryType'] ?? '';
+            $tonBook = $data1['tickets']['TonBook'] ?? '';
+            $user = $data1['tickets']; // Assuming user data comes from the tickets array
+
+            $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
+            $tipadQRYForHau = $tipadQRYForHau->row_array();
+
+            $haulageAddress = '';
+            if ($TipID == 1) {
+                // Combine address fields
+                $haulageAddress = $tipadQRYForHau['Street1'] . ' ' . $tipadQRYForHau['Street2'] . ' ' . $tipadQRYForHau['Town'] . ' ' . $tipadQRYForHau['County'] . ' ' . $tipadQRYForHau['PostCode'];
+            } else {
+                // Show TipName
+                $haulageAddress = $tipadQRYForHau['TipName'];
+            }
+
+            $lorryTypeQry = $this->db->query("SELECT * FROM tbl_booking1 WHERE BookingID = '" . $data1['tickets']['BookingID'] . "'");
+            $lorryTypeQryResult = $lorryTypeQry->row_array();  // Fetch the result as an array
+
+            $lorryType = $lorryTypeQryResult['LorryType'];
+
+            // print_r($lorryType);
+            // die();
+            $LT = '';
+            if ($lorryType == 1 || $lorryType == "1") {
+                $lorryType = "Tipper";
+            } elseif ($lorryType == 2 || $lorryType == "2") {
+                $lorryType = "Grab";
+            } elseif ($lorryType == 3 || $lorryType == "3") {
+                $lorryType = "Bin";
+            }
+
+            $siteOutDateTimeInDB = date("Y-m-d H:i:s");
+            //$dataarr[0]->SiteOutDateTime = $siteOutDateTimeInDB;
+            $data1['SiteOutDateTime2'] = $siteOutDateTimeInDB;
+
+            $siteInDateTime = $siteOutDateTime = '';
+            if (isset($data1['SiteInDateTime']) && !empty($data1['SiteInDateTime'])) {
+                $siteInDateTime = '<b>In Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteInDateTime'])) . ' <br>';
+            }
+            if (isset($data1['SiteOutDateTime']) && !empty($data1['SiteOutDateTime'])) {
+                $siteOutDateTime = '<b>Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteOutDateTime'])) . ' <br>';
+            }
+
+            $siteInDateTime2 = $siteOutDateTime2 = '';
+            if (isset($data1['SiteInDateTime2']) && !empty($data1['SiteInDateTime2'])) {
+                $siteInDateTime2 = '<b>Haulage In Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteInDateTime2'])) . ' <br>';
+            }
+            if (isset($data1['SiteOutDateTime2']) && !empty($data1['SiteOutDateTime2'])) {
+                $siteOutDateTime2 = '<b>Haulage Out Time: </b>' . date("d-m-Y H:i", strtotime($data1['SiteOutDateTime2'])) . ' <br>';
+            }
+
+            if ($TipID == 1) {
+                $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+            <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
+                <div style="width:100%;" ><div style="width:35%;float: left;" >
+                <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width ="80" ></div> 
+                    <div style="width:65%;float: right;text-align: right;" > 		  
+                        <b>' . $PDFContent->outpdf_title . '</b><br/>' . $PDFContent->outpdf_address . '<br/> 		 
+                        <b>Phone:</b> ' . $PDFContent->outpdf_phone . '
+                    </div> 
+                </div>	 
+                <div style="width:100%;float: left;" >    
+                    <b>Email:</b> ' . $PDFContent->outpdf_email . '<br/>		 
+                    <b>Web:</b> ' . $PDFContent->outpdf_website . ' <br/>		 
+                    <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
+                    <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
+                    <b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
+                    <b>Date Time: </b> ' . $data1['tickets']['CreateDateTime'] . ' <br>	
+                    ' . $siteInDateTime . '
+                    ' . $siteOutDateTime . '
+                    ' . $siteInDateTime2 . '
+                    ' . $siteOutDateTime2 . '
+                    <b>Vehicle Reg. No. </b> ' . $data1['tickets']['RegNumber'] . ' <br> 
+                    <b>Haulier: </b> ' . $data1['tickets']['Hulller'] . ' <br> 
+                    <b>Driver Name: </b> ' . $user['DriverName'] . '<br> 
+                    <b>Driver Signature: </b> <br> 
+                    <div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width ="100" height="40" style="float:left"> </div>
+                    <b>Company Name: </b> ' . $data1['tickets']['CompanyName'] . ' <br>		 
+                    <b>Site Address: </b> ' . $data1['tickets']['OpportunityName'] . ' <br>	 
+                    <b>Haulage Address: </b> ' . $haulageAddress . '<br>
+                    <b>Material:  </b>' . $data1['tickets']['MaterialName'] . ' ' . $LT . ' Delivered ' . $lorryType . ' ' . $tonBook . ' <br> 
+                    <b>SIC Code: </b> ' . $data1['tickets']['SicCode'] . ' <br> 
+                    <b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>
+                    <b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
+                    <b>Net Weight: </b> ' . round($data1['tickets']['Net']) . ' KGs <br> 
+                    </div> 
+                <div style="width:100%;float: left;" >
+                    <b>Produced By: </b><br>
+                    <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div>
+                    ' . $data1['tickets']['CustomerName'] . '<br><br>
+                </div>         
+                <div style="width:100%;float: left;" > 
+                    <b>Received By: </b><br> 
+                    <div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div> 
+                    ' . $data1['tickets']['CustomerName'] . ' 
+                    <p style="font-size: 7px;"> ' . $PDFContent->outpdf_para1 . ' <br>  
+                    ' . $PDFContent->outpdf_para2 . '<br>  
+                    <b>' . $PDFContent->outpdf_para3 . '</b></p>
+                    <p style="font-size: 7px;"><b> ' . $PDFContent->outpdf_para4 . '</b><br><br> 
+                        <b>VAT Reg. No: </b> ' . $PDFContent->VATRegNo . '<br> 
+                        <b>Company Reg. No: </b>' . $PDFContent->CompanyRegNo . '<br>
+                        ' . $PDFContent->FooterText . '</p></div></div></body></html>';
+
+                // Generate the PDF for TipID 1
+                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $UniqCodeGen . ".pdf";
+                $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                $mpdf->keep_table_proportions = false;
+                $mpdf->WriteHTML($html);
+                $mpdf->Output($pdfFilePath);
+
+                // Add the generated file name to the array
+                $pdfFileNames[] = $UniqCodeGen . ".pdf";
+                print_r($pdfFileNames);
+            } else {
+                // Use a different template for other TipID
+                $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+            <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
+                <div style="width:100%;" ><div style="width:35%;float: left;" >
+                <img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width ="80" ></div> 
+                    <div style="width:65%;float: right;text-align: right;" > 		  
+                        <b>' . $PDFContent->outpdf_title . '</b><br/>' . $PDFContent->outpdf_address . '<br/> 		 
+                        <b>Phone:</b> ' . $PDFContent->outpdf_phone . '
+                    </div> 
+                </div>	 
+                <div style="width:100%;float: left;" >    
+                    <b>Email:</b> ' . $PDFContent->outpdf_email . '<br/>		 
+                    <b>Web:</b> ' . $PDFContent->outpdf_website . ' <br/>		 
+                    <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
+                    <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
+                    <b>Conveyance Note No:</b> ' . $data1['ConveyanceNo'] . '<br>	 
+                    <b>Date Time: </b>' . date("d-m-Y H:i") . ' <br>		 
+                    ' . $siteInDateTime . '
+                    ' . $siteOutDateTime . '
+                    ' . $siteInDateTime2 . '
+                    ' . $siteOutDateTime2 . '
+                    <b>Vehicle Reg. No. </b> ' . $user['RegNumber'] . ' <br> 
+                    <b>Haulier: </b> ' . $user['Haulier'] . ' <br> 
+                    <b>Driver Name: </b> ' . $user['DriverName'] . '<br> 
+                    <b>Driver Signature: </b> <br> 
+                    <div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width ="100" height="40" style="float:left"> </div>
+                    <b>Company Name: </b> ' . $user['CompanyName'] . ' <br>		 
+                    <b>Site Address: </b> ' . $user['SiteAddress'] . ' <br>	 
+                    <b>Material:  </b>' . $user['Material'] . ' <br> 
+                    <b>Gross Weight: </b> ' . round($user['GrossWeight']) . ' KGs<br> 
+                    <b>Tare Weight: </b> ' . round($user['TareWeight']) . ' KGs <br>		 
+                    <b>Net Weight: </b> ' . round($user['NetWeight']) . ' KGs <br> 
+                    </div> 
+                </div> 
+            </body></html>';
+
+                // Generate the PDF for other TipIDs
+                $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets'][''] . ".pdf";
+                $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                $mpdf->keep_table_proportions = false;
+                $mpdf->WriteHTML($html);
+                $mpdf->Output($pdfFilePath);
+
+                // Add the generated file name to the array
+                $pdfFileNames[] = $UniqCodeGen . ".pdf";
+            }
+        }
+
+        // Return the list of generated PDF file names
+        $this->response(['status' => true, 'pdfFiles' => $pdfFileNames], 200);
     }
-
-    // Return the list of generated PDF file names
-    $this->response(['status' => true, 'pdfFiles' => $pdfFileNames], 200);
-}
 
 
 
