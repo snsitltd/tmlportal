@@ -3993,8 +3993,6 @@ class Booking extends REST_Controller
         $TipID = $this->input->post("TipID") ?? 0;  // Assuming TipID is passed in data
 
         $pdfFileNames = [];  // Array to store generated PDF filenames
-        print_r($ticketIds);
-        die();
 
         $PDFContentQRY = $this->db->query("SELECT * FROM tbl_content_settings WHERE id = '1'");
         $PDFContent = $PDFContentQRY->row();
@@ -4014,14 +4012,14 @@ class Booking extends REST_Controller
                 'Status' => 0
             );
             $user = $this->Drivers_API_Model->getRows($con);
-
+            print_r($user);
 
             // Generate a unique file name for each PDF
             $UniqCodeGen = uniqid('ticket_', true);  // Generating unique file name
             $TipID = 1;
             $tipadQRYForHau = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$TipID'");
             $tipadQRYForHau = $tipadQRYForHau->row_array();
-
+            print_r($tipadQRYForHau);
             $haulageAddress = '';
             if ($TipID == 1) {
                 // Combine address fields
@@ -4052,6 +4050,7 @@ class Booking extends REST_Controller
             }         
             // Check TipID to determine which PDF template to use
             if ($TipID == 1) {
+                print_r("Hola");
                 $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
                 <div style="width:100%;margin-bottom: 0px;margin-top: 0px; font-size: 10px;" >	 
                     <div style="width:100%;" ><div style="width:35%;float: left;" >
