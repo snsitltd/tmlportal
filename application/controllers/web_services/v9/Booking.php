@@ -4103,7 +4103,7 @@ class Booking extends REST_Controller
                     <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
                     <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
                     <b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
-                    <b>Date Time: </b> ' .  date('m/d/Y H:i:s', strtotime($data1['tickets']['CreateDateTime'])) . ' <br>	
+                    <b>Date Time: </b> ' .  date('d/m/Y H:i:s', strtotime($data1['tickets']['CreateDateTime'])) . ' <br>	
                     ' . $siteInDateTime . '
                     ' . $siteOutDateTime . '
                     ' . $siteInDateTime2 . '
