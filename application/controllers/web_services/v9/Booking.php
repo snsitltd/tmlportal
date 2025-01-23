@@ -4103,7 +4103,7 @@ class Booking extends REST_Controller
                     <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
                     <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
                     <b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
-                    <b>Date Time: </b> ' . date("d-m-Y H:i", strtotime($data1['tickets']['CreateDateTime'])) . ' <br>	
+                    <b>Date Time: </b> ' . date("d/m/Y H:i", strtotime($data1['tickets']['SiteInDateTime2'])) . ' <br>	
                     ' . $siteInDateTime . '
                     ' . $siteOutDateTime . '
                     ' . $siteInDateTime2 . '
@@ -4161,7 +4161,7 @@ class Booking extends REST_Controller
                     <b>Waste License No: </b> ' . $PDFContent->waste_licence . ' <br/><hr> 
                     <center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
                     <b>Conveyance Note No:</b> ' . $data1['ConveyanceNo'] . '<br>	 
-                    <b>Date Time: </b>' . date("d-m-Y H:i") . ' <br>		 
+                    <b>Date Time: </b>' . date("d/m/Y H:i") . ' <br>		 
                     ' . $siteInDateTime . '
                     ' . $siteOutDateTime . '
                     ' . $siteInDateTime2 . '
