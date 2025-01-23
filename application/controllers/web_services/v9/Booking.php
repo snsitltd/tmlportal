@@ -4136,7 +4136,7 @@ class Booking extends REST_Controller
 
                 // Generate the PDF for TipID 1
                 $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'];
-                $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                $mpdf = new mPDF('utf-8', array(70, 230), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
@@ -4194,7 +4194,7 @@ class Booking extends REST_Controller
 
                 // Generate the PDF for other TipIDs
                 $pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['ReceiptName'];
-                $mpdf = new mPDF('utf-8', array(70, 250), '', '', 5, 5, 5, 5, 5, 5);
+                $mpdf = new mPDF('utf-8', array(70, 230), '', '', 5, 5, 5, 5, 5, 5);
                 $mpdf->keep_table_proportions = false;
                 $mpdf->WriteHTML($html);
                 $mpdf->Output($pdfFilePath);
