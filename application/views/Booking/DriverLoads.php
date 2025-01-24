@@ -25,16 +25,31 @@
                                             <?php } ?>
                                         </select>
                                     </div> 
-                                </div>
-                                <div class="col-md-3">     
-									<div class="form-group">
-                                        <label for="date-time">Date <span class="required">*</span></label>
-                                        <div class="input-group date">
-                                          <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-											<input type="text" class="form-control required" id="searchdate" value="<?php if(set_value('searchdate')){ echo set_value('searchdate'); }else{ echo date('d/m/Y'); } ?>" name="searchdate" maxlength="64">
-                                        </div>
-                                    </div>  
-                                </div> 
+                                </div>  
+                                <div class="col-md-3">
+                                <div class="col-md-6">
+    <div class="form-group">
+        <label for="start-date">Start Date <span class="required">*</span></label>
+        <div class="input-group date">
+            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+            <input type="text" class="form-control required" id="start-date" 
+                name="start_date" placeholder="Select start date">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="form-group">
+        <label for="end-date">End Date <span class="required">*</span></label>
+        <div class="input-group date">
+            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+            <input type="text" class="form-control required" id="end-date" 
+                name="end_date" placeholder="Select end date">
+        </div>
+    </div>
+</div>
+
+
                             </div>  
                             <div class="row">
                                 <div class="col-md-6">                                 
@@ -316,11 +331,22 @@
 </div> 
 <script type="text/javascript" language="javascript" > 	 
 	$(document).ready(function(){
-		$('#searchdate').datepicker({  
-			format: 'dd/mm/yyyy', 
-			endDate: '+0d',			
-			daysOfWeekDisabled  : [0],
-			autoclose: true   
-		}); 		
+    $('#start-date').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayHighlight: true
+        }).on('changeDate', function (selected) {
+            var startDate = new Date(selected.date.valueOf());
+            $('#end-date').datepicker('setStartDate', startDate);
+        });
+
+        $('#end-date').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayHighlight: true
+        }).on('changeDate', function (selected) {
+            var endDate = new Date(selected.date.valueOf());
+            $('#start-date').datepicker('setEndDate', endDate);
+        });
     });    	 
 </script> 

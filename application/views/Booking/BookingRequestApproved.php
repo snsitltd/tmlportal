@@ -272,7 +272,7 @@
 	 			rowId: 'BookingDateID',
 	 			dom: '<"toolbar">frtip',
 	 			createdRow: function(row, data, dataIndex) {
-
+					// console.log(data);
 	 				var btype = '';
 	 				var del = '';
 	 				var edi = '';
@@ -307,9 +307,10 @@
 	 				} else if (data["LorryType"] == 3) {
 	 					LorryType = 'Bin';
 	 				}
-
-	 				//if(data["TotalLoadAllocated"] == '0'){  
-	 				del = '<a class="btn btn-sm btn-danger deleteRequest" href="#" data-BookingDateID="' + data["BookingDateID"] + '"  data-BookingRequestID="' + data["BookingRequestID"] + '"  data-BookingID="' + data["BookingID"] + '" title="Delete"><i class="fa fa-trash"></i></a>';
+					// console.log(data["Status"]);
+	 				if(data["Status"] == '0'){  
+	 					del = '<a class="btn btn-sm btn-danger deleteRequest" href="#" data-BookingDateID="' + data["BookingDateID"] + '"  data-BookingRequestID="' + data["BookingRequestID"] + '"  data-BookingID="' + data["BookingID"] + '" title="Delete"><i class="fa fa-trash"></i></a>';
+					}
 	 				if (data["TonBook"] == 1) {
 	 					$(row).find("td:eq(5)").html(data["TotalLoad"]);
 	 					$(row).find("td:eq(6)").html(data["TonPerLoad"]);

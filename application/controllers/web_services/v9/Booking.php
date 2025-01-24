@@ -4016,11 +4016,9 @@ class Booking extends REST_Controller
 
         $pdfFileNames = [];
         foreach ($records as $record) {
+            
             $data1['tickets'] = $this->Ticket_API_Model->get_pdf_data_app_script($record['TicketID']);
-            // echo "<pre>";
-            // print_r($data1);
-            // echo "</pre>";
-            // die();
+
             $TipID = $data1['tickets']['TipID']; // Assuming TipID is part of the ticket data
             $UniqCodeGen = uniqid(); // Unique code for the PDF filename
 
@@ -4056,8 +4054,8 @@ class Booking extends REST_Controller
 
             $lorryType = $lorryTypeQryResult['LorryType'];
 
-            // print_r($lorryType);
-            // die();
+            print_r($data1);
+            die();
             $LT = '';
             if ($lorryType == 1 || $lorryType == "1") {
                 $lorryType = "Tipper";

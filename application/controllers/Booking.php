@@ -562,6 +562,9 @@ class Booking extends BaseController
 					// Save the Excel file
 					$fileName = $type . '_Conveyance_' . date("Y-m-d-H-i") . '.xlsx';
 					$filePath = $exportDir . '/' . $fileName;
+					
+					
+
 
 					// Save Excel file to disk
 					$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
@@ -5690,18 +5693,23 @@ class Booking extends BaseController
 		if ($this->input->post('search')) {
 			$driver = $this->input->post('driver');
 			$data['Driver'] = $driver;
+		
 			$searchdate = $this->input->post('searchdate');
-			$data['searchdate'] = $searchdate;
+			$StartDate =$this->input->post('start_date');
+	
+			$EndDate = $this->input->post('end_date');
+
+			// $data['searchdate'] = $searchdate;
 
 			$B = explode('/', $searchdate);
 			$sd = $B[2] . "-" . $B[1] . "-" . $B[0];
 
 			$data['TodayPDAUsers'] = $this->Common_model->TodayPDAUsers($sd);
-			$data['DriverLoadsCollection'] = $this->Booking_model->GetDriverRequestLoadsCollection($searchdate, $driver);
-			$data['DriverLoadsDelivery'] = $this->Booking_model->GetDriverRequestLoadsDelivery($searchdate, $driver);
+			$data['DriverLoadsCollection'] = $this->Booking_model->GetDriverRequestLoadsCollection($StartDate , $EndDate, $driver);
+			$data['DriverLoadsDelivery'] = $this->Booking_model->GetDriverRequestLoadsDelivery($StartDate , $EndDate, $driver);
 
-			$data['DriverLoadsDayWork'] = $this->Booking_model->GetDriverRequestLoadsDayWork($searchdate, $driver);
-			$data['DriverLoadsHaulage'] = $this->Booking_model->GetDriverRequestLoadsHaulage($searchdate, $driver);
+			$data['DriverLoadsDayWork'] = $this->Booking_model->GetDriverRequestLoadsDayWork($StartDate , $EndDate, $driver);
+			$data['DriverLoadsHaulage'] = $this->Booking_model->GetDriverRequestLoadsHaulage($StartDate , $EndDate, $driver);
 
 			$data['DriverDetails'] = $this->Booking_model->GetDriverLoginDetails($driver);
 		}
