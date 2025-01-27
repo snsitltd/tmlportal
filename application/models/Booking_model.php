@@ -2740,7 +2740,12 @@ class Booking_model extends CI_Model{
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
-			}else{ 
+			}else if(strtolower($Status[0])=='i' ){ 
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
+				$this->db->group_end();  
+			} 
+			else{ 
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '11'); 
 				$this->db->group_end();  
@@ -2988,6 +2993,11 @@ class Booking_model extends CI_Model{
 			if(strtolower($Status[0])=='c' ){
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->group_end();  
+			} 
+			if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
 				$this->db->group_end();  
 			} 
 			if(strtolower($Status[0])=='w' ){
@@ -9805,6 +9815,10 @@ class Booking_model extends CI_Model{
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
+				$this->db->group_end();  
 			}else{ 
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '11'); 
@@ -10762,7 +10776,13 @@ class Booking_model extends CI_Model{
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
-			}else{ 
+			}
+			}else if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
+				$this->db->group_end();  
+			}
+			else{ 
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '11'); 
 				$this->db->group_end();  
