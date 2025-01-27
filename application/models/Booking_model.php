@@ -10777,7 +10777,7 @@ class Booking_model extends CI_Model{
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
 			}
-			}else if(strtolower($Status[0])=='i' ){
+			else if(strtolower($Status[0])=='i' ){
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
 				$this->db->group_end();  
