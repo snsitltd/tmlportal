@@ -16267,6 +16267,77 @@ class Booking extends BaseController
 			$this->loadViews("Booking/DuplicateBookingRequestTonnage", $this->global, $data, NULL);
 		}
 	}
+
+	function DriverLoadsExcelAjax() {
+		// Fetch POST data
+		$data = [
+			'driver' => $this->input->post('driver'),
+			'startDate' => $this->input->post('start_date'),
+			'endDate' => $this->input->post('end_date')
+		];
+	
+		// Retrieve data from the model
+		$collectionData = $this->Booking_model->GetDriverRequestLoadsCollection($data['startDate'], $data['endDate'], $data['driver']);
+		$deliveryData = $this->Booking_model->GetDriverRequestLoadsDelivery($data['startDate'], $data['endDate'], $data['driver']);
+		$dayWorkData = $this->Booking_model->GetDriverRequestLoadsDayWork($data['startDate'], $data['endDate'], $data['driver']);
+		$haulageData = $this->Booking_model->GetDriverRequestLoadsHaulage($data['startDate'], $data['endDate'], $data['driver']);
+	
+		// Combine all data (optional: can separate into different sheets if needed)
+		$driverData = array_merge($collectionData, $deliveryData, $dayWorkData, $haulageData);
+	
+		// Load the PHPExcel library
+		$this->load->library("excel");
+		$object = new PHPExcel();
+		$object->setActiveSheetIndex(0);
+		$sheet = $object->getActiveSheet();
+	
+		// Set the filename
+		$fileName = 'Driver_Loads_' . date('YmdHis') . '.xlsx';
+		$fileName = mb_ereg_replace("([^\w\s\d\-_~@&,;\[\]\(\).])", '', $fileName);
+		$fileName = mb_ereg_replace("([\.]{2,})", '', $fileName);
+	
+		// Set header row
+		$headers = [
+			'Company Name', 'Site Address', 'Tip Address', 'Material',
+			'Conv. No.', 'Start Time', 'Time In', 'Time Out',
+			'Tip In Time', 'Tip Ticket', 'Expense'
+		];
+		$sheet->fromArray($headers, null, 'A1');
+	
+		// Populate data rows
+		$rowNumber = 2; // Start at the second row
+		foreach ($driverData as $row) {
+			$sheet->setCellValue('A' . $rowNumber, $row->CompanyName);  // Use -> for objects
+			$sheet->setCellValue('B' . $rowNumber, $row->TipName);
+			$sheet->setCellValue('C' . $rowNumber, $row->TipName);
+			$sheet->setCellValue('D' . $rowNumber, $row->MaterialName);
+			$sheet->setCellValue('E' . $rowNumber, $row->ConveyanceNo);
+			$sheet->setCellValue('F' . $rowNumber, $row->JobStartDateTime);
+			$sheet->setCellValue('G' . $rowNumber, $row->SiteInDateTime);
+			$sheet->setCellValue('H' . $rowNumber, $row->SiteOutDateTime);
+			$sheet->setCellValue('I' . $rowNumber, $row->TipTicketDateTime);
+			$sheet->setCellValue('J' . $rowNumber, $row->TipTicketID);
+			$sheet->setCellValue('K' . $rowNumber, $row->Expenses);
+			$rowNumber++;
+		}
+		
+	
+		// Save the Excel file to the "DriverLoadsExcel" folder
+		$filePath = FCPATH . 'DriverLoadsExcel/' . $fileName;
+		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
+		$object_writer->save($filePath);
+	
+		// Provide a response (optional)
+		$response = [
+			'status' => 'success',
+			'message' => 'Excel file generated successfully',
+			'file_path' => base_url('DriverLoadsExcel/' . $fileName)
+		];
+		echo json_encode($response);
+	}
+	
+
+
 	function generateRandomString($length = 12)
 	{
 		return substr(str_shuffle(str_repeat($x = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
@@ -16282,7 +16353,7 @@ class Booking extends BaseController
 		}
 		return $data;
 	}
-
 }
+
 
 ?>

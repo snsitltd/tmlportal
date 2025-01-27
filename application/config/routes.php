@@ -346,6 +346,7 @@ $route['SendDriverChatMessage'] = "Chat/SendDriverChatMessage";
 
 
 $route['DriverLoads'] = "Booking/DriverLoads";
+$route['DriverLoadsAjax'] = "Booking/DriverLoadsExcelAjax";
 
 $route['BookingStageAtSite/(:any)'] = "Booking/BookingStageAtSite/$1";
 $route['BookingStageLeftSite/(:any)'] = "Booking/BookingStageLeftSite/$1";

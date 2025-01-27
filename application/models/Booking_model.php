@@ -3178,11 +3178,14 @@ class Booking_model extends CI_Model{
 
 	    return $query->result();
 	}
-	public function GetDriverRequestLoadsDelivery($searchdate,$driver){ 
+	public function GetDriverRequestLoadsDelivery($start_date,$end_date,$driver){ 
 	 
-	  	$sd= explode('/', $searchdate);    
-		$firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
-		 
+		$sd = explode('/', $start_date);
+		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
+
+		$ed = explode('/', $end_date);
+		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
+ 
         $per= $this->db->dbprefix;   
 	    $this->db->select(' tbl_booking_loads1.BookingID');  	 		 
 		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
@@ -3233,8 +3236,7 @@ class Booking_model extends CI_Model{
 		$this->db->where(' tbl_booking1.BookingType','2'); 
 		$this->db->where('tbl_booking_loads1.Status > 3'); 
 		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
-		
+		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
 	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);     
 		$this->db->group_by("tbl_booking_loads1.LoadID");             
 	    $query = $this->db->get('tbl_booking_loads1');
@@ -3243,11 +3245,14 @@ class Booking_model extends CI_Model{
 		//exit; 
 	    return $query->result();
 	} 
-	public function GetDriverRequestLoadsDayWork($searchdate,$driver){ 
+	public function GetDriverRequestLoadsDayWork($start_date,$end_date,$driver){ 
 	 
-	  	$sd= explode('/', $searchdate);    
-		$firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
-		 
+		$sd = explode('/', $start_date);
+		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
+
+		$ed = explode('/', $end_date);
+		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
+ 
         $per= $this->db->dbprefix;   
 	    $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
 		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
@@ -3286,8 +3291,7 @@ class Booking_model extends CI_Model{
 		$this->db->where(' tbl_booking1.BookingType','3');  
 	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
 		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
-		
+		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
 		$this->db->group_by("tbl_booking_loads1.LoadID");             
 	    $query = $this->db->get('tbl_booking_loads1');
 		
@@ -3296,11 +3300,14 @@ class Booking_model extends CI_Model{
 	    return $query->result();
 	}
 	
-	public function GetDriverRequestLoadsHaulage($searchdate,$driver){ 
+	public function GetDriverRequestLoadsHaulage($start_date,$end_date,$driver){ 
 	 
-	  	$sd= explode('/', $searchdate);    
-		$firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
-		 
+		$sd = explode('/', $start_date);
+		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
+
+		$ed = explode('/', $end_date);
+		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
+ 
         $per= $this->db->dbprefix;   
 	    $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
 		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
@@ -3341,8 +3348,7 @@ class Booking_model extends CI_Model{
 		$this->db->where(' tbl_booking1.BookingType','4');  
 	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
 		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y-%m-%d") ', $firstDate);    
-		
+		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
 		$this->db->group_by("tbl_booking_loads1.LoadID");             
 	    $query = $this->db->get('tbl_booking_loads1');
 		
@@ -9815,9 +9821,9 @@ class Booking_model extends CI_Model{
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
-			}else if(strtolower($Status[0])=='i' ){
+			}else if(strtolower($Status[0])=='w' ){
 				$this->db->group_start(); 
-				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
+				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
 			}else{ 
 				$this->db->group_start(); 

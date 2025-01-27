@@ -47,8 +47,11 @@
                 name="end_date" placeholder="Select end date">
         </div>
     </div>
+    <button class="btn btn-danger ConveyanceExcelExport" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Export XLS</button> 
 </div>
 
+    
+   
 
                             </div>  
                             <div class="row">
@@ -331,6 +334,7 @@
 </div> 
 <script type="text/javascript" language="javascript" > 	 
 	$(document).ready(function(){
+
     $('#start-date').datepicker({
             format: 'dd/mm/yyyy',
             autoclose: true,
@@ -348,5 +352,50 @@
             var endDate = new Date(selected.date.valueOf());
             $('#start-date').datepicker('setEndDate', endDate);
         });
-    });    	 
+    });    	
+    jQuery(document).on("click", ".ConveyanceExcelExport", function(){  
+        // Get the selected values from the form
+        var driverID = jQuery('#driver').val(); 
+        var startDate = jQuery('#start-date').val(); 
+        var endDate = jQuery('#end-date').val(); 
+
+        // Validate to ensure all fields are filled
+        if (!driverID || !startDate || !endDate) {
+            alert("Please fill all the fields.");
+            return; // Stop execution if any field is empty
+        }
+
+        // Set the URL for the AJAX request
+        hitURLCon = baseURL + "DriverLoadsAjax";
+        
+        // Disable the button to prevent multiple clicks
+        jQuery('#exportxls').prop('disabled', true); 
+        
+        // AJAX request to send data to the server
+        jQuery.ajax({
+            type: "POST",
+            dataType: "json",
+            url: hitURLCon,
+            data: {
+                driver: driverID,
+                start_date: startDate,
+                end_date: endDate
+            }
+        }).done(function(data){ 
+            // Enable the button after the request is complete
+            jQuery('#exportxls').prop('disabled', false); 
+            
+            // Handle the response from the server
+            if (data.success) {
+                alert("Export successful! File:");
+            } else {
+                alert("Export failed. Please try again.");
+            }
+        }).fail(function() {
+            // In case of error
+            jQuery('#exportxls').prop('disabled', false); 
+            alert("An error occurred while processing the request.");
+        });
+    });
+
 </script> 
