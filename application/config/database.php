@@ -99,9 +99,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
+	'hostname' => '213.175.208.242',
+	'username' => 'tmlsnslt_tml',
+	'password' => 'qmw7V7vEiT3C',
 	'database' => 'tmlsnslt_tml',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => 'tbl_',
