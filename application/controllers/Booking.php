@@ -324,12 +324,17 @@ class Booking extends BaseController
 				foreach ($table_columns as $field) {
 					$object->getActiveSheet()->getStyle('A1:K1')->getFont()->setBold(true);
 					$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+					$object->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+
 					$column++;
 				}
 
 				$excel_row = 2;
+				$hasdata = 'false';
 				// Fill data for the current lorry type
 				foreach ($data['SplitExcelDelTickets'] as $row) {
+					if ($row['LorryType'] == $typeKey) { // Filter by LorryType
+						$hasData = true;
 					if ($row['LorryType'] == $typeKey) { // Filter by LorryType
 						$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
 
@@ -360,12 +365,16 @@ class Booking extends BaseController
 						$excel_row++;
 					}
 				}
+			}
 
+				if($hasdata){
 				// Auto size columns for the current sheet
-				for ($col = 'A'; $col <= $object->getActiveSheet()->getHighestColumn(); $col++) {
-					$object->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-				}
+					for ($col = 'A'; $col <= $object->getActiveSheet()->getHighestColumn(); $col++) {
+						$object->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+						$object->getActiveSheet()->getStyle($col)->getFont()->setBold(true);
 
+					}
+				}
 				// Save the Excel file to output buffer
 				ob_start();
 				$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
@@ -648,6 +657,8 @@ class Booking extends BaseController
 			foreach ($table_columns as $field) {
 				$object->getActiveSheet()->getStyle('A1:N1')->getFont()->setBold(true);
 				$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+				$object->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+
 				$column++;
 			}
 			$object->getActiveSheet()->getStyle('k:k')->getNumberFormat()->setFormatCode('0.00');
@@ -904,6 +915,8 @@ class Booking extends BaseController
 						foreach ($table_columns as $field) {
 							$object->getActiveSheet()->getStyle('A1:O1')->getFont()->setBold(true);
 							$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+							$object->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+
 							$column++;
 						}
 
@@ -1957,6 +1970,8 @@ class Booking extends BaseController
 					foreach ($table_columns as $field) {
 						$object->getActiveSheet()->getStyle('A1:M1')->getFont()->setBold(true);
 						$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+						$object->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+
 						$column++;
 					}
 					$object->getActiveSheet()->getStyle('G:G')->getNumberFormat()->setFormatCode('0.00');
@@ -1973,6 +1988,7 @@ class Booking extends BaseController
 						if ($row['LorryType'] != $lt) {
 							continue;
 						}
+						$TLoad++;
 
 						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row['TicketNumber']);
 
@@ -2061,6 +2077,10 @@ class Booking extends BaseController
 						$excel_row++;
 					}
 
+					if($TLoad==0){
+						continue;
+					}
+
 					// $cname = preg_replace('/[^A-Za-z0-9]/', '', $CompanyName);
 					$oname = preg_replace('/[^A-Za-z0-9]/', '', $OpportunityName);
 					$FileName = $cname . "@" . $oname . "@" . date("YmdHis") . "@" . rand() . "_" . $ltName . ".xlsx";
@@ -2077,6 +2097,13 @@ class Booking extends BaseController
 					$xlsData = ob_get_contents();
 					ob_end_clean();
 				}
+
+				      /* Skip ZIP if no files */
+					  if (empty($xlsfiles)) {
+						$response = array('op' => 'no_data', 'message' => 'No data available to export.');
+						echo json_encode($response);
+						exit;
+					}
 
 				// Create ZIP file
 				foreach ($xlsfiles as $xls) {
@@ -2420,8 +2447,13 @@ class Booking extends BaseController
 
 				$column = 0;
 				foreach ($table_columns as $field) {
+					$columnLetter = PHPExcel_Cell::stringFromColumnIndex($column);
+					$object->getActiveSheet()->getColumnDimension($columnLetter)->setAutoSize(true);
+
 					$object->getActiveSheet()->getStyle('A1:K1')->getFont()->setBold(true);
 					$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+					$object->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+					
 					$column++;
 				}
 
@@ -2460,12 +2492,15 @@ class Booking extends BaseController
 						}
 
 						if ($row['BookingMaterialID'] == $row['MaterialID']) {
-							$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
+							$Price = isset($row['Price']) ? (float) $row['Price'] : 0;
+							//$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
 						} else {
 							$Price = 0;
 						}
-
-						$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $Price);
+						$object->getActiveSheet()->getStyle('G2:G' . $excel_row)->getNumberFormat()->setFormatCode('#,##0.00');
+					//	$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $Price);
+						$priceColumnIndex = array_search("Price", $table_columns);
+						$object->getActiveSheet()->setCellValueByColumnAndRow($priceColumnIndex, $excel_row, $Price);
 
 						// Wait Time
 						$min = ($row['WaitTime'] == null) ? "N/A" : $row['WaitTime'] . " Min";
@@ -2487,6 +2522,7 @@ class Booking extends BaseController
 				// Adjust column width
 				for ($x = 'A'; $x != $object->getActiveSheet()->getHighestColumn(); $x++) {
 					$object->getActiveSheet()->getColumnDimension($x)->setAutoSize(TRUE);
+			
 				}
 
 				// Generate the file name
@@ -2633,6 +2669,8 @@ class Booking extends BaseController
 				foreach ($table_columns as $field) {
 					$object->getActiveSheet()->getStyle('A1:J1')->getFont()->setBold(true);
 					$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+					$object->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+					
 					$column++;
 				}
 				$object->getActiveSheet()->getStyle('g:g')->getNumberFormat()->setFormatCode('0.00');
@@ -16304,11 +16342,18 @@ class Booking extends BaseController
 		];
 		$sheet->fromArray($headers, null, 'A1');
 	
+
+
+		// Make headers bold
+		$headerRow = 'A1:K1'; // Range for header row
+		$sheet->getStyle($headerRow)->getFont()->setBold(true);
+
+
 		// Populate data rows
 		$rowNumber = 2; // Start at the second row
 		foreach ($driverData as $row) {
 			$sheet->setCellValue('A' . $rowNumber, $row->CompanyName);  // Use -> for objects
-			$sheet->setCellValue('B' . $rowNumber, $row->TipName);
+			$sheet->setCellValue('B' . $rowNumber, $row->OpportunityName);
 			$sheet->setCellValue('C' . $rowNumber, $row->TipName);
 			$sheet->setCellValue('D' . $rowNumber, $row->MaterialName);
 			$sheet->setCellValue('E' . $rowNumber, $row->ConveyanceNo);
@@ -16320,7 +16365,11 @@ class Booking extends BaseController
 			$sheet->setCellValue('K' . $rowNumber, $row->Expenses);
 			$rowNumber++;
 		}
-		
+	
+		// Auto-width for all columns
+		foreach (range('A', 'K') as $columnID) {
+			$sheet->getColumnDimension($columnID)->setAutoSize(true);
+		}
 	
 		// Save the Excel file to the "DriverLoadsExcel" folder
 		$filePath = FCPATH . 'DriverLoadsExcel/' . $fileName;
@@ -16328,15 +16377,15 @@ class Booking extends BaseController
 		$object_writer->save($filePath);
 	
 		// Provide a response (optional)
-		$response = [
-			'status' => 'success',
-			'message' => 'Excel file generated successfully',
-			'file_path' => base_url('DriverLoadsExcel/' . $fileName)
-		];
-		echo json_encode($response);
+		$response = array(
+			'op' => 'ok',
+			'FileName' => "DriverLoadsExcel/" . $fileName,
+			'file' => "data:application/zip;base64," . base64_encode(file_get_contents("DriverLoadsExcel/" . $zname)) // Ensure correct base64 encoding
+		);
+
+		die(json_encode($response)); // Return JSON response
 	}
 	
-
 
 	function generateRandomString($length = 12)
 	{
