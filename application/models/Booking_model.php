@@ -5081,6 +5081,9 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking1.TonBook ');
 		$this->db->select(' tbl_booking1.TotalTon ');
 		$this->db->select(' tbl_booking1.TonPerLoad '); 
+
+		// $this->db->select('tbl_booking_request.BookingRequestID');
+		$this->db->select('tbl_booking_loads1.Status');
 		
 		$this->db->select(' tbl_booking1.BookingType '); 
 		$this->db->select(' tbl_booking1.LoadType ');
@@ -5091,6 +5094,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_date1.BookingDateStatus ');  
 		$this->db->select(' tbl_booking_request.CompanyName '); 
 		$this->db->select(' tbl_booking_request.OpportunityName '); 
+		$this->db->select(' tbl_booking_request.BookingRequestID '); 
 		
 		$this->db->select(' tbl_booking1.PurchaseOrderNo ');  
 		$this->db->select(' tbl_booking1.MaterialName  ');  
@@ -5098,6 +5102,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.CreateDateTime,"%d/%m/%Y %T") as CreateDateTime ');    
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d/%m/%Y ") as BookingDate ');    
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%Y%m%d ") as BookingDate1 ');     
+		$this->db->join('tbl_booking_loads1', 'tbl_booking_loads1.BookingRequestID = tbl_booking_date1.BookingRequestID','LEFT'); 
 		//$this->db->select('(select count(*) from tbl_booking_loads1 where  tbl_booking_date1.BookingDateID = tbl_booking_loads1.BookingDateID ) as TotalLoadAllocated ');   
 		$this->db->join('tbl_booking1', ' tbl_booking_date1.BookingID = tbl_booking1.BookingID ','LEFT');   
 		$this->db->join('tbl_booking_request', ' tbl_booking_date1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT');   
