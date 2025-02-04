@@ -4824,8 +4824,8 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_request.CompanyName '); 
 		$this->db->select(' tbl_booking_request.OpportunityName '); 
 		
-		$this->db->select('tbl_booking_loads1.BookingRequestID');
-		$this->db->select('tbl_booking_loads1.Status');
+		// $this->db->select('tbl_booking_loads1.BookingRequestID as BookingNewId');
+		// $this->db->select('tbl_booking_loads1.Status');
 
 		$this->db->select(' tbl_booking1.PurchaseOrderNo ');  
 		$this->db->select(' tbl_booking1.OpenPO '); 
@@ -4837,7 +4837,7 @@ class Booking_model extends CI_Model{
 		//$this->db->select('(select count(*) from tbl_booking_loads1 where  tbl_booking_date1.BookingDateID = tbl_booking_loads1.BookingDateID ) as TotalLoadAllocated ');   
 		$this->db->join('tbl_booking1', ' tbl_booking_date1.BookingID = tbl_booking1.BookingID ','LEFT');   
 		$this->db->join('tbl_booking_request', ' tbl_booking_date1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT');   
-		$this->db->join('tbl_booking_loads1', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID','LEFT'); 
+		// $this->db->join('tbl_booking_loads1', 'tbl_booking_loads1.BookingNewId = tbl_booking_request.BookingRequestID','LEFT'); 
 		$this->db->join('tbl_users', 'tbl_users.userId = tbl_booking_request.BookedBy','LEFT'); 
 		$this->db->where('tbl_booking_date1.BookingDateStatus = 1 '); 
 		$this->db->where('DATE_FORMAT(tbl_booking_date1.BookingDate,"%Y-%m-%d") >= (CURDATE() - INTERVAL 31 DAY)'); 
