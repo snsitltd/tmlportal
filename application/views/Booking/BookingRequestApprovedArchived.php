@@ -294,7 +294,7 @@
 	 				}
 
 	 				//if(data["TotalLoadAllocated"] == '0'){  
-					if(data['Status'] == "0"){
+					if(data['ApproveLoads'] == "0"){
 						del = '<a class="btn btn-sm btn-danger deleteRequest" href="#" data-BookingDateID="' + data["BookingDateID"] + '"  data-BookingRequestID="' + data["BookingRequestID"] + '"  data-BookingID="' + data["BookingID"] + '" title="Delete"><i class="fa fa-trash"></i></a>';
 					}
 	 				if (data["TonBook"] == 1) {
