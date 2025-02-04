@@ -35,7 +35,11 @@ $base .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME'
 $config['base_url'] = $base;
 
 
+<<<<<<< HEAD
 // $config['base_url'] = "http";
+=======
+$config['base_url'] = "https://tml.snsitltd.co.uk/";
+>>>>>>> main
 /*
 |--------------------------------------------------------------------------
 | Index File

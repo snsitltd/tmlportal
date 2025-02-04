@@ -307,8 +307,8 @@
 	 				} else if (data["LorryType"] == 3) {
 	 					LorryType = 'Bin';
 	 				}
-					// console.log(data["Status"]);
-	 				if(data["Status"] == '0'){  
+					console.log(data);
+	 				if(data["ApproveLoads"] == '0'){  
 	 					del = '<a class="btn btn-sm btn-danger deleteRequest" href="#" data-BookingDateID="' + data["BookingDateID"] + '"  data-BookingRequestID="' + data["BookingRequestID"] + '"  data-BookingID="' + data["BookingID"] + '" title="Delete"><i class="fa fa-trash"></i></a>';
 					}
 	 				if (data["TonBook"] == 1) {
