@@ -5724,40 +5724,34 @@ class Booking extends BaseController
 		}
 	}
 
-	public function DriverLoads()
-	{
-		$data = array();
-		$data['Driver'] = 0;
-		if ($this->input->post('search')) {
-			$driver = $this->input->post('driver');
+	public function DriverLoads(){ 
+        $data=array();  
+		$data['Driver'] = 0; 
+		if($this->input->post('search')){ 
+			$driver = $this->input->post('driver'); 
 			$data['Driver'] = $driver;
+			$searchdate = $this->input->post('searchdate');  
+			$data['searchdate'] = $searchdate;
+			
+			$B = explode('/',$searchdate);
+			$sd	 = $B[2]."-".$B[1]."-".$B[0] ;  
+			
+			$data['TodayPDAUsers'] = $this->Common_model->TodayPDAUsers($sd); 	
+			$data['DriverLoadsCollection'] = $this->Booking_model->GetDriverRequestLoadsCollection($searchdate,$driver);  
+			$data['DriverLoadsDelivery'] = $this->Booking_model->GetDriverRequestLoadsDelivery($searchdate,$driver);  
+			
+			$data['DriverLoadsDayWork'] = $this->Booking_model->GetDriverRequestLoadsDayWork($searchdate,$driver);  
+			$data['DriverLoadsHaulage'] = $this->Booking_model->GetDriverRequestLoadsHaulage($searchdate,$driver);  
+			
+			$data['DriverDetails'] = $this->Booking_model->GetDriverLoginDetails($driver);  			
+		}	
 		
-			$searchdate = $this->input->post('searchdate');
-			$StartDate =$this->input->post('start_date');
-	
-			$EndDate = $this->input->post('end_date');
-
-			// $data['searchdate'] = $searchdate;
-
-			$B = explode('/', $searchdate);
-			$sd = $B[2] . "-" . $B[1] . "-" . $B[0];
-
-			$data['TodayPDAUsers'] = $this->Common_model->TodayPDAUsers($sd);
-			$data['DriverLoadsCollection'] = $this->Booking_model->GetDriverRequestLoadsCollection($StartDate , $EndDate, $driver);
-			$data['DriverLoadsDelivery'] = $this->Booking_model->GetDriverRequestLoadsDelivery($StartDate , $EndDate, $driver);
-
-			$data['DriverLoadsDayWork'] = $this->Booking_model->GetDriverRequestLoadsDayWork($StartDate , $EndDate, $driver);
-			$data['DriverLoadsHaulage'] = $this->Booking_model->GetDriverRequestLoadsHaulage($StartDate , $EndDate, $driver);
-
-			$data['DriverDetails'] = $this->Booking_model->GetDriverLoginDetails($driver);
-		}
-
-		$data['DriverList'] = $this->Booking_model->DriverLoginList();
-
-		$this->global['pageTitle'] = WEB_PAGE_TITLE . ' : Driver Loads Reports';
-		$this->global['active_menu'] = 'driverloads';
-		$this->loadViews("Booking/DriverLoads", $this->global, $data, NULL);
-	}
+		$data['DriverList'] = $this->Booking_model->DriverLoginList(); 
+		
+        $this->global['pageTitle'] = WEB_PAGE_TITLE.' : Driver Loads Reports';
+        $this->global['active_menu'] = 'driverloads';
+        $this->loadViews("Booking/DriverLoads", $this->global, $data, NULL);
+    }
 
 	function DeleteLoad()
 	{

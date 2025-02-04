@@ -3107,255 +3107,241 @@ class Booking_model extends CI_Model{
 		//exit;
 		return $query->result_array();
 	}
-	public function GetDriverRequestLoadsCollection($start_date,$end_date,$driver){ 
+		
+	public function GetDriverRequestLoadsCollection($searchdate,$driver){ 
 	 
-	  //	$sd= explode('/', $start_date,$end_date);    
-	//	$firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
-		 
-		
-		$sd = explode('/', $start_date);
-		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
+		$sd= explode('/', $searchdate);    
+	  $firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
+	   
+	  $per= $this->db->dbprefix;   
+	  $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
+	  $this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+	  $this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+	  $this->db->select(' tbl_booking_loads1.LoadID ');  
+	  $this->db->select(' tbl_booking_loads1.TipNumber ');  
+	  $this->db->select(' tbl_booking_loads1.Status ');  
+	  $this->db->select(' tbl_booking_loads1.DriverLoginID '); 	
+	  $this->db->select(' tbl_booking_loads1.Expenses ');  
+	  $this->db->select(' tbl_booking_loads1.VehicleRegNo ');  
+	  $this->db->select('tbl_booking_loads1.ReceiptName'); 
+	  //$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
+	  $this->db->select(' tbl_booking_loads1.TipID ');	 
+	   
+	  $this->db->select(' tbl_booking1.BookingType ');  	 		
+	  $this->db->select(' tbl_booking1.LoadType ');  	 
+	  $this->db->select(' tbl_materials.MaterialName ');	
+	  $this->db->select(' tbl_booking_request.CompanyName ');	 
+	  $this->db->select(' tbl_booking_request.OpportunityID ');		  
+	  $this->db->select(' tbl_booking_request.OpportunityName ');	 
 
-		$ed = explode('/', $end_date);
-		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
+	  $this->db->select(' tbl_tipaddress.TipName ');	  
+	  $this->db->select(' tbl_tipticket.TipTicketID ');	
+	  $this->db->select(' tbl_tipticket.TipID as TicketTipID ');	  
+	  $this->db->select(' tbl_tipticket.TipRefNo as SuppNo ');
+	  $this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
+	  $this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime ');  	 	  		 
+	  $this->db->select(' tbl_tickets.TicketNumber'); 
+	  $this->db->select(' tbl_tickets.pdf_name as TicketPdfName'); 
+	   
+	  $this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
+	  $this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 
+	  $this->db->join('tbl_tipticket', 'tbl_booking_loads1.LoadID =tbl_tipticket.LoadID ',"LEFT"); 
+	  $this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID =tbl_tickets.LoadID ',"LEFT");  
+	  $this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
+	  $this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
+	  if($driver>0){
+		  $this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
+	  } 
+	  $this->db->where('tbl_booking_loads1.Status > 3'); 
+	  $this->db->where(' tbl_booking1.BookingType','1');  
+		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
+	  //$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
+	  $this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
+	  
+	  $this->db->group_by("tbl_booking_loads1.LoadID");             
+	  $query = $this->db->get('tbl_booking_loads1');
+	  
 
+	  return $query->result();
+  }
+  public function GetDriverRequestLoadsDelivery($searchdate,$driver){ 
+   
+		$sd= explode('/', $searchdate);    
+	  $firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
+	   
+	  $per= $this->db->dbprefix;   
+	  $this->db->select(' tbl_booking_loads1.BookingID');  	 		 
+	  $this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+	  $this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
+	  $this->db->select(' tbl_booking_loads1.LoadID ');  
+	  $this->db->select(' tbl_booking_loads1.TipNumber ');  
+	  $this->db->select(' tbl_booking_loads1.Status ');   
+	  $this->db->select(' tbl_booking_loads1.TipID ');	
+	  $this->db->select('tbl_booking_loads1.ReceiptName'); 
 
+	  $this->db->select(' tbl_booking_loads1.VehicleRegNo ');  
+	  $this->db->select(' tbl_booking_loads1.Expenses ');  
+	  $this->db->select(' tbl_booking_request.CompanyName ');	    
+	  
+	  $this->db->select(' tbl_booking_loads1.DriverLoginID ');  		
+	  
+	  $this->db->select(' tbl_tickets.TicketNumber ');   
+	  $this->db->select(' tbl_booking1.BookingType ');  	 		
+	  $this->db->select(' tbl_booking1.LoadType ');  	 
+	  $this->db->select(' tbl_materials.MaterialName ');	 
+	  //$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
+	  
+	  $this->db->select(' tbl_booking_request.OpportunityID ');		 
+	  $this->db->select(' tbl_booking_request.OpportunityName ');	 
+	   
+	  $this->db->select(' tbl_tipaddress.TipName ');	  
+	  $this->db->select(' tbl_tipticket.TipID as TicketTipID ');
+	  $this->db->select(' tbl_tipticket.TipRefNo as SuppNo ');
+	  $this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
+	  $this->db->select(' tbl_tickets.TicketNumber');  
+	  $this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime '); 		
+	  $this->db->select(' tbl_tickets.pdf_name as TicketPdfName'); 
+	  
+	  $this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
+	  $this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 
+	  $this->db->join('tbl_tipticket', 'tbl_booking_loads1.LoadID =tbl_tipticket.LoadID ',"LEFT"); 
+	  $this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID =tbl_tickets.LoadID ',"LEFT");  
+	  $this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
+	  $this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
+	  if($driver>0){
+		  $this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
+	  }
+	  $this->db->where(' tbl_booking1.BookingType','2'); 
+	  $this->db->where('tbl_booking_loads1.Status > 3'); 
+	  //$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
+	  $this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
+	  
+		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);     
+	  $this->db->group_by("tbl_booking_loads1.LoadID");             
+	  $query = $this->db->get('tbl_booking_loads1');
+	  
+	  //echo $this->db->last_query(); 
+	  //exit; 
+	  return $query->result();
+  } 
+  public function GetDriverRequestLoadsDayWork($searchdate,$driver){ 
+   
+		$sd= explode('/', $searchdate);    
+	  $firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
+	   
+	  $per= $this->db->dbprefix;   
+	  $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
+	  $this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+	  $this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+	  $this->db->select(' tbl_booking_loads1.LoadID ');  
+	  $this->db->select(' tbl_booking_loads1.TipNumber ');  
+	  $this->db->select(' tbl_booking_loads1.Status ');  
+	  $this->db->select(' tbl_booking_loads1.DriverLoginID ');  		
+	  //$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
+	  $this->db->select(' tbl_booking_loads1.TipID ');
+	  
+	   $this->db->select(' tbl_booking_loads1.Expenses ');  
+	  $this->db->select(' tbl_booking_request.CompanyName ');	 
+	  
+	  $this->db->select(' tbl_booking1.BookingType ');  	 		
+	  $this->db->select(' tbl_booking1.LoadType ');  	 
+	  $this->db->select(' tbl_materials.MaterialName ');	 
+	  $this->db->select(' tbl_booking_request.OpportunityID ');		  
+	  $this->db->select(' tbl_booking_request.OpportunityName ');	 
 
-        $per= $this->db->dbprefix;   
-	    $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
-		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
-		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
-		$this->db->select(' tbl_booking_loads1.LoadID ');  
-		$this->db->select(' tbl_booking_loads1.TipNumber ');  
-		$this->db->select(' tbl_booking_loads1.Status ');  
-		$this->db->select(' tbl_booking_loads1.DriverLoginID '); 	
-		$this->db->select(' tbl_booking_loads1.Expenses ');  
-		$this->db->select(' tbl_booking_loads1.VehicleRegNo ');  
-		$this->db->select('tbl_booking_loads1.ReceiptName'); 
-		//$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
-		$this->db->select(' tbl_booking_loads1.TipID ');	 
- 		
-		$this->db->select(' tbl_booking1.BookingType ');  	 		
-		$this->db->select(' tbl_booking1.LoadType ');  	 
-		$this->db->select(' tbl_materials.MaterialName ');	
-		$this->db->select(' tbl_booking_request.CompanyName ');	 
-		$this->db->select(' tbl_booking_request.OpportunityID ');		  
-		$this->db->select(' tbl_booking_request.OpportunityName ');	 
+	  $this->db->select(' tbl_tipaddress.TipName ');	   
+	  
+	  $this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
+	  $this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT");  
+	  $this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
+	  $this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
+	  if($driver>0){
+		  $this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
+	  } 
+	  $this->db->where('tbl_booking_loads1.Status > 3'); 
+	  $this->db->where(' tbl_booking1.BookingType','3');  
+		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
+	  //$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
+	  $this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
+	  
+	  $this->db->group_by("tbl_booking_loads1.LoadID");             
+	  $query = $this->db->get('tbl_booking_loads1');
+	  
+	  //echo $this->db->last_query(); 
+	  //exit; 
+	  return $query->result();
+  }
+  
+  public function GetDriverRequestLoadsHaulage($searchdate,$driver){ 
+   
+		$sd= explode('/', $searchdate);    
+	  $firstDate = trim($sd[2]).'-'.trim($sd[1]).'-'.trim($sd[0]); 
+	   
+	  $per= $this->db->dbprefix;   
+	  $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
+	  $this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+	  $this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+	  $this->db->select(' tbl_booking_loads1.LoadID ');  
+	  $this->db->select(' tbl_booking_loads1.TipNumber ');  
+	  $this->db->select(' tbl_booking_loads1.Status ');  
+	  $this->db->select(' tbl_booking_loads1.DriverLoginID ');  		
+	  //$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime2,"%d-%m-%Y %T") as SiteInDateTime2 ');  	 	 
+	  $this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y %T") as SiteOutDateTime2 ');   
+	  $this->db->select(' tbl_booking_loads1.TipID ');	 
+	   
+	   $this->db->select(' tbl_booking_loads1.Expenses ');  
+	  $this->db->select(' tbl_booking_request.CompanyName ');	    
+	  
+	  $this->db->select(' tbl_booking1.BookingType ');  	 		
+	  $this->db->select(' tbl_booking1.LoadType ');  	 
+	  $this->db->select(' tbl_materials.MaterialName ');	 
+	  $this->db->select(' tbl_booking_request.OpportunityID ');		  
+	  $this->db->select(' tbl_booking_request.OpportunityName ');	 
 
-		$this->db->select(' tbl_tipaddress.TipName ');	  
-		$this->db->select(' tbl_tipticket.TipTicketID ');	
-		$this->db->select(' tbl_tipticket.TipID as TicketTipID ');	  
-		$this->db->select(' tbl_tipticket.TipRefNo as SuppNo ');
-		$this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
-		$this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime ');  	 	  		 
-		$this->db->select(' tbl_tickets.TicketNumber'); 
-		$this->db->select(' tbl_tickets.pdf_name as TicketPdfName'); 
-		 
-		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
-		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 
-		$this->db->join('tbl_tipticket', 'tbl_booking_loads1.LoadID =tbl_tipticket.LoadID ',"LEFT"); 
-		$this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID =tbl_tickets.LoadID ',"LEFT");  
-		$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
-		$this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
-		if($driver>0){
-			$this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
-		} 
-		$this->db->where('tbl_booking_loads1.Status > 3'); 
-		$this->db->where(' tbl_booking1.BookingType','1');  
-	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
-		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
-
-		
-		$this->db->group_by("tbl_booking_loads1.LoadID");             
-	    $query = $this->db->get('tbl_booking_loads1');
-		
-
-	    return $query->result();
-	}
-	public function GetDriverRequestLoadsDelivery($start_date,$end_date,$driver){ 
-	 
-		$sd = explode('/', $start_date);
-		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
-
-		$ed = explode('/', $end_date);
-		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
- 
-        $per= $this->db->dbprefix;   
-	    $this->db->select(' tbl_booking_loads1.BookingID');  	 		 
-		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
-		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
-		$this->db->select(' tbl_booking_loads1.LoadID ');  
-		$this->db->select(' tbl_booking_loads1.TipNumber ');  
-		$this->db->select(' tbl_booking_loads1.Status ');   
-		$this->db->select(' tbl_booking_loads1.TipID ');	
-		$this->db->select('tbl_booking_loads1.ReceiptName'); 
-
-		$this->db->select(' tbl_booking_loads1.VehicleRegNo ');  
-        $this->db->select(' tbl_booking_loads1.Expenses ');  
-		$this->db->select(' tbl_booking_request.CompanyName ');	    
-		
-		$this->db->select(' tbl_booking_loads1.DriverLoginID ');  		
-		
-		$this->db->select(' tbl_tickets.TicketNumber ');   
-		$this->db->select(' tbl_booking1.BookingType ');  	 		
-		$this->db->select(' tbl_booking1.LoadType ');  	 
-		$this->db->select(' tbl_materials.MaterialName ');	 
-		//$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
-		
-		$this->db->select(' tbl_booking_request.OpportunityID ');		 
-		$this->db->select(' tbl_booking_request.OpportunityName ');	 
-		 
-		$this->db->select(' tbl_tipaddress.TipName ');	  
-		$this->db->select(' tbl_tipticket.TipID as TicketTipID ');
-		$this->db->select(' tbl_tipticket.TipRefNo as SuppNo ');
-		$this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
-		$this->db->select(' tbl_tickets.TicketNumber');  
-		$this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime '); 		
-		$this->db->select(' tbl_tickets.pdf_name as TicketPdfName'); 
-		
-		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
-		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 
-		$this->db->join('tbl_tipticket', 'tbl_booking_loads1.LoadID =tbl_tipticket.LoadID ',"LEFT"); 
-		$this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID =tbl_tickets.LoadID ',"LEFT");  
-		$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
-		$this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
-		if($driver>0){
-			$this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
-		}
-		$this->db->where(' tbl_booking1.BookingType','2'); 
-		$this->db->where('tbl_booking_loads1.Status > 3'); 
-		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
-	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);     
-		$this->db->group_by("tbl_booking_loads1.LoadID");             
-	    $query = $this->db->get('tbl_booking_loads1');
-		
-		//echo $this->db->last_query(); 
-		//exit; 
-	    return $query->result();
-	} 
-	public function GetDriverRequestLoadsDayWork($start_date,$end_date,$driver){ 
-	 
-		$sd = explode('/', $start_date);
-		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
-
-		$ed = explode('/', $end_date);
-		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
- 
-        $per= $this->db->dbprefix;   
-	    $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
-		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
-		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
-		$this->db->select(' tbl_booking_loads1.LoadID ');  
-		$this->db->select(' tbl_booking_loads1.TipNumber ');  
-		$this->db->select(' tbl_booking_loads1.Status ');  
-		$this->db->select(' tbl_booking_loads1.DriverLoginID ');  		
-		//$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
-		$this->db->select(' tbl_booking_loads1.TipID ');
-		
- 		$this->db->select(' tbl_booking_loads1.Expenses ');  
-		$this->db->select(' tbl_booking_request.CompanyName ');	 
-		
-		$this->db->select(' tbl_booking1.BookingType ');  	 		
-		$this->db->select(' tbl_booking1.LoadType ');  	 
-		$this->db->select(' tbl_materials.MaterialName ');	 
-		$this->db->select(' tbl_booking_request.OpportunityID ');		  
-		$this->db->select(' tbl_booking_request.OpportunityName ');	 
-
-		$this->db->select(' tbl_tipaddress.TipName ');	   
-		
-		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
-		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT");  
-		$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
-		$this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
-		if($driver>0){
-			$this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
-		} 
-		$this->db->where('tbl_booking_loads1.Status > 3'); 
-		$this->db->where(' tbl_booking1.BookingType','3');  
-	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
-		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
-		$this->db->group_by("tbl_booking_loads1.LoadID");             
-	    $query = $this->db->get('tbl_booking_loads1');
-		
-		//echo $this->db->last_query(); 
-		//exit; 
-	    return $query->result();
-	}
-	
-	public function GetDriverRequestLoadsHaulage($start_date,$end_date,$driver){ 
-	 
-		$sd = explode('/', $start_date);
-		$Start_Date = trim($sd[2]) . '-' . trim($sd[1]) . '-' . trim($sd[0]); 
-
-		$ed = explode('/', $end_date);
-		$End_Date = trim($ed[2]) . '-' . trim($ed[1]) . '-' . trim($ed[0]); 
- 
-        $per= $this->db->dbprefix;   
-	    $this->db->select(' tbl_booking_loads1.BookingID ');  	 		 
-		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
-		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
-		$this->db->select(' tbl_booking_loads1.LoadID ');  
-		$this->db->select(' tbl_booking_loads1.TipNumber ');  
-		$this->db->select(' tbl_booking_loads1.Status ');  
-		$this->db->select(' tbl_booking_loads1.DriverLoginID ');  		
-		//$this->db->select(' DATE_FORMAT(tbl_booking1.BookingDateTime,"%d-%m-%Y %T") as BookingDateTime ');  	 	  		
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") as AllocatedDateTime ');  
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y %T") as JobStartDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');   
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime2,"%d-%m-%Y %T") as SiteInDateTime2 ');  	 	 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y %T") as SiteOutDateTime2 ');   
-		$this->db->select(' tbl_booking_loads1.TipID ');	 
- 		
- 		$this->db->select(' tbl_booking_loads1.Expenses ');  
-		$this->db->select(' tbl_booking_request.CompanyName ');	    
-		
-		$this->db->select(' tbl_booking1.BookingType ');  	 		
-		$this->db->select(' tbl_booking1.LoadType ');  	 
-		$this->db->select(' tbl_materials.MaterialName ');	 
-		$this->db->select(' tbl_booking_request.OpportunityID ');		  
-		$this->db->select(' tbl_booking_request.OpportunityName ');	 
-
-		$this->db->select(' tbl_tipaddress.TipName ');	   
-		
-		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
-		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT");  
-		$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
-		$this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
-		if($driver>0){
-			$this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
-		} 
-		$this->db->where('tbl_booking_loads1.Status = 4'); 
-		$this->db->where(' tbl_booking1.BookingType','4');  
-	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
-		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
-		$this->db->where("DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime, '%Y-%m-%d') BETWEEN '$Start_Date' AND '$End_Date'");
-		$this->db->group_by("tbl_booking_loads1.LoadID");             
-	    $query = $this->db->get('tbl_booking_loads1');
-		
-		//echo $this->db->last_query(); 
-		//exit; 
-	    return $query->result();
-	}
+	  $this->db->select(' tbl_tipaddress.TipName ');	   
+	  
+	  $this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
+	  $this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT");  
+	  $this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
+	  $this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
+	  if($driver>0){
+		  $this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
+	  } 
+	  $this->db->where('tbl_booking_loads1.Status = 4'); 
+	  $this->db->where(' tbl_booking1.BookingType','4');  
+		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
+	  //$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
+	  $this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y-%m-%d") ', $firstDate);    
+	  
+	  $this->db->group_by("tbl_booking_loads1.LoadID");             
+	  $query = $this->db->get('tbl_booking_loads1');
+	  
+	  //echo $this->db->last_query(); 
+	  //exit; 
+	  return $query->result();
+  }
+  
 	
 	public function GetDriverLoadsCollection($searchdate,$driver){ 
 	 
