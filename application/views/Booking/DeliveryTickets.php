@@ -222,6 +222,7 @@ var GetTableDataApiEndpoint1 = 'AjaxDeliveryTickets';//Endpoint processing and r
 			//rowId required when doing update, can put any unique value for each row instead of ID
 			rowId: 'LoadID', 
 			createdRow: function (row, data, dataIndex) {  
+				console.log(data);
 					//alert(data["OpportunityID"]); 
 				//var btype = ''; 
 				var Ltype ="";var dname =""; var vreg ="";  var Status =""; 
