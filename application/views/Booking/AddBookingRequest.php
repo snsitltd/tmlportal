@@ -570,6 +570,32 @@ Append += '<td><input type="text" class="form-control" id="PurchaseOrderNo'+rowI
 		}); 
 		$("body").on("change", ".LorryType", function(){  
 		    $('.BookingDateTime').click();
+			var rawPriceVal = $(this).val();
+		
+    
+    var RID = $(this).attr("data-BID");  
+    var LorryType = $('#LorryType' + RID).val();
+	console.log("LorryType Selected:", LorryType);
+	
+    if (LorryType) {
+        if (LorryType === "2") {
+			$('#Price' + RID).val(0).change(); // Use the specific Price input related to this RID
+			//console.log("Price set to 0 because LorryType is 2");
+        } else {
+			var PriceField = $('#Price' + RID);
+			var rawPriceVal = PriceField.val();
+        }
+    } else {
+        //console.log("LorryType element not found for RID: " + RID);
+    }
+	if ($.isNumeric(rawPriceVal)) {
+            var PriceVal = parseFloat(rawPriceVal).toFixed(2);
+         //   console.log("Parsed PriceVal:", PriceVal);
+            PriceField.val(PriceVal); // Update the field with the parsed value
+        } else {
+         //   console.log("Invalid Price value:", rawPriceVal);
+            PriceField.val(0);
+        }
 		});
 		$("body").on("changeDate click change ", ".BookingDateTime , .LoadType , .LorryType , .Loads , .BookingType, .Material,  #OpportunityID", function(){  
 		//$('.BookingDateTime , .LoadType , .Loads , .BookingType').datepicker().on('changeDate click', function (ev) { 
@@ -597,7 +623,7 @@ Append += '<td><input type="text" class="form-control" id="PurchaseOrderNo'+rowI
 					//alert(temp[i]);
 				} 
 				temp.sort();
-				if(BookingDateTime!="" && LoadType ==1){
+				if(BookingDateTime!="" && LoadType ==1 || LoadType ==2){
 					var DateRequired = temp[0]; 
 					var HitUrl = baseURL + "ShowOppoProductPriceAJAX"; 
 					$.ajax({
@@ -624,7 +650,7 @@ Append += '<td><input type="text" class="form-control" id="PurchaseOrderNo'+rowI
 								$( "#Price"+RID).val(0);  Prc = 0; 
 							} 	
 
-							if(LoadType==1){ 
+							if(LoadType==1 || LoadType ==2){ 
 								 
 								$( "#Total"+RID).html(parseFloat(Prc*Loads*temp_count).toFixed(2)); 
 								$( "#TotalHidden"+RID).val(parseFloat(Prc*Loads*temp_count).toFixed(2)); 
