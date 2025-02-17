@@ -1809,9 +1809,13 @@ class Booking_model extends CI_Model{
 		$columnName = $_POST['columns'][$columnIndex]['data']; // Column name   
 		$columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 		$searchValue = trim(strtolower($_POST['search']['value'])); // Search value  
-		 
-        //Only select column that want to show in datatable or you can filte it mnually when send it
-        $this->db->start_cache(); 
+	
+		// Get pagination parameters
+		$start = $_POST['start'];
+		$length = $_POST['length'];
+	
+		// Start caching the query
+		$this->db->start_cache(); 
 		$this->db->select(' tbl_booking_loads1.BookingID');  	 		 
 		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
@@ -1824,27 +1828,23 @@ class Booking_model extends CI_Model{
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y %T") as JobEndDateTime ');  	 	 
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y %T") as SiteInDateTime ');  	 	 
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');  
-		
 		$this->db->select(' tbl_drivers_login.DriverName as dname ');  	 		
 		$this->db->select(' tbl_drivers.RegNumber as rname ');  	 				
-		 
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as BookingDateTime ');  
-		 
 		$this->db->select(' tbl_booking_request.OpportunityID ');		   
 		$this->db->select(' tbl_booking_request.OpportunityName ');		 
 		$this->db->select(' tbl_booking1.MaterialName ');		 
 		$this->db->select(' tbl_booking1.BookingType ');  	 		
 		$this->db->select(' tbl_booking1.LoadType ');  	 
-		
+	
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID '); 		
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID '); 		
 		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID '); 
 		$this->db->join('tbl_drivers', ' tbl_booking_loads1.DriverID = tbl_drivers.LorryNo '); 		
 		$this->db->join('tbl_drivers_login', 'tbl_booking_loads1.DriverLoginID = tbl_drivers_login.DriverID'); 	 
-		
-		//$this->db->where('tbl_booking_loads.Status <> 4 '); 
-        if( !empty($searchValue) ){  
-			
+	
+		// Search functionality
+		if( !empty($searchValue) ){  
 			$s = explode(' ',$searchValue);
 			if(count($s)>0){ 
 				for($i=0;$i<count($s);$i++){   
@@ -1855,39 +1855,48 @@ class Booking_model extends CI_Model{
 						$this->db->or_like('tbl_drivers.DriverName', $s[$i]); 
 						$this->db->or_like('tbl_drivers.RegNumber', $s[$i]);  
 						$this->db->or_like('tbl_booking1.MaterialName', $s[$i]);   
-						$this->db->or_like(' DATE_FORMAT(tbl_booking_date1.BookingDateTime,"%d-%m-%Y %T") ', $s[$i]);   
-						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") ', $s[$i]);   
-						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y  %T") ', $s[$i]);   
-						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y  %T") ', $s[$i]);   
-						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y  %T") ', $s[$i]);   
-						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y  %T") ', $s[$i]);   
+						$this->db->or_like('DATE_FORMAT(tbl_booking_date1.BookingDateTime,"%d-%m-%Y %T")', $s[$i]);   
+						$this->db->or_like('DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T")', $s[$i]);   
+						$this->db->or_like('DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y  %T")', $s[$i]);   
+						$this->db->or_like('DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d-%m-%Y  %T")', $s[$i]);   
+						$this->db->or_like('DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d-%m-%Y  %T")', $s[$i]);   
+						$this->db->or_like('DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y  %T")', $s[$i]);   
 					$this->db->group_end();
-
 				}
 			}    
-        }
- 
-		$this->db->order_by($columnName, $columnSortOrder);			 
-        $query = $this->db->get('tbl_booking_loads1');
-		//echo $this->db->last_query(); 
-		//exit; 
+		}
+	
+		// Order and Limit for Pagination
+		$this->db->order_by($columnName, $columnSortOrder);
 		$this->db->stop_cache();
-
-		//Reset Key Array
-        $data = array();
+	
+		// Get total records before applying pagination
+		$totalData = $this->db->count_all_results('tbl_booking_loads1', FALSE);
+	
+		// Apply pagination limits
+		$this->db->limit($length, $start);
+		$query = $this->db->get();
+		$this->db->flush_cache();
+	
+		// Get filtered records count
+		$totalFiltered = $totalData;
+		if(!empty($searchValue)){
+			$totalFiltered = $query->num_rows();
+		}
+	
+		// Reset Key Array
+		$data = array();
 		$data = $query->result_array();
-		$totalData  = $this->db->count_all_results();
-		$totalFiltered =  $totalData; 
 		 
-        //Prepare Return Data
-        $return = array(
-                "draw"            => $_REQUEST['draw'] ,   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
-                "recordsTotal"    => $totalData,  // total number of records
-                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
-                "data"            => $data   // total data array 
-        ); 
-        return $return; 
-    }
+		// Prepare Return Data
+		$return = array(
+			"draw" => $_REQUEST['draw'],
+			"recordsTotal" => $totalData,
+			"recordsFiltered" => $totalFiltered,
+			"data" => $data
+		); 
+		return $return; 
+	}
 	public function GetSubcontractorLoadsData($ContractorID){
 
 

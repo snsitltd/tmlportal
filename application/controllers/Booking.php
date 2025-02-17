@@ -4941,6 +4941,8 @@ class Booking extends BaseController
 	}
 	public function AjaxAllocateDrivers()
 	{
+		// echo "devam";
+		// die();
 		$this->load->library('ajax');
 		$data = $this->Booking_model->GetAllocateDriversData();
 		//echo "<PRE>";
