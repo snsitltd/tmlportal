@@ -14808,7 +14808,7 @@ class Booking extends BaseController
 								<b>Driver Name: </b> ' . $data1['tickets']['DriverName'] . '<br> 
 								<b>Driver Signature: </b> <br> 
 								<div><img src="/assets/DriverSignature/' . $data1['tickets']['dsignature'] . '" width ="100" height="40" style="float:left"> </div>
-								<b>Company Name: </b> ' . $data1['LoadInfo']->CompanyName . ' <br>		 	 	 
+								<b>Company Name: </b> ' . $data['LoadInfo']->CompanyName . ' <br>		 	 	 
 								<b>Site Address: </b> ' . $data['LoadInfo']->OpportunityName . '<br>
 								<b>Tip Address: </b> ' . $data['LoadInfo']->TipName . ',' . $data['LoadInfo']->Street1 . ',' . $data['LoadInfo']->Street2 . ',
 								' . $data['LoadInfo']->Town . ',' . $data['LoadInfo']->County . ',' . $data['LoadInfo']->PostCode . '<br>	 
