@@ -127,7 +127,7 @@
 			<ul class="nav navbar-nav">
 			<li class="dropdown messages-menu">
 					<a title="Version 1.0.0">
-					  <span> <strong> VU.25.02.3.4[P] </strong></span> 
+					  <span> <strong> VU.25.02.3.5[P] </strong></span> 
 					</a> 
 				</li>  
 			</ul>
