@@ -2440,9 +2440,9 @@ class Booking extends BaseController
 				$object->setActiveSheetIndex(0);
 
 				if ($NetWeight == '1') {
-					$table_columns = ["ConvTkt No", "ConvTkt Date", "Customer Name", "Job Site Address", "PO NO", "Product Description", "Price", "WaitTime", "Status", "NetWeight", "Total Price"];
+					$table_columns = ["ConvTkt No", "ConvTkt Date", "Customer Name", "Job Site Address", "PO NO", "Product Description","Driver Name","Vehicle Reg No", "Price", "WaitTime", "Status", "NetWeight", "Total Price"];
 				} else {
-					$table_columns = ["ConvTkt No", "ConvTkt Date", "Customer Name", "Job Site Address", "PO NO", "Product Description", "Price", "WaitTime", "Status"];
+					$table_columns = ["ConvTkt No", "ConvTkt Date", "Customer Name", "Job Site Address", "PO NO", "Product Description", "Driver Name","Vehicle Reg No","Price", "WaitTime", "Status"];
 				}
 
 				$column = 0;
@@ -2490,6 +2490,11 @@ class Booking extends BaseController
 						} else {
 							$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $row['MaterialName']);
 						}
+						// Driver Name (Column 6)
+						$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row['DriverName']);
+
+						// Vehicle Reg No (Column 7)
+						$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row['VehicleRegNo']);
 
 						if ($row['BookingMaterialID'] == $row['MaterialID']) {
 							$Price = isset($row['Price']) ? (float) $row['Price'] : 0;
@@ -2497,22 +2502,24 @@ class Booking extends BaseController
 						} else {
 							$Price = 0;
 						}
-						$object->getActiveSheet()->getStyle('G2:G' . $excel_row)->getNumberFormat()->setFormatCode('#,##0.00');
+
+						
+						$object->getActiveSheet()->getStyle('H2:H' . $excel_row)->getNumberFormat()->setFormatCode('#,##0.00');
 					//	$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $Price);
 						$priceColumnIndex = array_search("Price", $table_columns);
 						$object->getActiveSheet()->setCellValueByColumnAndRow($priceColumnIndex, $excel_row, $Price);
 
 						// Wait Time
 						$min = ($row['WaitTime'] == null) ? "N/A" : $row['WaitTime'] . " Min";
-						$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $min);
-						$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row['Status']);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $min);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $row['Status']);
 
 						// Net Weight and Price Calculation
 						if ($NetWeight == '1') {
-							$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, round($row['Net'] / 1000, 2));
+							$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, round($row['Net'] / 1000, 2));
 							$NetWeight1 = round((float) $row['Net'] / 1000, 2);
 							$NPrice = round((float) $NetWeight1 * (float) $row['Price'], 2);
-							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $NPrice);
+							$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $NPrice);
 						}
 
 						$excel_row++;
