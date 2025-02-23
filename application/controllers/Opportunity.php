@@ -113,11 +113,12 @@ class Opportunity extends BaseController
 			$Cond = array('OpportunityID'=>$data['OpportunityID'], 'TipID'=>$data['TipID']);
 			$data['Autho'] = $this->Common_model->select_where('tbl_opportunity_tip',$Cond) ; 
 			 
-			if($data['Autho']){ 
-				$data['TableID'] = $data['Autho']['TableID']; 
-			}else{ 
-				$data['TableID'] = ""; 
-			}
+            if (!empty($data['Autho'])) {
+                $data['TableID'] = $data['Autho']['TableID'];
+            } else {
+                $data['TableID'] = ""; 
+                $data['Autho'] = array('Status' => 1, 'TipRefNo' => ''); // Set default values to avoid null access
+            }
 			//var_dump($data);
 			//exit; 
 			$html = $this->load->view('Opportunity/EditAuthoAJAX', $data, true);  
