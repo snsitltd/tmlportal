@@ -2424,7 +2424,7 @@ class Booking extends BaseController
 			$this->load->library("excel");
 
 			// Lorry types (Tipper, Grab, Bin)
-			$lorryTypes = [1 => 'Tipper', 2 => 'Grab', 3 => 'Bin'];
+			$lorryTypes = [0 => 'delivery' ,1 => 'Tipper', 2 => 'Grab', 3 => 'Bin'];
 
 			// Create a folder to store the Excel files
 			$xlsFolder = 'SplitXLS/';
@@ -2436,6 +2436,15 @@ class Booking extends BaseController
 			$xlsFiles = [];
 
 			foreach ($lorryTypes as $typeId => $lorryType) {
+
+				$filteredData = array_filter($data['SplitExcelDelTickets'], function ($row) use ($typeId) {
+					return $row['LorryType'] == $typeId;
+				});
+
+				if (empty($filteredData)) {
+					continue;
+				}
+
 				$object = new PHPExcel();
 				$object->setActiveSheetIndex(0);
 
@@ -2461,7 +2470,7 @@ class Booking extends BaseController
 				$excel_row = 2;
 
 				// Filtering data for the current LorryType
-				foreach ($data['SplitExcelDelTickets'] as $row) {
+				foreach ($filteredData as $row) {
 					if ($row['LorryType'] == $typeId) { // Filter by LorryType
 						$Price = 0;
 						$NetWeight1 = 0;
@@ -2526,28 +2535,19 @@ class Booking extends BaseController
 					} // End filtering by LorryType
 				}
 
-				// Adjust column width
 				for ($x = 'A'; $x != $object->getActiveSheet()->getHighestColumn(); $x++) {
 					$object->getActiveSheet()->getColumnDimension($x)->setAutoSize(TRUE);
-			
 				}
-
-				// Generate the file name
-				$FileName = $lorryType . "_" . date("Y-m-d-H:i") . ".xls";
-
-				// Sanitize file name
+			
+				$FileName = $lorryType . "_" . date("Y-m-d-H:i") . ".xlsx";
 				$FileName = mb_ereg_replace("([^\w\s\d\-_~@&,;\[\]\(\).])", '', $FileName);
 				$FileName = mb_ereg_replace("([\.]{2,})", '', $FileName);
-
-				// Writer object
+			
 				$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
-
-				// Save the file to the directory
 				$filePath = $xlsFolder . $FileName;
 				$object_writer->save($filePath);
-
-				// Add the file to the list
 				$xlsFiles[] = $filePath;
+
 			}
 
 			// Now, create the zip file
