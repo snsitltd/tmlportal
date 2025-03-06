@@ -2424,7 +2424,7 @@ class Booking extends BaseController
 			$this->load->library("excel");
 
 			// Lorry types (Tipper, Grab, Bin)
-			$lorryTypes = [1 => 'Tipper', 2 => 'Grab', 3 => 'Bin'];
+			$lorryTypes = [0 => 'delivery',1 => 'Tipper', 2 => 'Grab', 3 => 'Bin'];
 
 			// Create a folder to store the Excel files
 			$xlsFolder = 'SplitXLS/';
