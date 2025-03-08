@@ -816,4 +816,5 @@ class PHPExcel_Shared_String
         $v = floatval($value);
         return (is_numeric(substr($value, 0, strlen($v)))) ? $v : $value;
     }
+    
 }

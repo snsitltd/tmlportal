@@ -2769,6 +2769,7 @@ class PHPExcel_Calculation
             return self::wrapResult($formula);
         }
 
+        
         $pCellParent = ($pCell !== null) ? $pCell->getWorksheet() : null;
         $wsTitle = ($pCellParent !== null) ? $pCellParent->getTitle() : "\x00Wrk";
         $wsCellReference = $wsTitle . '!' . $cellID;
