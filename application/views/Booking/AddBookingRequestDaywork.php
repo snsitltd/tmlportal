@@ -453,6 +453,14 @@
 			$("#Loads"+rowIdx).html(LO).selectpicker('refresh'); 
 			 
 			rowIdx++; 	
+
+			$("#BookingType" + rowIdx).prop("required", true);
+			$("#DescriptionofMaterial" + rowIdx).prop("required", true);
+			$("#SICCode" + rowIdx).prop("required", true);
+			$("#LoadType" + rowIdx).prop("required", true);
+			$("#LorryType" + rowIdx).prop("required", true);
+			$("#Loads" + rowIdx).prop("required", true);
+			$("#BookingDateTime" + rowIdx).prop("required", true);
  		});
 		 
 		$('#tbody').on('click', '.remove', function () {   
@@ -686,6 +694,27 @@
     	var formate = hh + ':' + mm;
     	$(this).val(formate);
     }
+
+	$('#AddBooking').on('submit', function (event) {
+		let isValid = true;
+		console.log("Form submitted");
+		// Select only LorryType dropdowns
+		$(this).find('.LorryType[required]').each(function () {
+			if (!$(this).val()) {
+				isValid = false;
+				console.log("false");
+
+				$(this).css("border", "1px solid red"); // Highlight empty fields
+			} else {
+				$(this).css("border", ""); // Remove highlight if valid
+			}
+		});
+
+		if (!isValid) {
+			event.preventDefault(); // Stop form submission
+			alert("Please select a Lorry Type.");
+		}
+	});
 	
 </script> 
 <script src="<?php echo base_url('assets/js/Booking1.js'); ?>" type="text/javascript"></script> 
