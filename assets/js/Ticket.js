@@ -850,7 +850,7 @@ $(document).ready(function(){
 				Tare = $( "input[name='Tare']" ).val(),
 				Net = $( "input[name='Net']" ).val(), 
 				MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
-				
+				TicketDate = $( "input[name='TicketDate']" ).val(),
 				OrderNo = $( "input[name='OrderNo']" ).val(), 
 				FreeSuite = $( "input[name='FreeSuite']:checked" ).val(), 
 				
@@ -875,7 +875,7 @@ $(document).ready(function(){
 				OpportunityID: OpportunityID,SiteAddress: SiteAddress,HaullerRegNo: HaullerRegNo,DescriptionofMaterial: DescriptionofMaterial,ticket_notes: ticket_notes,
 				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode,FreeSuite: FreeSuite,OrderNo: OrderNo,
 				Net: Net, MaterialPrice: MaterialPrice, PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount,TotalAmount: TotalAmount, 
-				PaymentRefNo: PaymentRefNo ,driversignature: driversignature } ); 
+				PaymentRefNo: PaymentRefNo ,driversignature: driversignature, TicketDate: TicketDate } ); 
 					$('#overlay').fadeIn();
 					posting.done(function( data ) {  
 						$('#overlay').fadeOut(); 
@@ -1060,7 +1060,7 @@ $(document).ready(function(){
 				Tare = $( "input[name='Tare']" ).val(),
 				Net = $( "input[name='Net']" ).val(), 
 				MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
-				
+				TicketDate = $( "input[name='TicketNo']" ).val(),
 				PaymentType = $( "input[name='PaymentType']:checked" ).val(), 
 				Amount = $( "input[name='Amount']" ).val(), 
 				Vat = $( "input[name='Vat']" ).val(), 
@@ -1107,6 +1107,7 @@ $(document).ready(function(){
 
 
 	var EditOutTicket = $("#EditOutTicket");
+	console.log(EditOutTicket)	;
 	
 	var validator = EditOutTicket.validate({
 		
@@ -1116,6 +1117,7 @@ $(document).ready(function(){
 			CompanyID: { required:  true } ,
 			DescriptionofMaterial: { required:  true } ,
 			VechicleRegNo :{ required : true },
+			TicketDate: { required:  true } ,
 			DriverName :{ required : true },
 			GrossWeight : {maxlength: 5,  greaterThan: '#Tare', notEqual: '0' },
 			Amount :{  required: function () {  
@@ -1142,6 +1144,7 @@ $(document).ready(function(){
 		submitHandler: function(form){  
 			event.preventDefault();   
 			TicketNo = $( "input[name='TicketNo']" ).val(),	
+			TicketDate = $( "input[name='TicketNo']" ).val(),
 			Conveyance = $( "input[name='Conveyance']" ).val(), 
 			CompanyID = $( "#CompanyID" ).val(),
 			OpportunityID = $( "#OpportunityID" ).val(),
@@ -1170,7 +1173,8 @@ $(document).ready(function(){
 			TotalAmount = $( "input[name='TotalAmount']" ).val(), 
 			PaymentRefNo = $( "input[name='PaymentRefNo']" ).val(), 
 			driversignature = $( "input[name='driversignature']" ).val(), 
-			
+			TicketDate = $( "input[name='TicketDate']" ).val(),
+		
 			url = EditOutTicket.attr( "action" ); 
 			 
 			if($( "input[name='is_tml']" ).is(":checked")){ var is_tml = 1; }else{ var is_tml = 0;  }
@@ -1178,14 +1182,14 @@ $(document).ready(function(){
 			if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined   && CompanyID !=0 && OpportunityID !=0 && 
 				DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0  ){ 
 				 
-				var posting = $.post( url, { TicketNo: TicketNo, Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
+				var posting = $.post( url, { TicketNo: TicketNo,Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
 				OpportunityID: OpportunityID,SiteAddress: SiteAddress,DescriptionofMaterial: DescriptionofMaterial, 
 				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,HaullerRegNo: HaullerRegNo,GrossWeight: GrossWeight,Tare: Tare, 
 				Net: Net, MaterialPrice: MaterialPrice, SicCode: SicCode, OrderNo: OrderNo,
-				PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount,TotalAmount: TotalAmount,PaymentRefNo: PaymentRefNo,driversignature: driversignature  } );
+				PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount,TotalAmount: TotalAmount,PaymentRefNo: PaymentRefNo,driversignature: driversignature , TicketDate: TicketDate } );
 				 
 						$('#overlay').fadeIn();
-					posting.done(function( data ) {  
+						posting.done(function( data ) {  
 						$('#overlay').fadeOut(); 
 						if(data=='SAME'){
 						  alert("All Values are same as previous. Please update values to change. ");
@@ -1265,9 +1269,9 @@ $(document).ready(function(){
 					GrossWeight = $( "input[name='GrossWeight']" ).val(),
 					Tare = $( "input[name='Tare']" ).val(),
 					Net = $( "input[name='Net']" ).val(),
-					 
+
 					MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
-					
+
 					OrderNo = $( "input[name='OrderNo']" ).val(), 
 					
 					PaymentType = $( "input[name='PaymentType']:checked" ).val(), 
