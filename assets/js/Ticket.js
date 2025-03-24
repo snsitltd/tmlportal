@@ -225,7 +225,7 @@ $(document).ready(function(){
 				if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
 			if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
 			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && 
-			TypeOfTicket !="" && TypeOfTicket !=undefined  && TicketGap !="" && TicketGap !=undefined  ){ 	
+			TypeOfTicket !="" && TypeOfTicket !=undefined  && TicketGap !="" && TicketGap !=undefined  && GrossWeight > 0  ){ 	
 			
 			  // Send the data using post
 				var posting = $.post( url, { TicketNumber: TicketNumber,TicketGap: TicketGap,WIFNumber: WIFNumber,TypeOfTicket: TypeOfTicket, 
@@ -367,7 +367,10 @@ $(document).ready(function(){
 				Tare = $( "input[name='Tare']" ).val(),
 				Net = $( "input[name='Net']" ).val(), 
 				MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
+				
+				FreeSuite = $( "input[name='FreeSuite']:checked" ).val(),  
 				OrderNo = $( "input[name='OrderNo']" ).val(), 
+				
 				PaymentType = $( "input[name='PaymentType']:checked" ).val(), 
 				LorryType = $( "input[name='LorryType']:checked" ).val(), 
 				Amount = $( "input[name='Amount']" ).val(), 
@@ -379,19 +382,20 @@ $(document).ready(function(){
 				
 				url = addTicketsSubmit.attr( "action" ); 
 				if($( "input[name='is_tml']" ).is(":checked")){ var is_tml = 1; }else{ var is_tml = 0;  }
+				if($( "input[name='FreeSuite']" ).is(":checked")){ var FreeSuite = 1; }else{ var FreeSuite = 0;  }
+				
 				var btn= $("input[type=submit]:focus").val();
 				if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
-		 
-
+		  
 			if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
-			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined    ){ 
+			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined && GrossWeight > 0  ){ 
  
 			  // Send the data using post
 				var posting = $.post( url, {  Conveyance: Conveyance, WIFNumber: WIFNumber,is_tml: is_tml,CompanyID: CompanyID,
 				CompanyName: CompanyName,Street1: Street1,County: County,Town: Town,PostCode: PostCode,
 				OpportunityID: OpportunityID,SiteAddress: SiteAddress,HaullerRegNo: HaullerRegNo,DescriptionofMaterial: DescriptionofMaterial,ticket_notes: ticket_notes,
-				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode,OrderNo: OrderNo,
-				Net: Net, MaterialPrice: MaterialPrice,is_hold: is_hold,	
+				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode,
+				Net: Net, MaterialPrice: MaterialPrice,is_hold: is_hold, FreeSuite: FreeSuite,OrderNo: OrderNo,
 				PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount,TotalAmount: TotalAmount,PaymentRefNo: PaymentRefNo ,driversignature: driversignature } );
 				  
 				 $('#overlay').fadeIn();
@@ -415,8 +419,8 @@ $(document).ready(function(){
 						$("#addTicketsSubmit")[0].reset();  								  
 						$("#driversignature").val('');				  
 						$('#driverimage').html('');  
-						$("div.pblock").hide(); 
-						$("#ShowOrderNo").hide();	
+						$("div.pblock").hide();
+						$("#ShowOrderNo").hide();						
 						$('#CompanyID').selectpicker('refresh'); 
 						$('#County').selectpicker('refresh'); 
 						$('#OpportunityID').selectpicker('refresh'); 
@@ -556,7 +560,7 @@ $(document).ready(function(){
 				if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
  
 		if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
-			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined    ){ 
+			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0 ){ 
 				
 			  // Send the data using post
 				var posting = $.post( url, {  Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
@@ -587,7 +591,7 @@ $(document).ready(function(){
 						$("#driversignature").val('');				  
 						$('#driverimage').html('');  
 						$("div.pblock").hide(); 
-						$("#ShowOrderNo").hide();	
+						$("#ShowOrderNo").hide();		
 						$('#CompanyID').selectpicker('refresh'); 
 						$('#County').selectpicker('refresh'); 
 						$('#OpportunityID').selectpicker('refresh'); 
@@ -707,6 +711,7 @@ $(document).ready(function(){
 				Net = $( "input[name='Net']" ).val(),
 				 
 				MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
+				
 				OrderNo = $( "input[name='OrderNo']" ).val(), 
 				
 				PaymentType = $( "input[name='PaymentType']:checked" ).val(), 
@@ -725,14 +730,14 @@ $(document).ready(function(){
 				if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
 			
 			if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
-			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  ){ 
+			DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0 ){ 
 			
 			  // Send the data using post
 				var posting = $.post( url, { Conveyance: Conveyance, CompanyID: CompanyID,
 				CompanyName: CompanyName,Street1: Street1,County: County,Town: Town,PostCode: PostCode,
 				OpportunityID: OpportunityID,SiteAddress: SiteAddress,HaullerRegNo: HaullerRegNo,DescriptionofMaterial: DescriptionofMaterial, 
 				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode, OrderNo: OrderNo, 
-				Net: Net, MaterialPrice: MaterialPrice,is_hold: is_hold,
+				Net: Net, MaterialPrice: MaterialPrice,is_hold: is_hold, 
 				PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount,TotalAmount: TotalAmount,PaymentRefNo: PaymentRefNo ,driversignature: driversignature  } );
 				  
 				$('#overlay').fadeIn();
@@ -847,7 +852,8 @@ $(document).ready(function(){
 				MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
 				
 				OrderNo = $( "input[name='OrderNo']" ).val(), 
-				    
+				FreeSuite = $( "input[name='FreeSuite']:checked" ).val(), 
+				
 				PaymentType = $( "input[name='PaymentType']:checked" ).val(), 
 				LorryType = $( "input[name='LorryType']:checked" ).val(), 
 				Amount = $( "input[name='Amount']" ).val(), 
@@ -867,7 +873,7 @@ $(document).ready(function(){
 				// Send the data using post
 				var posting = $.post( url, {  TicketNo: TicketNo, Conveyance: Conveyance, WIFNumber: WIFNumber,is_tml: is_tml,CompanyID: CompanyID,
 				OpportunityID: OpportunityID,SiteAddress: SiteAddress,HaullerRegNo: HaullerRegNo,DescriptionofMaterial: DescriptionofMaterial,ticket_notes: ticket_notes,
-				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode,OrderNo: OrderNo,
+				LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode,FreeSuite: FreeSuite,OrderNo: OrderNo,
 				Net: Net, MaterialPrice: MaterialPrice, PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount,TotalAmount: TotalAmount, 
 				PaymentRefNo: PaymentRefNo ,driversignature: driversignature } ); 
 					$('#overlay').fadeIn();
@@ -963,7 +969,7 @@ $(document).ready(function(){
 				if($( "input[name='is_tml']" ).is(":checked")){ var is_tml = 1; }else{ var is_tml = 0;  }   
 				
 				if(TicketNo !=""  && CompanyID !=""  && CompanyID !=undefined   && OpportunityID !="" && CompanyID !=0 && OpportunityID !=0 && OpportunityID !=undefined  && 
-					DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined && GrossWeight >0 ){ 
+					DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined && GrossWeight >0  ){ 
 
 				// Send the data using post
 				var posting = $.post( url, {  TicketNo: TicketNo, LoadID: LoadID,Conveyance: Conveyance, WIFNumber: WIFNumber,is_tml: is_tml,CompanyID: CompanyID,
@@ -1170,7 +1176,7 @@ $(document).ready(function(){
 			if($( "input[name='is_tml']" ).is(":checked")){ var is_tml = 1; }else{ var is_tml = 0;  }
 				  
 			if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined   && CompanyID !=0 && OpportunityID !=0 && 
-				DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined && GrossWeight > 0){ 
+				DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0  ){ 
 				 
 				var posting = $.post( url, { TicketNo: TicketNo, Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
 				OpportunityID: OpportunityID,SiteAddress: SiteAddress,DescriptionofMaterial: DescriptionofMaterial, 
@@ -1260,7 +1266,8 @@ $(document).ready(function(){
 					Tare = $( "input[name='Tare']" ).val(),
 					Net = $( "input[name='Net']" ).val(),
 					 
-					MaterialPrice = $( "input[name='MaterialPrice']" ).val(),
+					MaterialPrice = $( "input[name='MaterialPrice']" ).val(), 
+					
 					OrderNo = $( "input[name='OrderNo']" ).val(), 
 					
 					PaymentType = $( "input[name='PaymentType']:checked" ).val(), 
@@ -1277,10 +1284,10 @@ $(document).ready(function(){
 				//if($( "input[name='is_tml']" ).is(":checked")){ var is_tml = 1; }else{ var is_tml = 0;  } 
 				
 				if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined   && CompanyID !=0 && OpportunityID !=0 && 
-				DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined && GrossWeight > 0){ 
+				DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0 ){ 
 				
 				  // Send the data using post
-					var posting = $.post( url, {  TicketNo: TicketNo, Conveyance: Conveyance ,CompanyID: CompanyID,
+					var posting = $.post( url, {  TicketNo: TicketNo, Conveyance: Conveyance, CompanyID: CompanyID,
 					OpportunityID: OpportunityID,SiteAddress: SiteAddress,HaullerRegNo: HaullerRegNo,DescriptionofMaterial: DescriptionofMaterial, 
 					LorryNo: LorryNo,VechicleRegNo: VechicleRegNo,DriverName: DriverName,driverid: driverid,GrossWeight: GrossWeight,Tare: Tare,SicCode: SicCode,OrderNo: OrderNo,
 					Net: Net, MaterialPrice: MaterialPrice,  PaymentType: PaymentType,LorryType: LorryType,Amount: Amount,Vat: Vat,VatAmount: VatAmount, 
@@ -1688,7 +1695,7 @@ jQuery( "#addOfficeTicketsSubmit1" ).submit(function( event ) {
 		if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
 	if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
 	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && 
-	TypeOfTicket !="" && TypeOfTicket !=undefined  && TicketGap !="" && TicketGap !=undefined  ){ 	
+	TypeOfTicket !="" && TypeOfTicket !=undefined  && TicketGap !="" && TicketGap !=undefined  && GrossWeight > 0  ){ 	
 	
 	  // Send the data using post
 		var posting = $.post( url, { TicketNumber: TicketNumber,TicketGap: TicketGap,WIFNumber: WIFNumber,TypeOfTicket: TypeOfTicket, Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
@@ -1784,7 +1791,7 @@ jQuery( "#addTicketsSubmit1" ).submit(function( event ) {
  
 
 	if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
-	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined ){ 
+	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0  ){ 
 
 	  // Send the data using post
 		var posting = $.post( url, {  Conveyance: Conveyance, WIFNumber: WIFNumber,is_tml: is_tml,CompanyID: CompanyID,
@@ -1876,7 +1883,7 @@ jQuery( "#outTicketssubmit1" ).submit(function( event ) {
 		if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
 
 if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
-	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined ){ 
+	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0 ){ 
 		
 	  // Send the data using post
 		var posting = $.post( url, {  Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
@@ -1958,7 +1965,7 @@ jQuery( "#collectionTicketssubmit1" ).submit(function( event ) {
 		if(btn == 'HOLD'){ var is_hold = 1; }else{  var is_hold = 0;  } 
 	
 	if(CompanyID !=""  && CompanyID !=undefined  && OpportunityID !="" && OpportunityID !=undefined  && 
-	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined ){ 
+	DescriptionofMaterial !="" &&DescriptionofMaterial !=undefined  && LorryNo !="" && LorryNo !=undefined  && GrossWeight > 0  ){ 
 	
 	  // Send the data using post
 		var posting = $.post( url, { Conveyance: Conveyance,is_tml: is_tml,CompanyID: CompanyID,
