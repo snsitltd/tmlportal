@@ -77,8 +77,10 @@
 									<div class="col-md-6">
 										<div class="form-group">
 											<label for="TicketDate">Date Time</label>
-											<input type="datetime-local" class="form-control" id="TicketDate"
-												name="TicketDate" value="<?php echo $tickets['TicketDate']; ?>">
+											<input type="text" class="form-control" id="TicketDate"
+    name="TicketDate" 
+    value="<?php echo isset($tickets['TicketDate']) ? date('Y-m-d\TH:i', strtotime($tickets['TicketDate'])) : ''; ?>">
+
 										</div>
 									</div>
 									<div class="col-md-6">
@@ -225,11 +227,9 @@
 									<div class="col-md-12">
 										<div class="form-group">
 											<label for="SiteAddress">Site Address</label>
-											<input type="text" class="form-control" id="SiteAddress"
-												value="<?php if ($tickets['OpportunityID'] != "") {
-													echo $SiteAddress->OpportunityName;
-												} ?>"
-												name="SiteAddress" maxlength="100" readonly>
+											<input type="text" class="form-control" id="SiteAddress" value="<?php if ($tickets['OpportunityID'] != "") {
+												echo $SiteAddress->OpportunityName;
+											} ?>" name="SiteAddress" maxlength="100" readonly>
 										</div>
 									</div>
 
@@ -291,17 +291,20 @@
 											<label for="Conveyance">Payment</label>
 											<div class="checkbox">
 												<label> <input type="radio" name="PaymentType" id="PaymentType"
-														value="0" <?php if ($tickets['PaymentType'] == 0) { ?> checked <?php } ?>> Credit </label>
+														value="0" <?php if ($tickets['PaymentType'] == 0) { ?> checked
+														<?php } ?>> Credit </label>
 												<label> <input type="radio" name="PaymentType" id="PaymentType"
-														value="1" <?php if ($tickets['PaymentType'] == 1) { ?> checked <?php } ?>> Cash </label>
+														value="1" <?php if ($tickets['PaymentType'] == 1) { ?> checked
+														<?php } ?>> Cash </label>
 												<label> <input type="radio" name="PaymentType" id="PaymentType"
-														value="2" <?php if ($tickets['PaymentType'] == 2) { ?> checked <?php } ?>> Card </label>
+														value="2" <?php if ($tickets['PaymentType'] == 2) { ?> checked
+														<?php } ?>> Card </label>
 											</div>
 
 										</div>
 									</div>
-									<div class="pblock" <?php if ($tickets['PaymentType'] == 0) { ?> style="display: none;"
-										<?php } ?>>
+									<div class="pblock" <?php if ($tickets['PaymentType'] == 0) { ?>
+											style="display: none;" <?php } ?>>
 										<div class="col-md-4">
 											<div class="form-group">
 												<label for="Amount">Amount</label>
@@ -437,13 +440,11 @@
 										<div class="form-group">
 											<label for="GrossWeight">Gross Weight</label>
 											<input type="number" class="form-control  required" id="GrossWeight"
-												onKeyPress="if(this.value.length==6) return false;"
-												value="<?php if ($tickets['GrossWeight'] != 0) {
+												onKeyPress="if(this.value.length==6) return false;" value="<?php if ($tickets['GrossWeight'] != 0) {
 													echo round($tickets['GrossWeight']);
 												} else {
 													echo "";
-												} ?>"
-												name="GrossWeight" maxlength="6">
+												} ?>" name="GrossWeight" maxlength="6">
 										</div>
 									</div>
 									<div class="col-md-4">
@@ -521,8 +522,17 @@
 		</div>
 	</section>
 </div>
-<script>
+<!-- Include Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+<!-- Include Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+	flatpickr("#TicketDate", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        time_24hr: true
+    });
 	$(document).ready(function () {
 		$(document).on("click", ".LinkConveyance", function () {
 			var Conveyance = $('#Conveyance').val(),
