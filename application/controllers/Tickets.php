@@ -1878,7 +1878,7 @@ class Tickets extends BaseController
 						
 						$html=$this->load->view('Tickets/ticket_pdf', $data, true);
 						 //this the the PDF filename that user will get to download
-						$pdfFilePath =  WEB_ROOT_PATH."tmlportal/assets/pdf_file/".$TicketUniqueID.".pdf";
+						$pdfFilePath =  WEB_ROOT_PATH."/assets/pdf_file/".$TicketUniqueID.".pdf";
 						$openPath =  "/assets/pdf_file/".$TicketUniqueID.".pdf";
 						 
 						//load mPDF library
