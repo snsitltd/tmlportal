@@ -56,6 +56,12 @@
                                         <input type="text" class="form-control" id="Conveyance" value="<?php echo $tickets['Conveyance']; ?>" name="Conveyance">
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TicketDate">Date Time</label>
+                                        <input type="datetime-local" class="form-control" id="TicketDate" name="TicketDate" value="<?php echo $tickets['TicketDate']; ?>">
+                                    </div>
+                                </div>
 
                                  <div class="col-md-2"> 
 										<div class="form-group">

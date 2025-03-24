@@ -1837,8 +1837,11 @@ class Tickets extends BaseController
 				$VatAmount = $this->security->xss_clean($this->input->post('VatAmount'));
 				$TotalAmount = $this->security->xss_clean($this->input->post('TotalAmount'));
 				$PaymentRefNo = $this->security->xss_clean($this->input->post('PaymentRefNo'));
-                $driversignature = $this->input->post('driversignature', FALSE); 
-				
+                $driversignature = $this->input->post('driversignature', FALSE);
+
+				$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
+                $TicketDate = date('Y-m-d H:i:s', strtotime($TicketDate));
+			
 				if($LorryNo == 0){
 					$CHKDUP['duplicate'] = $this->tickets_model->CheckDuplicateRegNo($VechicleRegNo);            
 					if($CHKDUP['duplicate']>0){ echo "Error"; exit; }
@@ -1859,12 +1862,13 @@ class Tickets extends BaseController
 				'Tare'=>$Tare ,'Net'=>$Net , 'SicCode'=>$SicCode,  'pdf_name'=> $TicketUniqueID.".pdf",'UpdateUserID'=>$this->session->userdata['userId'] ,
 				'TypeOfTicket'=>'In','driver_id'=> $driverid,'is_tml'=>$is_tml, 'is_hold'=>0,'IsInBound'=>0,  
 				'ticket_notes'=>$ticket_notes, 'LorryType'=>$LorryType ,'PaymentType'=>$PaymentType ,'Amount'=>$Amount ,'Vat'=>$Vat,'VatAmount'=>$VatAmount, 'OrderNo'=>$OrderNo, 
-				'TotalAmount'=>$TotalAmount ,'PaymentRefNo'=>$PaymentRefNo,'driversignature'=>$driversignature );
-   
+				'TotalAmount'=>$TotalAmount ,'PaymentRefNo'=>$PaymentRefNo,'driversignature'=>$driversignature,'TicketDate'=> $TicketDate );
+				
+			
 				if($TicketNo != "" && trim($OpportunityID)!= "" && trim($DescriptionofMaterial)!= "" && trim($CompanyID)!= "" && trim($driverid)!= "" ){
                  
 					$cond = array(  'TicketNo' => $TicketNo ); 	 
-					$tupdate = $this->Common_model->update("tickets",$ticketsInfo, $cond);
+					$tupdate = $this->Common_model->updateTic("tickets",$ticketsInfo, $cond);
 				 
 					if($tupdate==1) {  
 						$data['content'] = $this->Common_model->select_where('content_settings',array('id' => 1));
@@ -1874,7 +1878,7 @@ class Tickets extends BaseController
 						
 						$html=$this->load->view('Tickets/ticket_pdf', $data, true);
 						 //this the the PDF filename that user will get to download
-						$pdfFilePath =  WEB_ROOT_PATH."assets/pdf_file/".$TicketUniqueID.".pdf";
+						$pdfFilePath =  WEB_ROOT_PATH."tmlportal/assets/pdf_file/".$TicketUniqueID.".pdf";
 						$openPath =  "/assets/pdf_file/".$TicketUniqueID.".pdf";
 						 
 						//load mPDF library
@@ -2347,8 +2351,8 @@ class Tickets extends BaseController
                 $MaterialPrice = $this->security->xss_clean($this->input->post('MaterialPrice'));
                 $driverid = $this->security->xss_clean($this->input->post('driverid')); 
                 $date = str_replace('/', '-', $TicketDate); 
-                $TicketDate =   date('Y-m-d  H:i:s',strtotime($date));  
-				
+                $TicketDate = date('d/m/Y H:i:s', strtotime($date));
+
 				if($is_tml!=1){
 					$OrderNo = $this->security->xss_clean($this->input->post('OrderNo')); 
 				}else{	
@@ -2382,7 +2386,7 @@ class Tickets extends BaseController
 				'MaterialID'=>$DescriptionofMaterial ,'MaterialPrice'=>$MaterialPrice ,'GrossWeight'=>$GrossWeight ,'UpdateUserID'=>$this->session->userdata['userId'] ,
 				'Tare'=>$Tare ,'Net'=>$Net ,'TypeOfTicket'=>'Out', 'driver_id'=>$driverid,'is_tml'=>$is_tml,'is_hold'=>0, 'IsInBound'=>0, 'OrderNo'=>$OrderNo, 
 				'PaymentType'=>$PaymentType ,'LorryType'=>$LorryType ,'Amount'=>$Amount ,'Vat'=>$Vat,'VatAmount'=>$VatAmount, 'TotalAmount'=>$TotalAmount , 
-				'PaymentRefNo'=>$PaymentRefNo,'driversignature'=>$driversignature );
+				'PaymentRefNo'=>$PaymentRefNo,'driversignature'=>$driversignature,'TicketDate'=>$TicketDate );
               
 				if( trim($TicketNo)!= "" && trim($OpportunityID)!= "" && trim($DescriptionofMaterial)!= "" && trim($CompanyID)!= "" && trim($driverid)!= "" ){
 				 
@@ -2453,7 +2457,7 @@ class Tickets extends BaseController
 									<b>Waste License No: </b> '.$PDFContent[0]->waste_licence.' <br/><hr> 
 									<center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
 									<b>Ticket NO:</b> '.$data1['tickets']['TicketNumber'].' <br>		 
-									<b>Date Time: </b> '.$data1['tickets']['tdate'].' <br>		   
+									<b>Date Time: </b> '.$TicketDate.' <br>		   
 									<b>In Time: </b> '.$data1['tickets']['SiteIn'].' <br>		   
 									<b>Out Time: </b> '.$data1['tickets']['SiteOut'].' <br>		   
 									<b>Vehicle Reg. No. </b> '.$data1['tickets']['RegNumber'].' <br> 
@@ -2482,7 +2486,7 @@ class Tickets extends BaseController
 										<b>Company Reg. No: </b>'.$PDFContent[0]->CompanyRegNo.'<br>
 										'.$PDFContent[0]->FooterText.'</p></div></div></body></html>';
 							 
-								$pdfFilePath =  WEB_ROOT_PATH."/assets/conveyance/".$data1['tickets']['TicketUniqueID'].".pdf"; 		   
+								$pdfFilePath =  WEB_ROOT_PATH."tmlportal/assets/conveyance/".$data1['tickets']['TicketUniqueID'].".pdf"; 		   
 								$mpdf =  new mPDF('utf-8', array(70,220),'','',5,5,5,5,5,5); 	   
 								$mpdf->keep_table_proportions = false;
 								$mpdf->WriteHTML($html);
