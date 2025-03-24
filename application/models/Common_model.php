@@ -574,6 +574,12 @@ function checkDriverMobileExists($key){
 	   
       return $this->db->affected_rows();
   }
+  public function updateTic($table, $data, $where){ 
+	$this->db->update($table, $data, $where);
+	//$this->db->last_query(); 
+	 
+	return $this->db->affected_rows();
+}
   public function direct_update($table, $data, $where) {
         // Construct SET part of the query
         $set = [];
