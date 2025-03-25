@@ -6167,7 +6167,7 @@ class Booking_model extends CI_Model{
 		
 		$this->db->where('tbl_booking_loads1.Status = 4 '); 
 		//$this->db->where('DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%Y-%m-%d") < CURDATE()'); 
-		$this->db->where('DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%Y-%m-%d") < CURDATE() - INTERVAL 30 DAY');  
+		$this->db->where('tbl_booking_loads1.JobEndDateTime < NOW() - INTERVAL 20 DAY');
 		
         if( !empty($searchValue) ){  
 			
