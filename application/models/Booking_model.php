@@ -10606,9 +10606,10 @@ class Booking_model extends CI_Model{
 		$this->db->start_cache();  
 		 
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
-             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
-             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-        end) as Status"); 
+				when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+				when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+				when  (tbl_booking_loads1.Status = '7') then 'Cancelled Invoice' 
+		end) as Status"); 
 		  
 		 
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
@@ -10663,6 +10664,7 @@ class Booking_model extends CI_Model{
 		$this->db->where('tbl_booking_loads1.Status = 4 ');
 		$this->db->or_where(' tbl_booking_loads1.Status = 5  ');
 		$this->db->or_where(' tbl_booking_loads1.Status = 6  ');
+		$this->db->or_where(' tbl_booking_loads1.Status = 7  ');
 		$this->db->group_end(); 
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 
 				 
