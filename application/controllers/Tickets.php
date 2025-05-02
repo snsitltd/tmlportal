@@ -2351,8 +2351,9 @@ class Tickets extends BaseController
                 $MaterialPrice = $this->security->xss_clean($this->input->post('MaterialPrice'));
                 $driverid = $this->security->xss_clean($this->input->post('driverid')); 
                 $date = str_replace('/', '-', $TicketDate); 
-                $TicketDate = date('d/m/Y H:i:s', strtotime($date));
-
+                // $TicketDate = date('d/m/Y H:i:s', strtotime($date));
+				$TicketDate = date('Y-m-d H:i:s', strtotime($date));
+// print_r($TicketDate); exit;
 				if($is_tml!=1){
 					$OrderNo = $this->security->xss_clean($this->input->post('OrderNo')); 
 				}else{	
@@ -2387,7 +2388,7 @@ class Tickets extends BaseController
 				'Tare'=>$Tare ,'Net'=>$Net ,'TypeOfTicket'=>'Out', 'driver_id'=>$driverid,'is_tml'=>$is_tml,'is_hold'=>0, 'IsInBound'=>0, 'OrderNo'=>$OrderNo, 
 				'PaymentType'=>$PaymentType ,'LorryType'=>$LorryType ,'Amount'=>$Amount ,'Vat'=>$Vat,'VatAmount'=>$VatAmount, 'TotalAmount'=>$TotalAmount , 
 				'PaymentRefNo'=>$PaymentRefNo,'driversignature'=>$driversignature,'TicketDate'=>$TicketDate );
-              
+				// print_r($TicketDate); exit;
 				if( trim($TicketNo)!= "" && trim($OpportunityID)!= "" && trim($DescriptionofMaterial)!= "" && trim($CompanyID)!= "" && trim($driverid)!= "" ){
 				 
 					$cond = array( 'TicketNo' => $TicketNo ); 
@@ -2406,7 +2407,7 @@ class Tickets extends BaseController
 							$html=$this->load->view('Tickets/ticket_pdf_out', $data, true);
 							
 							 //this the the PDF filename that user will get to download
-							$pdfFilePath =  WEB_ROOT_PATH."assets/pdf_file/".$TicketUniqueID.".pdf";
+							$pdfFilePath =  WEB_ROOT_PATH."tmlportal/assets/pdf_file/".$TicketUniqueID.".pdf";
 							$openPath =  "/assets/pdf_file/".$TicketUniqueID.".pdf";
 							 
 							//load mPDF library
@@ -2487,7 +2488,7 @@ class Tickets extends BaseController
 										'.$PDFContent[0]->FooterText.'</p></div></div></body></html>';
 							 
 								$pdfFilePath =  WEB_ROOT_PATH."tmlportal/assets/conveyance/".$data1['tickets']['TicketUniqueID'].".pdf"; 		   
-								$mpdf =  new mPDF('utf-8', array(70,220),'','',5,5,5,5,5,5); 	   
+								$mpdf =  new mPDF('utf-8', array(70,230),'','',5,5,5,5,5,5); 	   
 								$mpdf->keep_table_proportions = false;
 								$mpdf->WriteHTML($html);
 								$mpdf->Output($pdfFilePath);
@@ -2548,7 +2549,7 @@ class Tickets extends BaseController
                 $driverid = $this->security->xss_clean($this->input->post('driverid')); 
                 $date = str_replace('/', '-', $TicketDate); 
                 $TicketDate =   date('Y-m-d  H:i:s',strtotime($date));  
-				
+				print_r($OpportunityID);exit;
 				
 				if($is_tml!=1){
 					$OrderNo = $this->security->xss_clean($this->input->post('OrderNo')); 
@@ -2599,7 +2600,7 @@ class Tickets extends BaseController
 						$html=$this->load->view('Tickets/ticket_pdf_out', $data, true);
 						
 						 //this the the PDF filename that user will get to download
-						$pdfFilePath =  WEB_ROOT_PATH."assets/pdf_file/".$TicketUniqueID.".pdf";
+						$pdfFilePath =  "tmlportal/assets/pdf_file/".$TicketUniqueID.".pdf";
 						$openPath =  "/assets/pdf_file/".$TicketUniqueID.".pdf";
 						 
 						//load mPDF library
@@ -2799,7 +2800,8 @@ class Tickets extends BaseController
                 $LorryNo = $this->security->xss_clean($this->input->post('LorryNo'));
                 $VechicleRegNo = $this->security->xss_clean($this->input->post('VechicleRegNo'));
 				$VechicleRegNo = preg_replace('/\s+/', '',strtoupper($VechicleRegNo));
-				
+				$OpportunityName = $this->security->xss_clean($this->input->post('OpportunityName'));
+			
                 $DriverName = $this->security->xss_clean($this->input->post('DriverName'));
                 $CompanyID = $this->security->xss_clean($this->input->post('CompanyID'));
                 $GrossWeight = $this->security->xss_clean($this->input->post('GrossWeight'));
@@ -2821,7 +2823,7 @@ class Tickets extends BaseController
 				$TotalAmount = $this->security->xss_clean($this->input->post('TotalAmount'));
 				$PaymentRefNo = $this->security->xss_clean($this->input->post('PaymentRefNo'));
 				$driversignature = $this->input->post('driversignature', FALSE); 
- 
+				print_r($OpportunityID); //exit;	
 				if($LorryNo == 0){
 					$CHKDUP['duplicate'] = $this->tickets_model->CheckDuplicateRegNo($VechicleRegNo);            
 					if($CHKDUP['duplicate']>0){ echo "Error"; exit; }
@@ -2854,7 +2856,7 @@ class Tickets extends BaseController
 							
 							$html=$this->load->view('Tickets/ticket_pdf', $data, true);
 							 //this the the PDF filename that user will get to download
-							$pdfFilePath =  WEB_ROOT_PATH."assets/pdf_file/".$TicketUniqueID.".pdf";
+							$pdfFilePath =  WEB_ROOT_PATH."tmlportal/assets/pdf_file/".$TicketUniqueID.".pdf";
 							$openPath =  "/assets/pdf_file/".$TicketUniqueID.".pdf";
 							
 							//load mPDF library
