@@ -2483,7 +2483,7 @@ class Tickets extends BaseController
 										'.$PDFContent[0]->FooterText.'</p></div></div></body></html>';
 							 
 								$pdfFilePath =  WEB_ROOT_PATH."/assets/conveyance/".$data1['tickets']['TicketUniqueID'].".pdf"; 		   
-								$mpdf =  new mPDF('utf-8', array(70,280),'','',5,5,5,5,5,5); 	   
+								$mpdf =  new mPDF('utf-8', array(70,270),'','',5,5,5,5,5,5); 	   
 								$mpdf->keep_table_proportions = false;
 								$mpdf->WriteHTML($html);
 								$mpdf->Output($pdfFilePath);
