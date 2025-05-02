@@ -2788,27 +2788,88 @@ class Booking_model extends CI_Model{
 	public function GetDeliveryTickets(){
 		//print_r($_POST);
 		//exit;
-		if( !empty(trim($_POST['sort'])) ){  
-			$Sort = explode(' ', trim($_POST['sort'])); 
-			//print_r($Sort);
-			if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_booking_loads1.ConveyanceNo '; } 
-			if($Sort[0]=='WaitTime'){ $columnName = ' WaitTime '; }  
-			//if($Sort[0]=='BookingType'){ $columnName = 'tbl_booking.BookingType '; } 
-			if($Sort[0]=='SiteOutDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y%m%d%H%i%S") ';  }   
-			if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
-			if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
-			if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; } 
-			if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
-			if($Sort[0]=='DriverName'){ $columnName = ' tbl_drivers.DriverName '; } 
-			if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
-			//if($Sort[0]=='Price'){ $columnName = ' tbl_booking1.Price '; } 
-			if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.Price '; } 
-			if($Sort[0]=='PurchaseOrderNo'){ $columnName = ' tbl_booking1.PurchaseOrderNo '; } 
-			if($Sort[0]=='TicketNumber'){ $columnName = ' tbl_tickets.TicketNumber '; } 
-			 
-			$columnSortOrder = $Sort[1]; 
-		}	
-		  
+		// if( !empty(trim($_POST['sort'])) ){  
+		// 	$Sort = explode(' ', trim($_POST['sort'])); 
+		// 	//print_r($Sort);
+		// 	if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_booking_loads1.ConveyanceNo '; } 
+		// 	if($Sort[0]=='WaitTime'){ $columnName = ' WaitTime '; }  
+		// 	//if($Sort[0]=='BookingType'){ $columnName = 'tbl_booking.BookingType '; } 
+		// 	if($Sort[0]=='SiteOutDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y%m%d%H%i%S") ';  }   
+		// 	if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
+		// 	if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
+		// 	if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; } 
+		// 	if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
+		// 	if($Sort[0]=='DriverName'){ $columnName = ' tbl_drivers.DriverName '; } 
+		// 	if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
+		// 	//if($Sort[0]=='Price'){ $columnName = ' tbl_booking1.Price '; } 
+		// 	if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.Price '; } 
+		// 	if($Sort[0]=='PurchaseOrderNo'){ $columnName = ' tbl_booking1.PurchaseOrderNo '; } 
+		// 	if($Sort[0]=='TicketNumber'){ $columnName = ' tbl_tickets.TicketNumber '; } 
+		// 	//    // Append secondary sorting by TicketNumber
+		// 	//    if ($Sort[0] != 'TicketNumber') {
+		// 	// 	$columnName .= ' ' . $columnSortOrder . ', tbl_tickets.TicketNumber ASC';
+		// 	// } else {
+		// 	// 	$columnName .= ' ' . $columnSortOrder;
+		// 	// }
+		// 	$columnSortOrder = $Sort[1]; 
+			  
+		// }	
+		if (!empty(trim($_POST['sort']))) {
+			$Sort = explode(' ', trim($_POST['sort']));
+			$columnSortOrder = $Sort[1];
+		
+			switch ($Sort[0]) {
+				case 'ConveyanceNo':
+					$columnName = 'tbl_booking_loads1.ConveyanceNo';
+					break;
+				case 'WaitTime':
+					$columnName = 'WaitTime';
+					break;
+				case 'SiteOutDateTime':
+					$columnName = 'DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y%m%d%H%i%S")';
+					break;
+				case 'CompanyName':
+					$columnName = 'tbl_booking_request.CompanyName';
+					break;
+				case 'OpportunityName':
+					$columnName = 'tbl_booking_request.OpportunityName';
+					break;
+				case 'MaterialName':
+					$columnName = 'tbl_booking1.MaterialName';
+					break;
+				case 'VehicleRegNo':
+					$columnName = 'tbl_booking_loads1.VehicleRegNo';
+					break;
+				case 'DriverName':
+					$columnName = 'tbl_drivers.DriverName';
+					break;
+				case 'Status':
+					$columnName = 'tbl_booking_loads1.Status';
+					break;
+				case 'Price':
+					$columnName = 'tbl_booking_loads1.Price';
+					break;
+				case 'PurchaseOrderNo':
+					$columnName = 'tbl_booking1.PurchaseOrderNo';
+					break;
+				case 'TicketNumber':
+					$columnName = 'tbl_tickets.TicketNumber';
+					break;
+				default:
+					$columnName = 'tbl_tickets.TicketNumber';
+					$columnSortOrder = 'ASC';
+					break;
+			}
+		
+			// Secondary sorting clause
+			if ($Sort[0] != 'TicketNumber') {
+				$orderBy = "$columnName $columnSortOrder, tbl_tickets.TicketDate ASC";
+			} else {
+				$orderBy = "$columnName $columnSortOrder";
+			}
+		} else {
+			$orderBy = "tbl_tickets.TicketNumber ASC"; // default
+		}
 		$searchValue = trim(strtolower($_POST['search'])); // Search value  
 		//$BookingType = trim(strtolower($_POST['BookingType']));  
 		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));  
@@ -2845,6 +2906,7 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+			 when  (tbl_booking_loads1.Status = '7') then 'Cancelled Invoice' 
         end) as Status"); 
 		
 		$this->db->select(' tbl_tickets.TicketNumber ');      
@@ -2953,6 +3015,8 @@ class Booking_model extends CI_Model{
 			$this->db->group_start(); 
 			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime) >=', $StartDate);
 			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime) <=', $EndDate);  
+			// Apply status filter (only statuses 4, 5, 6, 7)
+$this->db->where_in('tbl_booking_loads1.Status', [4, 5, 6, 7]);
  			$this->db->group_end();  
         }
 		if( !empty(trim($SiteOutDateTime)) ){    
@@ -2987,26 +3051,64 @@ class Booking_model extends CI_Model{
  			$this->db->like('tbl_drivers.DriverName', trim($DriverName)); 
  			$this->db->group_end();  
         } 
-		if( !empty(trim($Status)) ){     
-			if(strtolower($Status[0])=='f' ){
-				$this->db->group_start(); 
-				$this->db->like(' tbl_booking_loads1.Status ', '4'); 
-				$this->db->group_end();  
-			} 
-			if(strtolower($Status[0])=='c' ){
-				$this->db->group_start(); 
-				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
-				$this->db->group_end();  
-			} 
-			if(strtolower($Status[0])=='w' ){
-				$this->db->group_start(); 
-				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
-				$this->db->group_end();  
-			} 
-        }
+		// if( !empty(trim($Status)) ){     
+		// 	if(strtolower($Status[0])=='f' ){
+		// 		$this->db->group_start(); 
+		// 		$this->db->like(' tbl_booking_loads1.Status ', '4'); 
+		// 		$this->db->group_end();  
+		// 	} 
+		// 	if(strtolower($Status[0])=='c' ){
+		// 		$this->db->group_start(); 
+		// 		$this->db->like(' tbl_booking_loads1.Status ', '5');
+		// 		$this->db->like('tbl_booking_loads1.Status','7'); 
+		// 		$this->db->group_end();  
+		// 	} 
+		// 	if(strtolower($Status[0])=='w' ){
+		// 		$this->db->group_start(); 
+		// 		$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+		// 		$this->db->group_end();  
+		// 	} 
+		// 	if(strtolower($Status[0])=='i' ){
+		// 		$this->db->group_start(); 
+		// 		$this->db->like(' tbl_booking_loads1.Status ', '7'); 
+		// 		$this->db->group_end();  
+		// 	} 
+        // }
+
+		if (!empty(trim($Status))) {
+			$statusKey = strtolower(trim($Status[0]));
+		
+			switch ($statusKey) {
+				case 'f': // Finished
+					$this->db->where('tbl_booking_loads1.Status', '4');
+					break;
+		
+				case 'w': // Wasted
+					$this->db->where('tbl_booking_loads1.Status', '6');
+					break;
+		
+				case 'c': // Cancelled (status 5 and 7)
+					$this->db->where_in('tbl_booking_loads1.Status', ['5', '7']);
+					break;
+				case 'cancelled': // Cancelled (status 5 and 7)
+					$this->db->where_in('tbl_booking_loads1.Status', ['5', '7']);
+					break;
+				case 'cancelled Invoice': // Cancelled (status 5 and 7)
+					$this->db->where_in('tbl_booking_loads1.Status', '7');
+					break;
+				case 'i': // Cancelled Invoice (status 7 only)
+					$this->db->where('tbl_booking_loads1.Status', '7');
+					break;
+		
+				default:
+					// If user types a status code directly (like "7")
+					$this->db->where('tbl_booking_loads1.Status', $Status);
+					break;
+			}
+		}
 		
 		$this->db->group_by("tbl_booking_loads1.LoadID ");   
-		$this->db->order_by($columnName.' '.$columnSortOrder);	
+		$this->db->order_by($columnName.' '.$columnSortOrder.',tbl_tickets.TicketNumber ASC');	
         $this->db->limit($_REQUEST['length'], $_REQUEST['start']);
 		
 	    
@@ -10752,6 +10854,10 @@ class Booking_model extends CI_Model{
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
 				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '7'); 
+				$this->db->group_end();
 			}else{ 
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '11'); 

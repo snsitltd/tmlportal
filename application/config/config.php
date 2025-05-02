@@ -35,8 +35,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // $config['base_url'] = $base;
 
 
-// $config['base_url'] = "http://localhost:8080/tmlportal/";
-$config['base_url'] = "https://tml.snsitltd.co.uk/";
+ $config['base_url'] = "http://localhost/tmlportal/";
+//$config['base_url'] = "https://tml.snsitltd.co.uk/";
 
 /*
 |--------------------------------------------------------------------------

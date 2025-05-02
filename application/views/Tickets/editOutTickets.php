@@ -56,12 +56,22 @@
                                         <input type="text" class="form-control" id="Conveyance" value="<?php echo $tickets['Conveyance']; ?>" name="Conveyance">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="TicketDate">Date Time</label>
                                         <input type="datetime-local" class="form-control" id="TicketDate" name="TicketDate" value="<?php echo $tickets['TicketDate']; ?>">
                                     </div>
-                                </div>
+                                </div> -->
+                                <div class="col-md-6">
+    <div class="form-group">
+        <label for="TicketDate">Date Time</label>
+        <?php
+        // Convert the TicketDate from DB to 'YYYY-MM-DDTHH:MM' format
+        $ticketDate = date('Y-m-d\TH:i', strtotime($tickets['TicketDate']));
+        ?>
+        <input type="datetime-local" class="form-control" id="TicketDate" name="TicketDate" value="<?php echo $ticketDate; ?>">
+    </div>
+</div>
 
                                  <div class="col-md-2"> 
 										<div class="form-group">
@@ -95,7 +105,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="CompanyID">Select Company <span class="required">*</span></label>
+                                        <!-- <label for="CompanyID">Select Company <span class="required">*</span></label>
                                         <select class="form-control" id="CompanyID" name="CompanyID" required="required" data-live-search="true"  aria-required="true">
                                          <?php 
                                         if($tickets['LoadID']>0){ 
@@ -127,9 +137,23 @@
                                         </select><div ></div>
                                     </div>
                                 </div>  
+                            </div> -->
+                            <label for="CompanyID">Select Company <span class="required">*</span></label>
+                            <select class="form-control selectpicker" id="CompanyID" name="CompanyID" required data-live-search="true">
+    <option value="">-- Select Company --</option>
+    <?php foreach ($company_list as $value): ?>
+        <?php if ($value['Status'] == 1 || $value['CompanyID'] == $tickets['CompanyID']): ?>
+            <option value="<?= $value['CompanyID'] ?>" <?= ($value['CompanyID'] == $tickets['CompanyID']) ? 'selected' : '' ?>>
+                <?= $value['CompanyName'] ?>
+            </option>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</select>
+
+<div ></div>
+                                    </div>
+                                </div>  
                             </div>
-
-
 
                             <div class="row">
                                 <div class="col-md-12">
@@ -398,6 +422,10 @@ if($tickets['LorryType']!=0){ $LorryType = $tickets['LorryType']; }else{  $Lorry
     
 </div>
 <script>   
+$(document).ready(function() {
+    $('.selectpicker').selectpicker('refresh');
+});
+
 $(document).ready(function() {
 
 	$(".fullscreen").click(function() { 

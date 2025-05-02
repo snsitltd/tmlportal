@@ -21,8 +21,8 @@
 					<?php if($Status!='6'){ ?>
 						<option value="6" >Wasted Journey</option> 
 					<?php } ?>
-					<?php if($Status!='8'){ ?>
-						<option value="8" >Invoice Cancelled</option> 
+					<?php if($Status!='7'){ ?>
+						<option value="7" >Invoice Cancelled</option> 
 					<?php } ?>
 			</select>
 		</div> 
