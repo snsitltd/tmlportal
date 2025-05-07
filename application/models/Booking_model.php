@@ -10700,6 +10700,7 @@ $this->db->where_in('tbl_booking_loads1.Status', [4, 5, 6, 7]);
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+			 when  (tbl_booking_loads1.Status = '7') then 'Invoice Cancelled' 
         end) as Status"); 
 		  
 		 
@@ -10755,6 +10756,7 @@ $this->db->where_in('tbl_booking_loads1.Status', [4, 5, 6, 7]);
 		$this->db->where('tbl_booking_loads1.Status = 4 ');
 		$this->db->or_where(' tbl_booking_loads1.Status = 5  ');
 		$this->db->or_where(' tbl_booking_loads1.Status = 6  ');
+		$this->db->or_where(' tbl_booking_loads1.Status = 7  ');
 		$this->db->group_end(); 
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 
 				 
@@ -10793,13 +10795,13 @@ $this->db->where_in('tbl_booking_loads1.Status', [4, 5, 6, 7]);
         }
 		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
 			$this->db->group_start();
-						
-			//$this->db->where('DATE(tbl_booking_loads1.JobStartDateTime) >=', $StartDate);
-			//$this->db->where('DATE(tbl_booking_loads1.JobStartDateTime) <=', $EndDate);  
-			
-			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) >=', $StartDate);
-			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) <=', $EndDate);  
- 			$this->db->group_end();  
+    $this->db->where('tbl_booking_loads1.Status = 7');
+    $this->db->or_group_start(); 
+        $this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) >=', $StartDate);
+        $this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) <=', $EndDate);
+    $this->db->group_end();
+$this->db->group_end();
+  
         }
 		if( !empty(trim($SiteOutDateTime2)) ){    
 			$this->db->group_start(); 
@@ -10848,7 +10850,8 @@ $this->db->where_in('tbl_booking_loads1.Status', [4, 5, 6, 7]);
 				$this->db->group_end();  
 			}else if(strtolower($Status[0])=='c' ){
 				$this->db->group_start(); 
-				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->or_like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->or_like(' tbl_booking_loads1.Status ', '7'); 
 				$this->db->group_end();  
 			}else if(strtolower($Status[0])=='w' ){
 				$this->db->group_start(); 

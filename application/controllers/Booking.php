@@ -4044,7 +4044,7 @@ class Booking extends BaseController
 						</div>  
 					</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -4078,7 +4078,9 @@ class Booking extends BaseController
 					$tInfo1 = array('MaterialID' => $MaterialID);
 					$tcond1 = array('TicketNo' => $TicketID);
 					$this->Common_model->update("tbl_tickets", $tInfo1, $tcond1);
+					sleep(1); // optional
 
+					$this->db->reset_query(); // optional cleanup
 					$data1['content'] = $this->Common_model->select_where('content_settings', array('id' => 1));
 					$data1['tickets'] = $this->Common_model->get_pdf_data1($TicketID);
 
@@ -4086,7 +4088,7 @@ class Booking extends BaseController
 
 					$html = $this->load->view('Tickets/ticket_pdf', $data1, true);
 					//this the the PDF filename that user will get to download
-					$pdfFilePath = WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
+					$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					$openPath = "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 					//load mPDF library
@@ -4296,7 +4298,7 @@ class Booking extends BaseController
 									<b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
 									' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
+					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
 					$mpdf = new mPDF('utf-8', array(70, 220), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -14667,7 +14669,7 @@ class Booking extends BaseController
 							</div>  
 						</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -14678,7 +14680,7 @@ class Booking extends BaseController
 					///* =================== Site Logs ===================   
 					$OldFile = $pdfFilePath;
 					$NewFileName = date('YmdHis') . ".pdf";
-					$NewFile = WEB_ROOT_PATH . "/assets/conveyance/" . $NewFileName;
+					$NewFile = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $NewFileName;
 
 					copy($OldFile, $NewFile);
 
@@ -14702,7 +14704,8 @@ class Booking extends BaseController
 						$TicketInfo = array('OpportunityID' => $data['LoadInfo']->OpportunityID, 'CompanyID' => $data['LoadInfo']->CompanyID);
 						$Cond = array('TicketNo' => $TicketID);
 						$UpdateTicketInfo = $this->Common_model->update('tbl_tickets', $TicketInfo, $Cond);
-
+						$data['LoadInfo'] = $this->Booking_model->BookingLoadInfo1($LoadID);
+						$data1['tickets'] = $this->Common_model->get_pdf_data1($TicketID);
 						/* =================== Site Logs ===================  */
 						$TInfoJson = json_encode($TicketInfo);
 						$CondJson = json_encode($Cond);
@@ -14722,13 +14725,13 @@ class Booking extends BaseController
 						/* ===================================== */
 
 						$data1['content'] = $this->Common_model->select_where('content_settings', array('id' => 1));
-						$data1['tickets'] = $this->Common_model->get_pdf_data1($TicketID);
+						//$data1['tickets'] = $this->Common_model->get_pdf_data1($TicketID);
 
 						$TicketUniqueID = $data1['tickets']['TicketUniqueID'];
 
 						$html = $this->load->view('Tickets/ticket_pdf', $data1, true);
 						//this the the PDF filename that user will get to download
-						$pdfFilePath = WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
+						$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 						$openPath = "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 						//load mPDF library
@@ -14840,7 +14843,7 @@ class Booking extends BaseController
 									<b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
 									' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
+					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
 					// Delete old PDF if it exists
 					if (file_exists($pdfFilePath)) {
 						unlink($pdfFilePath);
@@ -14848,7 +14851,7 @@ class Booking extends BaseController
 
 					// Generate unique file name
 					$uniqueFileName = time() . "_" . $data1['tickets']['TicketUniqueID'] . ".pdf";
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $uniqueFileName;
+					$pdfFilePath = WEB_ROOT_PATH . "/tmlpotal/assets/conveyance/" . $uniqueFileName;
 
 					$TicketInfo = array('ReceiptName' => $uniqueFileName);
 					$TicketInfoTic = array('pdf_name' => $uniqueFileName);
@@ -14967,7 +14970,7 @@ class Booking extends BaseController
 							</div>  
 						</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -15081,7 +15084,7 @@ class Booking extends BaseController
 						</div>  
 					</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 240), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
