@@ -10703,13 +10703,15 @@ class Booking_model extends CI_Model{
         }
 		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
 			$this->db->group_start();
-						
+					$this->db->where('tbl_booking_loads1.Status = 7 ');
+					$this->db->or_group_start();	
 			//$this->db->where('DATE(tbl_booking_loads1.JobStartDateTime) >=', $StartDate);
 			//$this->db->where('DATE(tbl_booking_loads1.JobStartDateTime) <=', $EndDate);  
 			
 			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) >=', $StartDate);
 			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) <=', $EndDate);  
  			$this->db->group_end();  
+			$this->db->group_end();  
         }
 		if( !empty(trim($SiteOutDateTime2)) ){    
 			$this->db->group_start(); 
@@ -10758,11 +10760,16 @@ class Booking_model extends CI_Model{
 				$this->db->group_end();  
 			}else if(strtolower($Status[0])=='c' ){
 				$this->db->group_start(); 
-				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->or_like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->or_like(' tbl_booking_loads1.Status ', '7'); 
 				$this->db->group_end();  
 			}else if(strtolower($Status[0])=='w' ){
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '7'); 
 				$this->db->group_end();  
 			}else{ 
 				$this->db->group_start(); 
