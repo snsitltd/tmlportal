@@ -638,8 +638,6 @@
 	var OpportunityID = $("#OpportunityID").val();
 	$("#MaterialName" + RID).val(selectedText);
 	$("#SICCode" + RID).val(sic);
-	alert(sic);
-	alert(MaterialID);
 
 	if (OpportunityID != '' && MaterialID != '') {
 		jQuery.ajax({

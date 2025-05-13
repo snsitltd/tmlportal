@@ -591,64 +591,38 @@
 			});
 		});
 		//"input[name^='news']"
-
-	// 	$("body").on("change", ".Material", function () {
-	// 		var RID = $(this).attr("data-BID");
-	// 		$('#DescriptionofMaterial' + RID).selectpicker('refresh');
-	// 		var selectedText = $(this).find("option:selected").text();
-	// 		var selected = $(this).find('option:selected');
-	// 		var sic = selected.data('sic');
-	// 		var MaterialID = selected.data('materialid');
-	// 		var OpportunityID = $("#OpportunityID").val();
-	// 		$("#MaterialName" + RID).val(selectedText);
-	// 		$("#SICCode" + RID).val(sic);
-	// 		alert(sic)
-	// 		alert(MaterialID)
-	// 		if (OpportunityID != '' && MaterialID != '') {
-
-	// 			jQuery.ajax({
-	// 				type: "POST",
-	// 				dataType: "json",
-	// 				url: baseURL + "/LoadSICCodeProduct",
-	// 				data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
-	// 			})
-	// 		}).done(function (data) {
-	// 			//alert(JSON.stringify( data ));     
-	// 			//console.log(data); 
-	// 			//alert(data.SICCODE[0].SICCode);
-	// 			if (data.SICCODE[0].SICCode != '') {
-	// 				$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
-	// 			}
-	// 		});
-	
-	// });
-
-	$("body").on("change", ".Material", function () {
-	var RID = $(this).attr("data-BID");
-	$('#DescriptionofMaterial' + RID).selectpicker('refresh');
-	var selectedText = $(this).find("option:selected").text();
-	var selected = $(this).find('option:selected');
-	var sic = selected.data('sic');
-	var MaterialID = selected.data('materialid');
-	var OpportunityID = $("#OpportunityID").val();
-	$("#MaterialName" + RID).val(selectedText);
-	$("#SICCode" + RID).val(sic);
-	alert(sic);
-	alert(MaterialID);
-
-	if (OpportunityID != '' && MaterialID != '') {
-		jQuery.ajax({
-			type: "POST",
-			dataType: "json",
-			url: baseURL + "/LoadSICCodeProduct",
-			data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
-		}).done(function (data) {
-			if (data.SICCODE[0].SICCode != '') {
-				$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
-			}
-		});
-	}
-});
+		
+		$("body").on("change", ".Material", function(){   
+			var RID = $(this).attr("data-BID");  
+			$('#DescriptionofMaterial'+RID).selectpicker('refresh');     
+			var selectedText = $(this).find("option:selected").text(); 
+			var selected = $(this).find('option:selected'); 
+			var sic = selected.data('sic');  
+			var MaterialID = selected.data('materialid');  
+			var OpportunityID = $("#OpportunityID").val();   
+			$("#MaterialName"+RID).val(selectedText);  
+			$("#SICCode"+RID).val(sic);  
+			//alert(sic) 
+			//alert(MaterialID) 
+			if(OpportunityID!='' && MaterialID!='' ){     	 
+				
+				jQuery.ajax({
+					type : "POST",
+					dataType : "json",
+					url: baseURL+"/LoadSICCodeProduct",
+					data : { OpportunityID : OpportunityID, MaterialID : MaterialID } 
+					}).done(function(data){  
+						//alert(JSON.stringify( data ));     
+						//console.log(data); 
+						//alert(data.SICCODE[0].SICCode);
+						if(data.SICCODE[0].SICCode!=''){	   
+							$("#SICCode"+RID).val(data.SICCODE[0].SICCode);  							 
+						}  
+				}); 
+			} 
+			
+			
+		});  
 
 		// $("body").on("change", ".Material", function () {
 		// 	var RID = $(this).attr("data-BID");
@@ -953,3 +927,5 @@
 	});    	  
 </script>
 <script src="<?php echo base_url('assets/js/Booking1.js'); ?>" type="text/javascript"></script>
+
+aa AddBookingRequest.php ma nakhi ne commit kari ne pull lai le badhu fix thai gyu che
