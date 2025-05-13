@@ -657,7 +657,7 @@
 				}
 			});
 	});
-
+}
 	// 	$("body").on("change", ".Material", function () {
 	// 		var RID = $(this).attr("data-BID");
 	// 		var selectedText = $(this).find("option:selected").text();
