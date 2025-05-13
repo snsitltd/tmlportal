@@ -50,7 +50,8 @@
 																	<?php foreach ($company_list as $key => $value) {
 																		if ($value['Status'] == 1) { ?>
 																			<option value="<?php echo $value['CompanyID'] ?>">
-																				<?php echo $value['CompanyName'] ?></option>
+																				<?php echo $value['CompanyName'] ?>
+																			</option>
 																		<?php }
 																	} ?>
 																</select> <input type="hidden" id="CompName"
@@ -138,8 +139,8 @@
 																	<?php
 																	if (!empty($county)) {
 																		foreach ($county as $rl) { ?>
-																			<option value="<?php echo $rl->County ?>" <?php if ($rl->County == set_value('County')) { ?>
-																					selected <?php } ?>><?php echo $rl->County ?>
+																			<option value="<?php echo $rl->County ?>" <?php if ($rl->County == set_value('County')) { ?> selected
+																				<?php } ?>><?php echo $rl->County ?>
 																			</option>
 																			<?php
 																		}
@@ -244,7 +245,8 @@
 																	<?php foreach ($ApprovalUserList as $key => $value) {
 																		if ($value['userId'] != 1) { ?>
 																			<option value="<?php echo $value['userId'] ?>">
-																				<?php echo $value['name'] ?></option>
+																				<?php echo $value['name'] ?>
+																			</option>
 																		<?php }
 																	} ?>
 																</select>
@@ -626,231 +628,246 @@
 		//"input[name^='news']"
 		$("body").on("change", ".Material", function () {
 			var RID = $(this).attr("data-BID");
-			$('#DescriptionofMaterial' + RID).selectpicker('refresh');
 			var selectedText = $(this).find("option:selected").text();
 			var selected = $(this).find('option:selected');
 			var sic = selected.data('sic');
 			var MaterialID = selected.data('materialid');
 			var OpportunityID = $("#OpportunityID").val();
+
+			console.log("Selected Material: ", selectedText);
+			console.log("Material ID: ", MaterialID);
+			console.log("Opportunity ID: ", OpportunityID);
+
+			// Update Material Name and SIC Code inputs
 			$("#MaterialName" + RID).val(selectedText);
 			$("#SICCode" + RID).val(sic);
-			//alert(sic) 
-			//alert(MaterialID) 
-			if (OpportunityID != '' && MaterialID != '') {
 
+			if (OpportunityID != '' && MaterialID != '') {
+				// Make the AJAX call
 				jQuery.ajax({
 					type: "POST",
 					dataType: "json",
-					url: baseURL + "/LoadSICCodeProduct",
-					data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
-				}).done(function (data) {
-					//alert(JSON.stringify( data ));     
-					//console.log(data); 
-					//alert(data.SICCODE[0].SICCode);
-					if (data.SICCODE[0].SICCode != '') {
-						$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
+					url: baseURL + "/LoadSICCodeProduct",  // Make sure URL is correct
+					data: {
+						OpportunityID: OpportunityID,
+						MaterialID: MaterialID
 					}
-				});
+				})
+					.done(function (data) {
+						console.log("AJAX response:", data);
+
+						// Check if the response contains the SICCode
+						if (data.status && data.SICCODE && data.SICCODE.SICCode !== "") {
+							console.log("SICCode fetched: ", data.SICCODE.SICCode);
+							$("#SICCode" + RID).val(data.SICCODE.SICCode); // Set SICCode value in the appropriate field
+						} else {
+							$("#SICCode" + RID).val(''); // Clear the field if no SICCode
+						}
+					})
+					.fail(function (jqXHR, textStatus, errorThrown) {
+						console.log("AJAX request failed", textStatus, errorThrown);
+					});
 			}
-
-
 		});
 
-		/*$("body").on("change", ".Material", function(){   
-			var RID = $(this).attr("data-BID");  
-			var selectedText = $(this).find("option:selected").text(); 
-			$("#MaterialName"+RID).val(selectedText);  
-		 
-		});*/
+
+	});
+
+	/*$("body").on("change", ".Material", function(){   
+		var RID = $(this).attr("data-BID");  
+		var selectedText = $(this).find("option:selected").text(); 
+		$("#MaterialName"+RID).val(selectedText);  
+	 
+	});*/
 
 
 
-		$("body").on("change", ".LoadType", function () {
-			//$(".LoadType").on('change',function(){
-			$('.BookingDateTime').click();
-		});
-		$("body").on("change", ".Loads", function () {
-			//$(".Loads").on('change',function(){
-			$('.BookingDateTime').click();
-		});
-		$("body").on("change", ".Price", function () {
-			//$(".Price").on('change',function(){  
+	$("body").on("change", ".LoadType", function () {
+		//$(".LoadType").on('change',function(){
+		$('.BookingDateTime').click();
+	});
+	$("body").on("change", ".Loads", function () {
+		//$(".Loads").on('change',function(){
+		$('.BookingDateTime').click();
+	});
+	$("body").on("change", ".Price", function () {
+		//$(".Price").on('change',function(){  
 
-			var PriceVal = parseFloat($(this).val()).toFixed(2);
-			var RID = $(this).attr("data-BID");
-			var BookingDateTime = $("#BookingDateTime" + RID).val();
+		var PriceVal = parseFloat($(this).val()).toFixed(2);
+		var RID = $(this).attr("data-BID");
+		var BookingDateTime = $("#BookingDateTime" + RID).val();
+		var temp = new Array();
+		temp = BookingDateTime.split(",");
+		var temp_count = temp.length;
+		var Loads = document.getElementById('Loads' + RID).value;
+		var TotalTon = document.getElementById('TotalTon' + RID).value;
+
+		if (PriceVal != '') {
+			$("#Total" + RID).html(parseFloat(PriceVal * TotalTon * temp_count).toFixed(2));
+			$("#TotalHidden" + RID).val(parseFloat(PriceVal * TotalTon * temp_count).toFixed(2));
+
+		}
+		var TotalHidden = document.getElementsByName('TotalHidden[]');
+		let SubTotal = 0;
+		for (var i = 0; i < TotalHidden.length; i++) {
+			if (TotalHidden[i].value == "") { TotalHidden[i].value = 0; }
+			SubTotal += parseFloat(TotalHidden[i].value);
+		}
+		$("#SubTotal").html(SubTotal.toFixed(2));
+		$("#PriceSubTotal").val(SubTotal);
+
+		var Vat = parseFloat((SubTotal * 20) / 100).toFixed(2);
+		$("#Vat").html(Vat);
+		$("#PriceVat").val(Vat);
+
+		var AllTotal = (parseFloat(SubTotal) + parseFloat(Vat)).toFixed(2);
+		$("#AllTotal").html(AllTotal);
+		$("#TotalAmount").val(AllTotal);
+	});
+	$("body").on("change", ".BookingType", function () {
+		//$(".BookingType").on('change',function(event){   
+		var id = $(this).val();
+		var RID = $(this).attr("data-BID");
+
+		if (id != '') {
+			jQuery.ajax({
+				type: "POST",
+				dataType: "json",
+				url: baseURL + "/LoadBookingMaterials",
+				data: { id: id }
+			}).done(function (data) {
+				//alert(JSON.stringify( data ));    
+				//console.log(data);               
+				if (data.status == false) {
+					var options = ' <option value="">Select Material Type</option>';
+					$("select#DescriptionofMaterial" + RID).html(options);
+				} else {
+					var sty = '';
+					var options = '<option value="">Select Material Type</option>';
+					for (var i = 0; i < data.material_list.length; i++) {
+						if (data.material_list[i].Status == 1) { sty = 'style="background-color:#dd4b39;color:white;font-weight: bold;"' } else { sty = ''; }
+						options += '<option value="' + data.material_list[i].MaterialID + '" data-sic="' + data.material_list[i].SicCode + '" data-materialid="' + data.material_list[i].MaterialID + '"  >' + data.material_list[i].MaterialName + '</option>';
+					}
+					//$("select#DescriptionofMaterial"+RID).html(options);  
+					$('#DescriptionofMaterial' + RID).html(options);
+					$('#DescriptionofMaterial' + RID).selectpicker('refresh');
+
+				}
+				$('.BookingDateTime').click();
+			});
+		}
+
+	});
+	$("body").on("change", ".LorryType", function () {
+		$('.BookingDateTime').click();
+	});
+	$("body").on("changeDate click change", ".BookingDateTime , .LoadType , .Loads , .BookingType,.Material, #OpportunityID", function () {
+		//$('.BookingDateTime , .LoadType , .Loads , .BookingType').datepicker().on('changeDate click', function (ev) { 
+		//alert(val('#BookingDateTime'));
+		//var BookingDateTime = $( "#BookingDateTime").val(); 
+
+		//var BookingDateTime = $(this).val();  
+		var RID = $(this).attr("data-BID");
+		//console.log(RID);
+		var BookingDateTime = $("#BookingDateTime" + RID).val();
+		//alert(BookingDateTime)
+		//console.log(BookingDateTime);
+		var OpportunityID = $("#OpportunityID").val();
+		var MaterialID = $("#DescriptionofMaterial" + RID).val();
+		var BookingType = $("#BookingType" + RID).val();
+		var Loads = $("#Loads" + RID).val();
+		var LoadType = $("#LoadType" + RID).val();
+		var LorryType = $("#LorryType" + RID).val();
+		var Price = parseFloat($("#Price" + RID).val()).toFixed(2);
+		var TotalTon = document.getElementById('TotalTon' + RID).value;
+		if (OpportunityID != '' && OpportunityID != 0 && MaterialID != '' && BookingType != '') {
 			var temp = new Array();
 			temp = BookingDateTime.split(",");
 			var temp_count = temp.length;
-			var Loads = document.getElementById('Loads' + RID).value;
-			var TotalTon = document.getElementById('TotalTon' + RID).value;
+			for (i = 0; i < temp.length; i++) {
+				var dt = new Array();
+				dt = temp[i].split("/");
 
-			if (PriceVal != '') {
-				$("#Total" + RID).html(parseFloat(PriceVal * TotalTon * temp_count).toFixed(2));
-				$("#TotalHidden" + RID).val(parseFloat(PriceVal * TotalTon * temp_count).toFixed(2));
-
+				temp[i] = dt[2] + '-' + dt[1] + '-' + dt[0];
+				//alert(temp[i]);
 			}
-			var TotalHidden = document.getElementsByName('TotalHidden[]');
-			let SubTotal = 0;
-			for (var i = 0; i < TotalHidden.length; i++) {
-				if (TotalHidden[i].value == "") { TotalHidden[i].value = 0; }
-				SubTotal += parseFloat(TotalHidden[i].value);
-			}
-			$("#SubTotal").html(SubTotal.toFixed(2));
-			$("#PriceSubTotal").val(SubTotal);
-
-			var Vat = parseFloat((SubTotal * 20) / 100).toFixed(2);
-			$("#Vat").html(Vat);
-			$("#PriceVat").val(Vat);
-
-			var AllTotal = (parseFloat(SubTotal) + parseFloat(Vat)).toFixed(2);
-			$("#AllTotal").html(AllTotal);
-			$("#TotalAmount").val(AllTotal);
-		});
-		$("body").on("change", ".BookingType", function () {
-			//$(".BookingType").on('change',function(event){   
-			var id = $(this).val();
-			var RID = $(this).attr("data-BID");
-
-			if (id != '') {
-				jQuery.ajax({
+			temp.sort();
+			if (BookingDateTime != "") {
+				var DateRequired = temp[0];
+				var HitUrl = baseURL + "ShowOppoProductPriceTonnageAJAX";
+				$.ajax({
 					type: "POST",
 					dataType: "json",
-					url: baseURL + "/LoadBookingMaterials",
-					data: { id: id }
-				}).done(function (data) {
-					//alert(JSON.stringify( data ));    
-					//console.log(data);               
-					if (data.status == false) {
-						var options = ' <option value="">Select Material Type</option>';
-						$("select#DescriptionofMaterial" + RID).html(options);
-					} else {
-						var sty = '';
-						var options = '<option value="">Select Material Type</option>';
-						for (var i = 0; i < data.material_list.length; i++) {
-							if (data.material_list[i].Status == 1) { sty = 'style="background-color:#dd4b39;color:white;font-weight: bold;"' } else { sty = ''; }
-							options += '<option value="' + data.material_list[i].MaterialID + '" data-sic="' + data.material_list[i].SicCode + '" data-materialid="' + data.material_list[i].MaterialID + '"  >' + data.material_list[i].MaterialName + '</option>';
-						}
-						//$("select#DescriptionofMaterial"+RID).html(options);  
-						$('#DescriptionofMaterial' + RID).html(options);
-						$('#DescriptionofMaterial' + RID).selectpicker('refresh');
-
+					url: HitUrl,
+					data: { 'OpportunityID': OpportunityID, 'MaterialID': MaterialID, 'DateRequired': DateRequired, 'LorryType': LorryType }
+				}).success(function (data) {
+					//var Prc = 0;
+					var Prc = Price;
+					if (data.Price) {
+						var Prc = data.Price;
 					}
-					$('.BookingDateTime').click();
-				});
-			}
+					if (data.OpenPO == 1) {
+						$("#PurchaseOrderNo" + RID).val(data.PON);
+						$('#OpenPO' + RID).prop('checked', true);
+					} else {
+						//$( "#PurchaseOrderNo"+RID).val('');  
+					}
+					if (Prc != '' && Prc != '0' && Prc != 'NaN') {
+						$("#Price" + RID).val(parseFloat((Prc)).toFixed(2));
+					} else {
+						$("#Price" + RID).val(0); Prc = 0;
+					}
 
-		});
-		$("body").on("change", ".LorryType", function () {
-			$('.BookingDateTime').click();
-		});
-		$("body").on("changeDate click change", ".BookingDateTime , .LoadType , .Loads , .BookingType,.Material, #OpportunityID", function () {
-			//$('.BookingDateTime , .LoadType , .Loads , .BookingType').datepicker().on('changeDate click', function (ev) { 
-			//alert(val('#BookingDateTime'));
-			//var BookingDateTime = $( "#BookingDateTime").val(); 
+					$("#Total" + RID).html(parseFloat(Prc * TotalTon * temp_count).toFixed(2));
+					$("#TotalHidden" + RID).val(parseFloat(Prc * TotalTon * temp_count).toFixed(2));
 
-			//var BookingDateTime = $(this).val();  
-			var RID = $(this).attr("data-BID");
-			//console.log(RID);
-			var BookingDateTime = $("#BookingDateTime" + RID).val();
-			//alert(BookingDateTime)
-			//console.log(BookingDateTime);
-			var OpportunityID = $("#OpportunityID").val();
-			var MaterialID = $("#DescriptionofMaterial" + RID).val();
-			var BookingType = $("#BookingType" + RID).val();
-			var Loads = $("#Loads" + RID).val();
-			var LoadType = $("#LoadType" + RID).val();
-			var LorryType = $("#LorryType" + RID).val();
-			var Price = parseFloat($("#Price" + RID).val()).toFixed(2);
-			var TotalTon = document.getElementById('TotalTon' + RID).value;
-			if (OpportunityID != '' && OpportunityID != 0 && MaterialID != '' && BookingType != '') {
-				var temp = new Array();
-				temp = BookingDateTime.split(",");
-				var temp_count = temp.length;
-				for (i = 0; i < temp.length; i++) {
-					var dt = new Array();
-					dt = temp[i].split("/");
-
-					temp[i] = dt[2] + '-' + dt[1] + '-' + dt[0];
-					//alert(temp[i]);
-				}
-				temp.sort();
-				if (BookingDateTime != "") {
-					var DateRequired = temp[0];
-					var HitUrl = baseURL + "ShowOppoProductPriceTonnageAJAX";
-					$.ajax({
-						type: "POST",
-						dataType: "json",
-						url: HitUrl,
-						data: { 'OpportunityID': OpportunityID, 'MaterialID': MaterialID, 'DateRequired': DateRequired, 'LorryType': LorryType }
-					}).success(function (data) {
-						//var Prc = 0;
-						var Prc = Price;
-						if (data.Price) {
-							var Prc = data.Price;
-						}
-						if (data.OpenPO == 1) {
-							$("#PurchaseOrderNo" + RID).val(data.PON);
-							$('#OpenPO' + RID).prop('checked', true);
-						} else {
-							//$( "#PurchaseOrderNo"+RID).val('');  
-						}
-						if (Prc != '' && Prc != '0' && Prc != 'NaN') {
-							$("#Price" + RID).val(parseFloat((Prc)).toFixed(2));
-						} else {
-							$("#Price" + RID).val(0); Prc = 0;
-						}
-
-						$("#Total" + RID).html(parseFloat(Prc * TotalTon * temp_count).toFixed(2));
-						$("#TotalHidden" + RID).val(parseFloat(Prc * TotalTon * temp_count).toFixed(2));
-
-						if (data.PriceDate) {
-							if (data.PriceDate != "") {
-								$("#pdate" + RID).html('<b>PriceDate:</b> ' + data.PriceDate);
-							} else { $("#pdate" + RID).html(''); }
+					if (data.PriceDate) {
+						if (data.PriceDate != "") {
+							$("#pdate" + RID).html('<b>PriceDate:</b> ' + data.PriceDate);
 						} else { $("#pdate" + RID).html(''); }
+					} else { $("#pdate" + RID).html(''); }
 
-						var TotalHidden = document.getElementsByName('TotalHidden[]');
-						let SubTotal = 0;
-						for (var i = 0; i < TotalHidden.length; i++) {
-							if (TotalHidden[i].value == "") { TotalHidden[i].value = 0; }
-							SubTotal += parseFloat(TotalHidden[i].value);
-						}
+					var TotalHidden = document.getElementsByName('TotalHidden[]');
+					let SubTotal = 0;
+					for (var i = 0; i < TotalHidden.length; i++) {
+						if (TotalHidden[i].value == "") { TotalHidden[i].value = 0; }
+						SubTotal += parseFloat(TotalHidden[i].value);
+					}
 
-						$("#SubTotal").html(SubTotal.toFixed(2));
-						$("#PriceSubTotal").val(SubTotal);
+					$("#SubTotal").html(SubTotal.toFixed(2));
+					$("#PriceSubTotal").val(SubTotal);
 
-						var Vat = parseFloat((SubTotal * 20) / 100).toFixed(2);
-						$("#Vat").html(Vat);
-						$("#PriceVat").val(Vat);
+					var Vat = parseFloat((SubTotal * 20) / 100).toFixed(2);
+					$("#Vat").html(Vat);
+					$("#PriceVat").val(Vat);
 
-						var AllTotal = (parseFloat(SubTotal) + parseFloat(Vat)).toFixed(2);
-						$("#AllTotal").html(AllTotal);
-						$("#TotalAmount").val(AllTotal);
+					var AllTotal = (parseFloat(SubTotal) + parseFloat(Vat)).toFixed(2);
+					$("#AllTotal").html(AllTotal);
+					$("#TotalAmount").val(AllTotal);
 
-					});
-				} else {
-					//$( "#Price"+RID).val('');  
-					//$( "#pdate"+RID).html('');  
-					//$( "#Total"+RID).html(0); 
-					//$( "#TotalHidden"+RID).val(0); 
-				}
-			} else { 	//$( "#Price"+RID).val('');  
+				});
+			} else {
+				//$( "#Price"+RID).val('');  
 				//$( "#pdate"+RID).html('');  
 				//$( "#Total"+RID).html(0); 
-				//$( "#TotalHidden"+RID).val(0);  
+				//$( "#TotalHidden"+RID).val(0); 
 			}
+		} else { 	//$( "#Price"+RID).val('');  
+			//$( "#pdate"+RID).html('');  
+			//$( "#Total"+RID).html(0); 
+			//$( "#TotalHidden"+RID).val(0);  
+		}
 
 
-		});
-		$("input[name$='PaymentType']").click(function () {
-			var pvalue = $(this).val();
-			if (pvalue != 0) {
-				$("div.pblock").show();
-			} else {
-				$("div.pblock").hide();
-			}
-		});
+	});
+	$("input[name$='PaymentType']").click(function () {
+		var pvalue = $(this).val();
+		if (pvalue != 0) {
+			$("div.pblock").show();
+		} else {
+			$("div.pblock").hide();
+		}
+	});
 	});
 	$('#AddBooking').on('submit', function (event) {
 		let isValid = true;
