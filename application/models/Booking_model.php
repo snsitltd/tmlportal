@@ -823,37 +823,37 @@ class Booking_model extends CI_Model
 		return $result;
 	}
 
-	// function GetLatestSICCode($OpportunityID,$MaterialID){
-	//     $this->db->select('SICCode');
-	//     $this->db->from('tbl_product');
-	//     $this->db->where('OpportunityID', $OpportunityID);
-	// 	$this->db->where('MaterialID', $MaterialID);
-	//     $this->db->order_by('productid', 'desc');
-	// 	$this->db->limit(1);
-	//     $query = $this->db->get(); 
-	// 	//echo $this->db->last_query();       
-	//    //exit;
-	//     $result = $query->result();        
-	//     return $result;
-	// }
-
-	function GetLatestSICCode($OpportunityID, $MaterialID)
-	{
-		$this->db->select('SICCode');
-		$this->db->from('tbl_product');
-		$this->db->where('OpportunityID', $OpportunityID);
+	function GetLatestSICCode($OpportunityID,$MaterialID){
+	    $this->db->select('SICCode');
+	    $this->db->from('tbl_product');
+	    $this->db->where('OpportunityID', $OpportunityID);
 		$this->db->where('MaterialID', $MaterialID);
-		$this->db->order_by('productid', 'desc');
+	    $this->db->order_by('productid', 'desc');
 		$this->db->limit(1);
-
-		$query = $this->db->get();
-
-		if ($query->num_rows() > 0) {
-			return $query->row(); // Return the row containing SICCode
-		} else {
-			return null; // No result found
-		}
+	    $query = $this->db->get(); 
+		//echo $this->db->last_query();       
+	   //exit;
+	    $result = $query->result();        
+	    return $result;
 	}
+
+	// function GetLatestSICCode($OpportunityID, $MaterialID)
+	// {
+	// 	$this->db->select('SICCode');
+	// 	$this->db->from('tbl_product');
+	// 	$this->db->where('OpportunityID', $OpportunityID);
+	// 	$this->db->where('MaterialID', $MaterialID);
+	// 	$this->db->order_by('productid', 'desc');
+	// 	$this->db->limit(1);
+
+	// 	$query = $this->db->get();
+
+	// 	if ($query->num_rows() > 0) {
+	// 		return $query->row(); // Return the row containing SICCode
+	// 	} else {
+	// 		return null; // No result found
+	// 	}
+	// }
 
 	function getMaterialListDetails($id)
 	{

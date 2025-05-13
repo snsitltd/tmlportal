@@ -5923,39 +5923,39 @@ class Booking extends BaseController
 
 	}
 
-	// function LoadSICCodeProduct()
-	// {
-	// 	$OpportunityID = $_POST['OpportunityID'];
-	// 	$MaterialID = $_POST['MaterialID'];
-
-	// 	$result['SICCODE'] = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
-	// 	if ($result > 0) {
-	// 		echo (json_encode($result));
-	// 	} else {
-	// 		echo (json_encode(array('status' => FALSE)));
-	// 	}
-
-	// }
-
 	function LoadSICCodeProduct()
 	{
-		$OpportunityID = $this->input->post('OpportunityID');
-		$MaterialID = $this->input->post('MaterialID');
+		$OpportunityID = $_POST['OpportunityID'];
+		$MaterialID = $_POST['MaterialID'];
 
-		// Debugging: Log received data
-		//log_message('debug', "Received OpportunityID: $OpportunityID and MaterialID: $MaterialID");
-
-		// Try to fetch SICCode using the model method
-		$SICCode = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
-
-		if ($SICCode) {
-			// If SICCode is found, return it in a valid JSON format
-			echo json_encode(array('status' => true, 'SICCODE' => $SICCode));
+		$result['SICCODE'] = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
+		if ($result > 0) {
+			echo (json_encode($result));
 		} else {
-			// If no SICCode is found, return a failure status
-			echo json_encode(array('status' => false, 'message' => 'No SIC Code found'));
+			echo (json_encode(array('status' => FALSE)));
 		}
+
 	}
+
+	// function LoadSICCodeProduct()
+	// {
+	// 	$OpportunityID = $this->input->post('OpportunityID');
+	// 	$MaterialID = $this->input->post('MaterialID');
+
+	// 	// Debugging: Log received data
+	// 	//log_message('debug', "Received OpportunityID: $OpportunityID and MaterialID: $MaterialID");
+
+	// 	// Try to fetch SICCode using the model method
+	// 	$SICCode = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
+
+	// 	if ($SICCode) {
+	// 		// If SICCode is found, return it in a valid JSON format
+	// 		echo json_encode(array('status' => true, 'SICCODE' => $SICCode));
+	// 	} else {
+	// 		// If no SICCode is found, return a failure status
+	// 		echo json_encode(array('status' => false, 'message' => 'No SIC Code found'));
+	// 	}
+	// }
 
 	function LoadOpportunityContacts()
 	{

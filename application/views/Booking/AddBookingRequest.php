@@ -591,49 +591,80 @@
 			});
 		});
 		//"input[name^='news']"
+
 		$("body").on("change", ".Material", function () {
 			var RID = $(this).attr("data-BID");
+			$('#DescriptionofMaterial' + RID).selectpicker('refresh');
 			var selectedText = $(this).find("option:selected").text();
 			var selected = $(this).find('option:selected');
 			var sic = selected.data('sic');
 			var MaterialID = selected.data('materialid');
 			var OpportunityID = $("#OpportunityID").val();
-
-			console.log("Selected Material: ", selectedText);
-			console.log("Material ID: ", MaterialID);
-			console.log("Opportunity ID: ", OpportunityID);
-
-			// Update Material Name and SIC Code inputs
 			$("#MaterialName" + RID).val(selectedText);
 			$("#SICCode" + RID).val(sic);
-
+			alert(sic)
+			alert(MaterialID)
 			if (OpportunityID != '' && MaterialID != '') {
-				// Make the AJAX call
+
 				jQuery.ajax({
 					type: "POST",
 					dataType: "json",
-					url: baseURL + "/LoadSICCodeProduct",  // Make sure URL is correct
-					data: {
-						OpportunityID: OpportunityID,
-						MaterialID: MaterialID
-					}
+					url: baseURL + "/LoadSICCodeProduct",
+					data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
 				})
-					.done(function (data) {
-						console.log("AJAX response:", data);
+			}).done(function (data) {
+				//alert(JSON.stringify( data ));     
+				//console.log(data); 
+				//alert(data.SICCODE[0].SICCode);
+				if (data.SICCODE[0].SICCode != '') {
+					$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
+				}
+			});
+	});
 
-						// Check if the response contains the SICCode
-						if (data.status && data.SICCODE && data.SICCODE.SICCode !== "") {
-							console.log("SICCode fetched: ", data.SICCODE.SICCode);
-							$("#SICCode" + RID).val(data.SICCODE.SICCode); // Set SICCode value in the appropriate field
-						} else {
-							$("#SICCode" + RID).val(''); // Clear the field if no SICCode
-						}
-					})
-					.fail(function (jqXHR, textStatus, errorThrown) {
-						console.log("AJAX request failed", textStatus, errorThrown);
-					});
-			}
-		});
+		// $("body").on("change", ".Material", function () {
+		// 	var RID = $(this).attr("data-BID");
+		// 	var selectedText = $(this).find("option:selected").text();
+		// 	var selected = $(this).find('option:selected');
+		// 	var sic = selected.data('sic');
+		// 	var MaterialID = selected.data('materialid');
+		// 	var OpportunityID = $("#OpportunityID").val();
+
+		// 	console.log("Selected Material: ", selectedText);
+		// 	console.log("Material ID: ", MaterialID);
+		// 	console.log("Opportunity ID: ", OpportunityID);
+
+		// 	// Update Material Name and SIC Code inputs
+		// 	$("#MaterialName" + RID).val(selectedText);
+		// 	$("#SICCode" + RID).val(sic);
+
+		// 	if (OpportunityID != '' && MaterialID != '') {
+		// 		// Make the AJAX call
+		// 		jQuery.ajax({
+		// 			type: "POST",
+		// 			dataType: "json",
+		// 			url: baseURL + "/LoadSICCodeProduct",  // Make sure URL is correct
+		// 			data: {
+		// 				OpportunityID: OpportunityID,
+		// 				MaterialID: MaterialID
+		// 			}
+		// 		})
+		// 			.done(function (data) {
+		// 				console.log("AJAX response:", data);
+
+		// 				// Check if the response contains the SICCode
+		// 				if (data.status && data.SICCODE && data.SICCODE.SICCode !== "") {
+		// 					console.log("SICCode fetched: ", data.SICCODE.SICCode);
+		// 					$("#SICCode" + RID).val(data.SICCODE.SICCode); // Set SICCode value in the appropriate field
+		// 				} else {
+		// 					$("#SICCode" + RID).val(''); // Clear the field if no SICCode
+		// 				}
+		// 			})
+		// 			.fail(function (jqXHR, textStatus, errorThrown) {
+		// 				console.log("AJAX request failed", textStatus, errorThrown);
+		// 			});
+		// 	}
+		// });
 
 	});
 	$("body").on("change", ".LoadType", function () {
