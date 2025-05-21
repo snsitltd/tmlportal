@@ -488,8 +488,7 @@
 					}
 				}
 
-				// ✅ Add Update PDF button
-				var updatePDFButton = '<a href="#" class="btn btn-sm btn-success me-1 update-pdf-btn" data-loadid="' + data["LoadID"] + '" title="Update PDF"><i class="fa fa-refresh"></i></a>';
+				
 
 				$(row).find("td:eq(-1)").html(
 					'<div class="d-flex align-items-center">' +
