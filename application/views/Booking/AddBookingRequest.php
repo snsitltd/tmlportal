@@ -60,7 +60,7 @@
 																			<option value="<?php echo $value['CompanyID'] ?>">
 																				<?php echo $value['CompanyName'] ?>
 																			</option>
-																		<?php }
+																	<?php }
 																	} ?>
 																</select> <input type="hidden" id="CompName"
 																	name="CompName">
@@ -147,7 +147,7 @@
 																			<option value="<?php echo $rl->County ?>" <?php if ($rl->County == set_value('County')) { ?> selected
 																				<?php } ?>><?php echo $rl->County ?>
 																			</option>
-																			<?php
+																	<?php
 																		}
 																	}
 																	?>
@@ -233,7 +233,8 @@
 														<!--<div class="col-md-6">
 									<div class="form-group">
 										<label for="PurchaseOrderNumber">Purchase Order  </label>
-										<input type="text" class="form-control " id="PurchaseOrderNumber" value="<?php //echo set_value('PurchaseOrderNumber'); ?>" name="PurchaseOrderNumber">
+										<input type="text" class="form-control " id="PurchaseOrderNumber" value="<?php //echo set_value('PurchaseOrderNumber'); 
+																													?>" name="PurchaseOrderNumber">
 										<div class="checkbox"> 
 											<label> <input type="checkbox" name="OpenPO" value="1" id="OpenPO"  > Open PO </label>
 										</div> 
@@ -251,7 +252,7 @@
 																			<option value="<?php echo $value['userId'] ?>">
 																				<?php echo $value['name'] ?>
 																			</option>
-																		<?php }
+																	<?php }
 																	} ?>
 																</select>
 																<div></div>
@@ -345,13 +346,13 @@
 																			id="LorryType1" required="required"
 																			name="LorryType[]" data-live-search="true">
 																			<option value="" <?php if (set_value('LorryType') == "") { ?>
-																					selected <?php } ?>>Select</option>
+																				selected <?php } ?>>Select</option>
 																			<option value="1" <?php if (set_value('LorryType') == 1) { ?>
-																					selected <?php } ?>>Tipper</option>
+																				selected <?php } ?>>Tipper</option>
 																			<option value="2" <?php if (set_value('LorryType') == 2) { ?>
-																					selected <?php } ?>>Grab</option>
+																				selected <?php } ?>>Grab</option>
 																			<option value="3" <?php if (set_value('LorryType') == 3) { ?>
-																					selected <?php } ?>>Bin</option>
+																				selected <?php } ?>>Bin</option>
 																		</select>
 																		<div></div>
 																	</td>
@@ -449,7 +450,8 @@
 																			id="PaymentType" value="3" checked> Card
 																	</label>
 																</div>
-																<!-- <input type="text" class="form-control " id="PaymentType" value="<?php //echo set_value('PaymentType'); ?>" name="PaymentType" maxlength="20" >
+																<!-- <input type="text" class="form-control " id="PaymentType" value="<?php //echo set_value('PaymentType'); 
+																																		?>" name="PaymentType" maxlength="20" >
 										<i id='pdate'></i> -->
 															</div>
 														</div>
@@ -507,12 +509,11 @@
 	</section>
 </div>
 <script type="text/javascript" language="javascript">
-
-	$(document).ready(function () {
+	$(document).ready(function() {
 		var rowIdx = 2;
 
 		// jQuery button click event to add a row.
-		$('#addBtn').on('click', function () {
+		$('#addBtn').on('click', function() {
 			var Append = '<tr id="' + rowIdx + '" >';
 			Append += '<td> <button class="btn btn-sm btn-danger remove" title="Remove "><i class="fa fa-remove"></i></button> </td>';
 			Append += '<td><select class="form-control BookingType" id="BookingType' + rowIdx + '" data-BID="' + rowIdx + '" name="BookingType[]" required="required"  ></select><div ></div></td>';
@@ -543,7 +544,9 @@
 			$("#LorryType" + rowIdx).html(LRTOptions).selectpicker('refresh');
 
 			var LO = '';
-			for (i = 1; i <= 100; i++) { LO += '<option value="' + i + '"  >' + i + '</option>'; }
+			for (i = 1; i <= 100; i++) {
+				LO += '<option value="' + i + '"  >' + i + '</option>';
+			}
 			$("#Loads" + rowIdx).html(LO).selectpicker('refresh');
 
 			rowIdx++;
@@ -558,7 +561,7 @@
 
 		});
 
-		$('#tbody').on('click', '.remove', function () {
+		$('#tbody').on('click', '.remove', function() {
 			$(this).closest('tr').remove();
 		});
 
@@ -581,59 +584,142 @@
 		);
 		//alert(formatDate(oneMonthAgo)); 
 
-		$("body").on("click focus", ".BookingDateTime", function () {
-			$('.BookingDateTime').datepicker({
-				format: 'dd/mm/yyyy',
-				startDate: 'today',
-				daysOfWeekDisabled: [0],
-				multidate: 6,
-				closeOnDateSelect: true
-			});
-		});
+		// $("body").on("click focus", ".BookingDateTime", function() {
+		// 	$('.BookingDateTime').datepicker({
+		// 		format: 'dd/mm/yyyy',
+		// 		startDate: 'today',
+		// 		daysOfWeekDisabled: [0],
+		// 		multidate: 6,
+		// 		closeOnDateSelect: true
+		// 	});
+		// });
+
+		$("body").on("click focus", ".BookingDateTime", function() {
+	$(this).datepicker({
+		format: 'dd/mm/yyyy',
+		daysOfWeekDisabled: [0],  // Optional: disables Sundays
+		multidate: 6,
+		closeOnDateSelect: true,
+		autoclose: true,
+		todayHighlight: true
+	});
+});
+
 		//"input[name^='news']"
-		$("body").on("change", ".Material", function () {
+		// $("body").on("change", ".Material", function() {
+		// 	var RID = $(this).attr("data-BID");
+		// 	$('#DescriptionofMaterial' + RID).selectpicker('refresh');
+		// 	var selectedText = $(this).find("option:selected").text();
+		// 	var selected = $(this).find('option:selected');
+		// 	var sic = selected.data('sic');
+		// 	var MaterialID = selected.data('materialid');
+		// 	var OpportunityID = $("#OpportunityID").val();
+		// 	$("#MaterialName" + RID).val(selectedText);
+		// 	$("#SICCode" + RID).val(sic);
+		// alert(sic) 
+		// alert(MaterialID) 
+		// if (OpportunityID != '' && MaterialID != '') {
+
+		// 	jQuery.ajax({
+		// 		type: "POST",
+		// 		dataType: "json",
+		// 		url: baseURL + "/LoadSICCodeProduct",
+		// 		data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
+		// 		})
+		// 	}).done(function (data) {
+		// 		//alert(JSON.stringify( data ));     
+		// 		//console.log(data); 
+		// 		//alert(data.SICCODE[0].SICCode);
+		// 		if (data.SICCODE[0].SICCode != '') {
+		// 			$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
+		// 		}
+		// 	});
+		// });
+
+// 		$("body").on("change", ".Material", function() {
+// 	var RID = $(this).attr("data-BID");
+// 	$('#DescriptionofMaterial' + RID).selectpicker('refresh');
+// 	var selectedText = $(this).find("option:selected").text();
+// 	var selected = $(this).find('option:selected');
+// 	var sic = selected.data('sic');
+// 	var MaterialID = selected.data('materialid');
+// 	var OpportunityID = $("#OpportunityID").val();
+// 	$("#MaterialName" + RID).val(selectedText);
+// 	$("#SICCode" + RID).val(sic);
+// 	alert(sic);
+// 	alert(MaterialID);
+	
+// 	if (OpportunityID != '' && MaterialID != '') {
+// 		jQuery.ajax({
+// 			type: "POST",
+// 			dataType: "json",
+// 			url: baseURL + "/LoadSICCodeProduct",
+// 			data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
+// 		}).done(function(data) {
+// 			if (data.SICCODE[0].SICCode != '') {
+// 				$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
+// 			}
+// 		});
+// 	}
+// });
+
+		$("body").on("change", ".Material", function() {
 			var RID = $(this).attr("data-BID");
-			$('#DescriptionofMaterial' + RID).selectpicker('refresh');
 			var selectedText = $(this).find("option:selected").text();
 			var selected = $(this).find('option:selected');
 			var sic = selected.data('sic');
 			var MaterialID = selected.data('materialid');
 			var OpportunityID = $("#OpportunityID").val();
+
+			console.log("Selected Material: ", selectedText);
+			console.log("Material ID: ", MaterialID);
+			console.log("Opportunity ID: ", OpportunityID);
+
+			// Update Material Name and SIC Code inputs
 			$("#MaterialName" + RID).val(selectedText);
 			$("#SICCode" + RID).val(sic);
-			//alert(sic) 
-			//alert(MaterialID) 
+
 			if (OpportunityID != '' && MaterialID != '') {
-
+				// Make the AJAX call
 				jQuery.ajax({
-					type: "POST",
-					dataType: "json",
-					url: baseURL + "/LoadSICCodeProduct",
-					data: { OpportunityID: OpportunityID, MaterialID: MaterialID }
-				}).done(function (data) {
-					//alert(JSON.stringify( data ));     
-					//console.log(data); 
-					//alert(data.SICCODE[0].SICCode);
-					if (data.SICCODE[0].SICCode != '') {
-						$("#SICCode" + RID).val(data.SICCODE[0].SICCode);
-					}
-				});
+						type: "POST",
+						dataType: "json",
+						url: baseURL + "/LoadSICCodeProduct", // Make sure URL is correct
+						data: {
+							OpportunityID: OpportunityID,
+							MaterialID: MaterialID
+						}
+					})
+					.done(function(data) {
+						console.log("AJAX response:", data);
+
+						// Check if the response contains the SICCode
+						if (data.status && data.SICCODE && data.SICCODE.SICCode !== "") {
+							console.log("SICCode fetched: ", data.SICCODE.SICCode);
+							$("#SICCode" + RID).val(data.SICCODE.SICCode); // Set SICCode value in the appropriate field
+						} else {
+							$("#SICCode" + RID).val(''); // Clear the field if no SICCode
+						}
+					})
+					.fail(function(jqXHR, textStatus, errorThrown) {
+						console.log("AJAX request failed", textStatus, errorThrown);
+					});
 			}
-
-
 		});
-		$("body").on("change", ".LoadType", function () {
+
+
+		$("body").on("change", ".LoadType", function() {
 			//$(".LoadType").on('change',function(){
 			var LoadType = $(this).val();
 			$('.Price').change();
 			$('.BookingDateTime').click();
 
 		});
-		$("body").on("change", ".Loads", function () {
+		$("body").on("change", ".Loads", function() {
 			//$(".Loads").on('change',function(){ 
 			$('.Price').change();
 		});
-		$("body").on("change", ".Price", function () {
+		$("body").on("change", ".Price", function() {
 			//$(".Price").on('change',function(){  
 
 			var PriceVal = parseFloat($(this).val()).toFixed(2);
@@ -656,7 +742,9 @@
 			var TotalHidden = document.getElementsByName('TotalHidden[]');
 			let SubTotal = 0.0;
 			for (var i = 0; i < TotalHidden.length; i++) {
-				if (TotalHidden[i].value == "") { TotalHidden[i].value = 0; }
+				if (TotalHidden[i].value == "") {
+					TotalHidden[i].value = 0;
+				}
 				SubTotal += parseFloat(TotalHidden[i].value);
 			}
 
@@ -671,7 +759,7 @@
 			$("#AllTotal").html(AllTotal);
 			$("#TotalAmount").val(AllTotal);
 		});
-		$("body").on("change", ".BookingType", function () {
+		$("body").on("change", ".BookingType", function() {
 			//$(".BookingType").on('change',function(event){   
 			var id = $(this).val();
 			var RID = $(this).attr("data-BID");
@@ -680,8 +768,10 @@
 					type: "POST",
 					dataType: "json",
 					url: baseURL + "/LoadBookingMaterials",
-					data: { id: id }
-				}).done(function (data) {
+					data: {
+						id: id
+					}
+				}).done(function(data) {
 					//alert(JSON.stringify( data ));    
 					//console.log(data);               
 					if (data.status == false) {
@@ -691,7 +781,11 @@
 						var sty = '';
 						var options = '<option value="">Select Material Type</option>';
 						for (var i = 0; i < data.material_list.length; i++) {
-							if (data.material_list[i].Status == 1) { sty = 'style="background-color:#dd4b39;color:white;font-weight: bold;"' } else { sty = ''; }
+							if (data.material_list[i].Status == 1) {
+								sty = 'style="background-color:#dd4b39;color:white;font-weight: bold;"'
+							} else {
+								sty = '';
+							}
 							options += '<option value="' + data.material_list[i].MaterialID + '"     data-sic="' + data.material_list[i].SicCode + '" data-materialid="' + data.material_list[i].MaterialID + '"  >' + data.material_list[i].MaterialName + '</option>';
 						}
 						//$("select#DescriptionofMaterial"+RID).html(options);  
@@ -704,7 +798,7 @@
 			}
 
 		});
-		$("body").on("change", ".LorryType", function () {
+		$("body").on("change", ".LorryType", function() {
 			$('.BookingDateTime').click();
 			var rawPriceVal = $(this).val();
 
@@ -733,7 +827,7 @@
 				PriceField.val(0);
 			}
 		});
-		$("body").on("changeDate click change ", ".BookingDateTime , .LoadType , .LorryType , .Loads , .BookingType, .Material,  #OpportunityID", function () {
+		$("body").on("changeDate click change ", ".BookingDateTime , .LoadType , .LorryType , .Loads , .BookingType, .Material,  #OpportunityID", function() {
 			//$('.BookingDateTime , .LoadType , .Loads , .BookingType').datepicker().on('changeDate click', function (ev) { 
 			//alert(val('#BookingDateTime'));
 			//var BookingDateTime = $( "#BookingDateTime").val(); 
@@ -766,8 +860,13 @@
 						type: "POST",
 						dataType: "json",
 						url: HitUrl,
-						data: { 'OpportunityID': OpportunityID, 'MaterialID': MaterialID, 'DateRequired': DateRequired, 'LorryType': LorryType }
-					}).success(function (data) {
+						data: {
+							'OpportunityID': OpportunityID,
+							'MaterialID': MaterialID,
+							'DateRequired': DateRequired,
+							'LorryType': LorryType
+						}
+					}).success(function(data) {
 						console.log(data);
 						//var Prc = 0;
 						var Prc = Price;
@@ -783,7 +882,8 @@
 						if (Prc != '' || Prc != '0') {
 							$("#Price" + RID).val(parseFloat((Prc)).toFixed(2));
 						} else {
-							$("#Price" + RID).val(0); Prc = 0;
+							$("#Price" + RID).val(0);
+							Prc = 0;
 						}
 
 						if (LoadType == 1 || LoadType == 2) {
@@ -798,13 +898,19 @@
 						if (data.PriceDate) {
 							if (data.PriceDate != "") {
 								$("#pdate" + RID).html('<b>PriceDate:</b> ' + data.PriceDate);
-							} else { $("#pdate" + RID).html(''); }
-						} else { $("#pdate" + RID).html(''); }
+							} else {
+								$("#pdate" + RID).html('');
+							}
+						} else {
+							$("#pdate" + RID).html('');
+						}
 
 						var TotalHidden = document.getElementsByName('TotalHidden[]');
 						let SubTotal = 0.0;
 						for (var i = 0; i < TotalHidden.length; i++) {
-							if (TotalHidden[i].value == "") { TotalHidden[i].value = 0; }
+							if (TotalHidden[i].value == "") {
+								TotalHidden[i].value = 0;
+							}
 							SubTotal += parseFloat(TotalHidden[i].value);
 						}
 
@@ -826,7 +932,7 @@
 					//$( "#Total"+RID).html(0); 
 					//$( "#TotalHidden"+RID).val(0); 
 				}
-			} else { 	//$( "#Price"+RID).val('');  
+			} else { //$( "#Price"+RID).val('');  
 				//$( "#pdate"+RID).html('');  
 				//$( "#Total"+RID).html(0); 
 				//$( "#TotalHidden"+RID).val(0);  
@@ -841,9 +947,9 @@
 		// 			}
 		// 		}); 
 
-		$(document).ready(function () {
+		$(document).ready(function() {
 			// Handle payment type selection
-			$("input[name='PaymentType']").click(function () {
+			$("input[name='PaymentType']").click(function() {
 				var pvalue = $(this).val();
 				// Show the payment block if the payment type is not 0
 				if (pvalue != 0) {
@@ -855,15 +961,15 @@
 			});
 		});
 
-		$('#AddBooking').on('submit', function (event) {
+		$('#AddBooking').on('submit', function(event) {
 			let isValid = true;
 			console.log("Form submitted");
 			// Select only LorryType dropdowns
-			$(this).find('.LorryType[required]').each(function () {
+			$(this).find('.LorryType[required]').each(function() {
 				if (!$(this).val()) {
 					isValid = false;
 					console.log("false");
-					
+
 					$(this).css("border", "1px solid red"); // Highlight empty fields
 				} else {
 					$(this).css("border", ""); // Remove highlight if valid
@@ -877,6 +983,6 @@
 		});
 
 
-	});    	  
+	});
 </script>
 <script src="<?php echo base_url('assets/js/Booking1.js'); ?>" type="text/javascript"></script>

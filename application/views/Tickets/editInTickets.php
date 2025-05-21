@@ -268,7 +268,7 @@
 											<label for="SicCode">SIC Code <span class="required">*</span></label>
 											<input type="text" class="form-control" id="SicCode"
 												value="<?php echo $tickets['SicCode']; ?>" name="SicCode"
-												maxlength="100" readonly>
+												maxlength="100" >
 										</div>
 									</div>
 

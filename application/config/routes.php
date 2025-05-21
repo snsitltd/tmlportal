@@ -691,7 +691,6 @@ $route['FetchDeliveryTicketNoAJAX'] = "Booking/FetchDeliveryTicketNoAJAX";
 
 $route['StatusUpdateAjax'] = "Booking/StatusUpdateAjax";
 $route['StatusUpdate/(:num)'] = "Booking/StatusUpdate/$1";
-
 $route['DeliveryStatusUpdateAjax'] = "Booking/DeliveryStatusUpdateAjax";
 $route['DeliveryStatusUpdate/(:num)'] = "Booking/DeliveryStatusUpdate/$1";
 

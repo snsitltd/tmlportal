@@ -1234,12 +1234,12 @@ class Booking extends BaseController
 							}
 
 							if ($tickets[$i]['BookingMaterialID'] == $tickets[$i]['MaterialID']) {
-								$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
-							} else {
-								$Price = 0;
-							}
-							$TPrice = floor(($TPrice + $Price) * 100) / 100;
+								// $Price = is_numeric($row['Price']) ? $row['Price'] : 0;
+								$Price = is_numeric($tickets[$i]['Price']) ? $tickets[$i]['Price'] : 0;
 
+							}
+							// $TPrice = floor(($TPrice + $Price) * 100) / 100;
+							$TPrice = bcadd($TPrice, $Price, 2);
 							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);
 							if ($tickets[$i]['WaitTime'] == null) {
 								$min = "N/A";
@@ -5924,20 +5924,42 @@ class Booking extends BaseController
 
 	}
 
-	function LoadSICCodeProduct()
-	{
-		$OpportunityID = $_POST['OpportunityID'];
-		$MaterialID = $_POST['MaterialID'];
+	// function LoadSICCodeProduct()
+	// {
+	// 	$OpportunityID = $_POST['OpportunityID'];
+	// 	$MaterialID = $_POST['MaterialID'];
 
-		$result['SICCODE'] = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
-		if ($result > 0) {
-			echo (json_encode($result));
+	// 	$result['SICCODE'] = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
+	// 	if ($result > 0) {
+	// 		echo (json_encode($result));
+	// 	} else {
+	// 		echo (json_encode(array('status' => FALSE)));
+	// 	}
+
+	// }
+	function LoadSICCodeProduct() {
+		$OpportunityID = $this->input->post('OpportunityID');
+		$MaterialID = $this->input->post('MaterialID');
+		
+		// Debugging: Log received data
+		log_message('debug', "Received OpportunityID: $OpportunityID and MaterialID: $MaterialID");
+	
+		// Try to fetch SICCode using the model method
+		$SICCode = $this->Booking_model->GetLatestSICCode($OpportunityID, $MaterialID);
+		
+		if ($SICCode) {
+			// If SICCode is found, return it in a valid JSON format
+			echo json_encode(array('status' => true, 'SICCODE' => $SICCode));
 		} else {
-			echo (json_encode(array('status' => FALSE)));
+			// If no SICCode is found, return a failure status
+			echo json_encode(array('status' => false, 'message' => 'No SIC Code found'));
 		}
-
 	}
+	
+	
 
+
+	
 	function LoadOpportunityContacts()
 	{
 		$id = $_POST['id'];
@@ -7301,7 +7323,7 @@ class Booking extends BaseController
 					$PurchaseOrderNo = $this->security->xss_clean($this->input->post('PurchaseOrderNo'));
 					$OpenPO = $this->security->xss_clean($this->input->post('OpenPO'));
 					$TotalHidden = $this->security->xss_clean($this->input->post('TotalHidden'));
-
+//print_r($BookingDateTime); exit;
 					if ($ContactID == '0') {
 						if (trim($ContactName) == '') {
 							$this->session->set_flashdata('error', 'Contact Name Must Not be blank');
@@ -10744,6 +10766,7 @@ class Booking extends BaseController
 
 					$conditions = array('LoadID ' => $LoadID);
 					$data['LoadInfo'] = $this->Booking_model->BookingLoadInfo1($LoadID);
+				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
 					$PDFContentQRY = $this->db->query("select * from tbl_content_settings where id = '1'");
 					$PDFContent = $PDFContentQRY->result();
@@ -10816,7 +10839,7 @@ class Booking extends BaseController
 						</div>  
 					</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
