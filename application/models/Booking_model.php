@@ -836,23 +836,24 @@ class Booking_model extends CI_Model
 	// 	$result = $query->result();
 	// 	return $result;
 	// }
-	function GetLatestSICCode($OpportunityID, $MaterialID) {
+	function GetLatestSICCode($OpportunityID, $MaterialID)
+	{
 		$this->db->select('SICCode');
 		$this->db->from('tbl_product');
 		$this->db->where('OpportunityID', $OpportunityID);
 		$this->db->where('MaterialID', $MaterialID);
 		$this->db->order_by('productid', 'desc');
 		$this->db->limit(1);
-	
+
 		$query = $this->db->get();
-	
+
 		if ($query->num_rows() > 0) {
 			return $query->row(); // Return the row containing SICCode
 		} else {
 			return null; // No result found
 		}
 	}
-	
+
 
 
 	function getMaterialListDetails($id)
@@ -1238,7 +1239,7 @@ class Booking_model extends CI_Model
 	// 	return $result = $query->result();
 	// }
 
-function MaterialListAJAX()
+	function MaterialListAJAX()
 	{
 		$this->db->select('MaterialID,MaterialName,SicCode,Status');
 		$this->db->from('tbl_materials');
@@ -2783,7 +2784,16 @@ function MaterialListAJAX()
 		$this->db->select(' tbl_booking_request.OpportunityName ');
 		$this->db->select(' tbl_tipaddress.TipName ');
 		$this->db->select(' concat(tbl_tipaddress.Street1,tbl_tipaddress.Street2,tbl_tipaddress.Town,tbl_tipaddress.County,tbl_tipaddress.PostCode) as TipAddress ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
+		$this->db->select('
+			DATE_FORMAT(
+				CASE 
+				WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+				ELSE tbl_booking_loads1.SiteOutDateTime 
+				END, "%d-%m-%Y"
+			) as SiteOutDateTime
+		');
+
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');
 		$this->db->select(' tbl_booking_date1.BookingDateID ');
 		$this->db->select(' tbl_booking_date1.BookingRequestID ');
@@ -2791,7 +2801,16 @@ function MaterialListAJAX()
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		$this->db->select(' DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d/%m/%Y %T"
+		) as SiteOut
+		');
+
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.CancelDateTime,"%d/%m/%Y %T")');
 		$this->db->select('ROUND(TIMESTAMPDIFF(MINUTE, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime) - tbl_booking_request.WaitingTime ) AS WaitTime');
 
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ', 'LEFT');
@@ -3141,8 +3160,16 @@ function MaterialListAJAX()
 		$this->db->select(' tbl_materials.MaterialName ');
 		//$this->db->select(' tbl_booking1.Price '); 
 		$this->db->select(' tbl_booking_loads1.LoadPrice as Price ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d-%m-%Y"
+		) as SiteOutDateTime
+		');
 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
+//		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStartDateTime ');
 		$this->db->select(' tbl_tickets_documents.ID  as DOCID ');
 		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y %T") as SiteOutDateTime ');  	 	  	 	      
@@ -3152,7 +3179,16 @@ function MaterialListAJAX()
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d/%m/%Y %T"
+		) as SiteOut
+		');
+
+		//	$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
 
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ', 'LEFT');
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ', 'LEFT');
@@ -3859,7 +3895,7 @@ function MaterialListAJAX()
 		$this->db->select(' tbl_materials.MaterialName ');
 		$this->db->select(' tbl_materials.MaterialID ');
 		$this->db->select(' tbl_booking1.SicCode ');
-	//	$this->db->select('tbl_booking1.SICCode');
+		//	$this->db->select('tbl_booking1.SICCode');
 		$this->db->select(' tbl_booking1.SICCode as LoadSICCODE ');
 
 		$this->db->select(' tbl_booking_request.CompanyName ');
@@ -10421,14 +10457,31 @@ function MaterialListAJAX()
 
 		$this->db->select(' tbl_booking_date1.BookingDateID ');
 		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d/%m/%Y %T"
+		) as SiteOut
+		');
 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');
 
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d-%m-%Y"
+		) as SiteOutDateTime
+		');
+
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
 
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ', 'LEFT');
 		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID ', 'LEFT');
@@ -11456,8 +11509,16 @@ function MaterialListAJAX()
 
 		$this->db->select(' tbl_booking_date1.BookingDateID ');
 		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d-%m-%Y"
+		) as SiteOutDateTime
+		');
 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
+	//	$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") as SiteOutDateTime2 ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');
 
@@ -11466,7 +11527,16 @@ function MaterialListAJAX()
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d/%m/%Y %T"
+		) as SiteOut
+		');
+
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
 
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime2,"%d/%m/%Y %T") as HaulageIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d/%m/%Y %T") as HaulageOut ');
