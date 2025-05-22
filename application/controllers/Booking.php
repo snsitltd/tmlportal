@@ -10766,7 +10766,7 @@ class Booking extends BaseController
 
 					$conditions = array('LoadID ' => $LoadID);
 					$data['LoadInfo'] = $this->Booking_model->BookingLoadInfo1($LoadID);
-				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+					$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
 					$PDFContentQRY = $this->db->query("select * from tbl_content_settings where id = '1'");
 					$PDFContent = $PDFContentQRY->result();

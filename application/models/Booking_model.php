@@ -1227,7 +1227,18 @@ class Booking_model extends CI_Model
 		return $result = $query->result();
 	}
 
-	function MaterialListAJAX()
+	// function MaterialListAJAX()
+	// {
+	// 	$this->db->select('tbl_materials.MaterialID,tbl_materials.MaterialName,tbl_booking1.SicCode,tbl_materials.Status');
+	// 	$this->db->from('tbl_materials');
+	// 	 $this->db->join('tbl_booking1', 'tbl_booking1.MaterialID = tbl_materials.MaterialID', 'left'); // JOIN added here
+	// 	$this->db->where('tbl_materials.Operation = "IN" ');
+	// 	$this->db->order_by('MaterialID', 'ASC');
+	// 	$query = $this->db->get();
+	// 	return $result = $query->result();
+	// }
+
+function MaterialListAJAX()
 	{
 		$this->db->select('MaterialID,MaterialName,SicCode,Status');
 		$this->db->from('tbl_materials');
@@ -1236,6 +1247,7 @@ class Booking_model extends CI_Model
 		$query = $this->db->get();
 		return $result = $query->result();
 	}
+
 	function MaterialListAJAX1()
 	{
 		$this->db->select('MaterialID,MaterialName,SicCode,Status');
@@ -3846,7 +3858,8 @@ class Booking_model extends CI_Model
 
 		$this->db->select(' tbl_materials.MaterialName ');
 		$this->db->select(' tbl_materials.MaterialID ');
-		$this->db->select(' tbl_materials.SicCode ');
+		$this->db->select(' tbl_booking1.SicCode ');
+	//	$this->db->select('tbl_booking1.SICCode');
 		$this->db->select(' tbl_booking1.SICCode as LoadSICCODE ');
 
 		$this->db->select(' tbl_booking_request.CompanyName ');

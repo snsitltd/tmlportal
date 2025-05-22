@@ -495,7 +495,7 @@
 					cpdf +
 					pdaButton +
 					'<a href="#" class="btn btn-sm btn-warning LoadInfo" data-LoadID="' + data["LoadID"] + '" title="Load Info"><i class="fa fa-history"></i></a>' +
-					'<a href="#" class="btn btn-sm btn-success me-1 update-pdf-btn" data-loadid="' + data["LoadID"] + '" title="Update PDF"><i class="fa fa-refresh"></i></a>' +
+					
 					'</div>'
 				);
 
