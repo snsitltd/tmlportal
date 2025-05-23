@@ -968,32 +968,7 @@
 
 		});
 
-		$(document).on('click', '.update-pdf-btn', function(e) {
-			e.preventDefault();
-
-			var loadID = $(this).data('loadid');
-
-			if (confirm("Are you sure you want to update the PDF?")) {
-				$.ajax({
-					url: baseURL + "PdfUpdate", // Replace with your actual controller method
-					method: "POST",
-					data: {
-						load_id: loadID
-					},
-					success: function(response) {
-						alert("PDF updated successfully.");
-						// optionally reload the DataTable row or table
-						$('#yourTableId').DataTable().ajax.reload(null, false);
-					},
-					error: function() {
-						alert("Error updating PDF.");
-					}
-				});
-			}
-		});
-
-
-
+		
 	});
 </script>
 

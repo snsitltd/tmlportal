@@ -2787,11 +2787,18 @@ class Booking_model extends CI_Model
 		$this->db->select('
 			DATE_FORMAT(
 				CASE 
-				WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
-				ELSE tbl_booking_loads1.SiteOutDateTime 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
 				END, "%d-%m-%Y"
 			) as SiteOutDateTime
 		');
+
 
 		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');
@@ -2801,12 +2808,19 @@ class Booking_model extends CI_Model
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(
-			CASE 
-			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
-			ELSE tbl_booking_loads1.SiteOutDateTime 
-			END, "%d/%m/%Y %T"
-		) as SiteOut
+		$this->db->select('
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOut
 		');
 
 		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
@@ -3161,13 +3175,20 @@ class Booking_model extends CI_Model
 		//$this->db->select(' tbl_booking1.Price '); 
 		$this->db->select(' tbl_booking_loads1.LoadPrice as Price ');
 		$this->db->select('
-		DATE_FORMAT(
-			CASE 
-			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
-			ELSE tbl_booking_loads1.SiteOutDateTime 
-			END, "%d-%m-%Y"
-		) as SiteOutDateTime
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOutDateTime
 		');
+
 
 //		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStartDateTime ');
@@ -3180,13 +3201,20 @@ class Booking_model extends CI_Model
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
 		$this->db->select('
-		DATE_FORMAT(
-			CASE 
-			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
-			ELSE tbl_booking_loads1.SiteOutDateTime 
-			END, "%d/%m/%Y %T"
-		) as SiteOut
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOut
 		');
+
 
 		//	$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
 
@@ -11510,12 +11538,18 @@ class Booking_model extends CI_Model
 		$this->db->select(' tbl_booking_date1.BookingDateID ');
 		$this->db->select(' tbl_booking_date1.BookingRequestID ');
 		$this->db->select('
-		DATE_FORMAT(
-			CASE 
-			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
-			ELSE tbl_booking_loads1.SiteOutDateTime 
-			END, "%d-%m-%Y"
-		) as SiteOutDateTime
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOutDateTime
 		');
 
 	//	$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
@@ -11528,12 +11562,18 @@ class Booking_model extends CI_Model
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
 		$this->db->select('
-		DATE_FORMAT(
-			CASE 
-			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
-			ELSE tbl_booking_loads1.SiteOutDateTime 
-			END, "%d/%m/%Y %T"
-		) as SiteOut
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOut
 		');
 
 		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
