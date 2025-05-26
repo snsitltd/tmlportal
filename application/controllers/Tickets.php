@@ -2704,7 +2704,7 @@ class Tickets extends BaseController
 			$this->loadViews("permission", $this->global, $data, NULL);
 		} else {  // $post = $this->input->post();
 			$TicketNo = $this->security->xss_clean($this->input->post('TicketNo'));
-			$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
+			//$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
 			$OpportunityID = $this->security->xss_clean($this->input->post('OpportunityID'));
 			$Conveyance = $this->security->xss_clean($this->input->post('Conveyance'));
 			$is_tml = $this->security->xss_clean($this->input->post('is_tml'));
