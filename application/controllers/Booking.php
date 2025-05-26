@@ -4044,7 +4044,7 @@ class Booking extends BaseController
 						</div>  
 					</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -4088,7 +4088,7 @@ class Booking extends BaseController
 
 					$html = $this->load->view('Tickets/ticket_pdf', $data1, true);
 					//this the the PDF filename that user will get to download
-					$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+					$pdfFilePath = WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					$openPath = "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 					//load mPDF library
@@ -4298,7 +4298,7 @@ class Booking extends BaseController
 									<b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
 									' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
 					$mpdf = new mPDF('utf-8', array(70, 220), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -14710,7 +14710,7 @@ class Booking extends BaseController
 							</div>  
 						</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -14721,7 +14721,7 @@ class Booking extends BaseController
 					///* =================== Site Logs ===================   
 					$OldFile = $pdfFilePath;
 					$NewFileName = date('YmdHis') . ".pdf";
-					$NewFile = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $NewFileName;
+					$NewFile = WEB_ROOT_PATH . "assets/conveyance/" . $NewFileName;
 
 					copy($OldFile, $NewFile);
 
@@ -14772,7 +14772,7 @@ class Booking extends BaseController
 
 						$html = $this->load->view('Tickets/ticket_pdf', $data1, true);
 						//this the the PDF filename that user will get to download
-						$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+						$pdfFilePath = WEB_ROOT_PATH . "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 						$openPath = "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 						//load mPDF library
@@ -14884,7 +14884,7 @@ class Booking extends BaseController
 									<b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
 									' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
 					// Delete old PDF if it exists
 					if (file_exists($pdfFilePath)) {
 						unlink($pdfFilePath);
@@ -15011,7 +15011,7 @@ class Booking extends BaseController
 							</div>  
 						</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
@@ -15125,7 +15125,7 @@ class Booking extends BaseController
 						</div>  
 					</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "/tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 240), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
