@@ -10759,7 +10759,7 @@ class Booking extends BaseController
 
 				$LoadInfo = array('JobStartDatetime' => $JobStartDatetime, 'SiteInDatetime' => $SiteInDatetime, 'SiteOutDatetime' => $SiteOutDatetime, 'JobEndDatetime' => $JobEndDatetime);
 				$cond = array('LoadID ' => $LoadID);
-				$update = $this->Common_model->upadte("tbl_booking_loads1", $LoadInfo, $cond);
+				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
 
 				/* =================== Site Logs ===================  */
