@@ -10759,7 +10759,7 @@ class Booking extends BaseController
 
 				$LoadInfo = array('JobStartDatetime' => $JobStartDatetime, 'SiteInDatetime' => $SiteInDatetime, 'SiteOutDatetime' => $SiteOutDatetime, 'JobEndDatetime' => $JobEndDatetime);
 				$cond = array('LoadID ' => $LoadID);
-				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+				$update = $this->Common_model->upadte("tbl_booking_loads1", $LoadInfo, $cond);
 
 
 				/* =================== Site Logs ===================  */
@@ -10857,7 +10857,7 @@ class Booking extends BaseController
 						</div>  
 					</div></body></html>';
 
-					$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+					$pdfFilePath = WEB_ROOT_PATH . "assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 					$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
