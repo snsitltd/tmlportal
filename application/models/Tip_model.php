@@ -69,7 +69,7 @@ class Tip_model extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('county');
-        $this->db->where('ID !=', 1);
+        $this->db->where('ID >=', 1);
         $query = $this->db->get();
         
         return $query->result();
