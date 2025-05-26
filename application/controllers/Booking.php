@@ -4493,7 +4493,7 @@ class Booking extends BaseController
 							</div>  
 						</div></body></html>';
 
-						$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
+						$pdfFilePath = WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
 						$mpdf = new mPDF('utf-8', array(70, 190), '', '', 5, 5, 5, 5, 5, 5);
 						$mpdf->keep_table_proportions = false;
 						$mpdf->WriteHTML($html);
