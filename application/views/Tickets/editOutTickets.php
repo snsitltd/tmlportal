@@ -102,46 +102,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="TicketDate">Date Time</label>
-                                        <input type="datetime-local" class="form-control" id="TicketDate" name="TicketDate" value="<?php echo $tickets['TicketDate']; ?>">
-                                    </div>
-                                </div>
-
-                                 <div class="col-md-2"> 
-										<div class="form-group">
-                                        <label for="Conveyance">&nbsp; </label>                                                                  
-                                        <div class="checkbox"> 
-                                        <label> <input type="checkbox" name="is_tml" id="is_tml"  value="1" <?php if($tickets['is_tml']==1) echo 'checked';?> > Is TML Ticket  </label> 
-                                        </div> 
-                                    </div>
-									
-                                </div>  
-								<div class="col-md-4"> 
-										<div class="form-group">
-                                        <label  >&nbsp; </label>                                                                  
-                                        <div id="ShowOrderNo" <?php if($tickets['is_tml']==1) { ?> style="display:none"  <?php  }else{  ?>  <?php } ?> >   
-											<input type="text" class="form-control" id="OrderNo" placeholder = "OrderNumber" value="<?php echo $tickets['OrderNo']; ?>" name="OrderNo"> 		  
-                                        </div> 
-                                    </div>
-									
-                                </div>  
-
-                                                                  
-                            </div>
-							<div class="row">                                
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="notes">Booking Notes : </label> 
-										<?php if($BookingNotes['Notes']){ ?> <?php echo $BookingNotes['Notes']; ?> <?php }else{ echo 'NONE';} ?>
-                                    </div>
-                                </div>                               
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="CompanyID">Select Company <span class="required">*</span></label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <!-- <label for="CompanyID">Select Company <span class="required">*</span></label>
                                         <select class="form-control" id="CompanyID" name="CompanyID" required="required" data-live-search="true"  aria-required="true">
                                          <?php
                                             if ($tickets['LoadID'] > 0) {
