@@ -1232,12 +1232,12 @@ class Booking extends BaseController
 							} else {
 								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tickets[$i]['MaterialName']);
 							}
-
-							if ($tickets[$i]['BookingMaterialID'] == $tickets[$i]['MaterialID']) {
+							$Price = is_numeric($tickets[$i]['Price']) ? $tickets[$i]['Price'] : 0;
+							//if ($tickets[$i]['BookingMaterialID'] == $tickets[$i]['MaterialID']) {
 								// $Price = is_numeric($row['Price']) ? $row['Price'] : 0;
-								$Price = is_numeric($tickets[$i]['Price']) ? $tickets[$i]['Price'] : 0;
+							//	$Price = is_numeric($tickets[$i]['Price']) ? $tickets[$i]['Price'] : 0;
 
-							}
+							//}
 							// $TPrice = floor(($TPrice + $Price) * 100) / 100;
 							$TPrice = bcadd($TPrice, $Price, 2);
 							$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);
