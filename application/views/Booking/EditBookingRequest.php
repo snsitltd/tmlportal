@@ -241,7 +241,7 @@
 										<td>
 											<div class="input-group date">
 												<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-												<input type="text" class="form-control required BookingDateTime" readonly data-BID='<?php echo $record->BookingID; ?>'  <?php if($record->TotalLoadAllocated>0){ ?> <?php } ?>  <?php if($record->TotalLoadAllocated>0){ ?>  <?php } ?>  id="BookingDateTime<?php echo $record->BookingID; ?>" autocomplete="off" value="<?php echo $record->BookingDate1; ?>" name="BookingDateTime[<?php echo $record->BookingID; ?>]" maxlength="65">
+												<input type="text" class="form-control required BookingDateTime" readonly data-BID='<?php echo $record->BookingID; ?>'  <?php if($record->TotalLoadAllocated>0){ ?> disabled <?php } ?>  <?php if($record->TotalLoadAllocated>0){ ?> disabled <?php } ?>  id="BookingDateTime<?php echo $record->BookingID; ?>" autocomplete="off" value="<?php echo $record->BookingDate1; ?>" name="BookingDateTime[<?php echo $record->BookingID; ?>]" maxlength="65">
 											</div>  
 											<div ></div> 										
 										</td>

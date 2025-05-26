@@ -75,8 +75,6 @@ $active_group = 'default';
 $query_builder = TRUE;
 //'database' => 'tmlsnslt_tml__',
 
-
-//local database 
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => '213.175.208.242',
@@ -99,7 +97,6 @@ $db['default'] = array(
 	'save_queries' => TRUE
 );
 
-//live database 
 // $db['default'] = array(
 // 	'dsn'	=> '',
 // 	'hostname' => '213.175.208.242',

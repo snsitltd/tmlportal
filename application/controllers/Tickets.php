@@ -2111,8 +2111,8 @@ class Tickets extends BaseController
 			$PaymentRefNo = $this->security->xss_clean($this->input->post('PaymentRefNo'));
 			$driversignature = $this->input->post('driversignature', FALSE);
 
-			$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
-			$TicketDate = date('Y-m-d H:i:s', strtotime($TicketDate));
+			// $TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
+			// $TicketDate = date('Y-m-d H:i:s', strtotime($TicketDate));
 //print_r($SicCode); exit;
 			if ($LorryNo == 0) {
 				$CHKDUP['duplicate'] = $this->tickets_model->CheckDuplicateRegNo($VechicleRegNo);
@@ -2162,7 +2162,7 @@ class Tickets extends BaseController
 				'TotalAmount' => $TotalAmount,
 				'PaymentRefNo' => $PaymentRefNo,
 				'driversignature' => $driversignature,
-				'TicketDate' => $TicketDate
+				//'TicketDate' => $TicketDate
 			);
 
 
@@ -2179,7 +2179,7 @@ class Tickets extends BaseController
 
 					$html = $this->load->view('Tickets/ticket_pdf', $data, true);
 					//this the the PDF filename that user will get to download
-					$pdfFilePath =  WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+					$pdfFilePath =  WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					
 					
@@ -2704,7 +2704,7 @@ class Tickets extends BaseController
 			$this->loadViews("permission", $this->global, $data, NULL);
 		} else {  // $post = $this->input->post();
 			$TicketNo = $this->security->xss_clean($this->input->post('TicketNo'));
-			$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
+			//$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
 			$OpportunityID = $this->security->xss_clean($this->input->post('OpportunityID'));
 			$Conveyance = $this->security->xss_clean($this->input->post('Conveyance'));
 			$is_tml = $this->security->xss_clean($this->input->post('is_tml'));
@@ -2723,10 +2723,10 @@ class Tickets extends BaseController
 			$Net = $this->security->xss_clean($this->input->post('Net'));
 			$MaterialPrice = $this->security->xss_clean($this->input->post('MaterialPrice'));
 			$driverid = $this->security->xss_clean($this->input->post('driverid'));
-			$date = str_replace('/', '-', $TicketDate);
+			//$date = str_replace('/', '-', $TicketDate);
 			// $TicketDate = date('d/m/Y H:i:s', strtotime($date));
-			$TicketDate = date('Y-m-d H:i:s', strtotime($date));
-			$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
+			//$TicketDate = date('Y-m-d H:i:s', strtotime($date));
+			//$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
 			//	$post = $this->input->post();
 
 			if ($is_tml != 1) {
@@ -2788,12 +2788,10 @@ class Tickets extends BaseController
 				'TotalAmount' => $TotalAmount,
 				'PaymentRefNo' => $PaymentRefNo,
 				'driversignature' => $driversignature,
-				'TicketDate' => $TicketDate,
-				'TonBook' => $TonBook
+				//'TicketDate' => $TicketDate
+				
 			);
-			print_r($TicketDate);
-			print_r($TonBook);
-			exit;
+			
 
 			if (trim($TicketNo) != "" && trim($OpportunityID) != "" && trim($DescriptionofMaterial) != "" && trim($CompanyID) != "" && trim($driverid) != "") {
 
@@ -2813,7 +2811,7 @@ class Tickets extends BaseController
 						$html = $this->load->view('Tickets/ticket_pdf_out', $data, true);
 
 						//this the the PDF filename that user will get to download
-						$pdfFilePath =  WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+						$pdfFilePath =  WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 						$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 						//load mPDF library
@@ -2871,7 +2869,7 @@ class Tickets extends BaseController
 									<b>Waste License No: </b> ' . $PDFContent[0]->waste_licence . ' <br/><hr> 
 									<center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
 									<b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
-									<b>Date Time: </b> ' . $TicketDate . ' <br>		   
+									<b>Date Time: </b> ' . $data1['tickets']['TicketDate']  . ' <br>		   
 									<b>In Time: </b> ' . $data1['tickets']['SiteIn'] . ' <br>		   
 									<b>Out Time: </b> ' . $data1['tickets']['SiteOut'] . ' <br>		   
 									<b>Vehicle Reg. No. </b> ' . $data1['tickets']['RegNumber'] . ' <br> 
@@ -2893,21 +2891,21 @@ class Tickets extends BaseController
 									<b>' . $PDFContent[0]->outpdf_para3 . '</b></p></div> 
 								<div style="width:100%;float: left;" > 
 									<b>Received By: </b><br> 
-									<div><img src="/uploads/Signature/' . $data1['tickets']['Signature'] . '" width ="100" height="40" style="float:left"></div> 
-									' . $data1['tickets']['CustomerName'] . ' 
-									<p style="font-size: 7px;"><b> ' . $PDFContent[0]->outpdf_para4 . '</b><br><br> 
-										<b>VAT Reg. No: </b> ' . $PDFContent[0]->VATRegNo . '<br> 
-										<b>Company Reg. No: </b>' . $PDFContent[0]->CompanyRegNo . '<br>
-										' . $PDFContent[0]->FooterText . '</p></div></div></body></html>';
-
-						$pdfFilePath =  WEB_ROOT_PATH . "tmlportal/assets/conveyance/" . $data1['tickets']['TicketUniqueID'] . ".pdf";
-						$mpdf =  new mPDF('utf-8', array(70, 230), '', '', 5, 5, 5, 5, 5, 5);
-						$mpdf->keep_table_proportions = false;
-						$mpdf->WriteHTML($html);
-						$mpdf->Output($pdfFilePath);
-
-						/* =================== Site Logs ===================  */
-						/*$OldFile = $pdfFilePath;
+									<div><img src="/uploads/Signature/'.$data1['tickets']['Signature'].'" width ="100" height="40" style="float:left"></div> 
+									'.$data1['tickets']['CustomerName'].' 
+									<p style="font-size: 7px;"><b> '.$PDFContent[0]->outpdf_para4.'</b><br><br> 
+										<b>VAT Reg. No: </b> '.$PDFContent[0]->VATRegNo.'<br> 
+										<b>Company Reg. No: </b>'.$PDFContent[0]->CompanyRegNo.'<br>
+										'.$PDFContent[0]->FooterText.'</p></div></div></body></html>';
+							 
+								$pdfFilePath =  WEB_ROOT_PATH."/assets/conveyance/".$data1['tickets']['TicketUniqueID'].".pdf"; 		   
+								$mpdf =  new mPDF('utf-8', array(70,270),'','',5,5,5,5,5,5); 	   
+								$mpdf->keep_table_proportions = false;
+								$mpdf->WriteHTML($html);
+								$mpdf->Output($pdfFilePath);
+							
+							  /* =================== Site Logs ===================  */
+								/*$OldFile = $pdfFilePath;
 								$NewFileName = date('YmdHis').".pdf";
 								$NewFile = WEB_ROOT_PATH."/assets/conveyance/".$NewFileName;
 									

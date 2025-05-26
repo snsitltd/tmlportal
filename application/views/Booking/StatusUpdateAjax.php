@@ -20,7 +20,7 @@
 						<option value="6" >Wasted Journey</option> 
 					<?php } ?>
 					<?php if($Status!='Cancelled Invoice'){ ?>
-						<option value="7" >Cancelled Invoice</option> 
+						<option value="8" >Cancelled Invoice</option> 
 					<?php } ?>
 			</select>
 		</div> 
