@@ -2788,7 +2788,7 @@ class Tickets extends BaseController
 				'TotalAmount' => $TotalAmount,
 				'PaymentRefNo' => $PaymentRefNo,
 				'driversignature' => $driversignature,
-				'TicketDate' => $TicketDate
+				//'TicketDate' => $TicketDate
 				
 			);
 			
@@ -2869,7 +2869,7 @@ class Tickets extends BaseController
 									<b>Waste License No: </b> ' . $PDFContent[0]->waste_licence . ' <br/><hr> 
 									<center><b>COMBINED CONVEYANCE CONTROLLED WASTE TRANSFER NOTE</b></center><br/>  
 									<b>Ticket NO:</b> ' . $data1['tickets']['TicketNumber'] . ' <br>		 
-									<b>Date Time: </b> ' . $TicketDate . ' <br>		   
+									<b>Date Time: </b> ' . $data1['tickets']['TicketDate']  . ' <br>		   
 									<b>In Time: </b> ' . $data1['tickets']['SiteIn'] . ' <br>		   
 									<b>Out Time: </b> ' . $data1['tickets']['SiteOut'] . ' <br>		   
 									<b>Vehicle Reg. No. </b> ' . $data1['tickets']['RegNumber'] . ' <br> 
