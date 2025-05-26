@@ -2725,8 +2725,8 @@ class Tickets extends BaseController
 			$driverid = $this->security->xss_clean($this->input->post('driverid'));
 			$date = str_replace('/', '-', $TicketDate);
 			// $TicketDate = date('d/m/Y H:i:s', strtotime($date));
-			$TicketDate = date('Y-m-d H:i:s', strtotime($date));
-			$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
+			//$TicketDate = date('Y-m-d H:i:s', strtotime($date));
+			//$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
 			//	$post = $this->input->post();
 
 			if ($is_tml != 1) {
@@ -2788,12 +2788,10 @@ class Tickets extends BaseController
 				'TotalAmount' => $TotalAmount,
 				'PaymentRefNo' => $PaymentRefNo,
 				'driversignature' => $driversignature,
-				'TicketDate' => $TicketDate,
-				'TonBook' => $TonBook
+				'TicketDate' => $TicketDate
+				
 			);
-			print_r($TicketDate);
-			print_r($TonBook);
-			exit;
+			
 
 			if (trim($TicketNo) != "" && trim($OpportunityID) != "" && trim($DescriptionofMaterial) != "" && trim($CompanyID) != "" && trim($driverid) != "") {
 
@@ -2813,7 +2811,7 @@ class Tickets extends BaseController
 						$html = $this->load->view('Tickets/ticket_pdf_out', $data, true);
 
 						//this the the PDF filename that user will get to download
-						$pdfFilePath =  WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+						$pdfFilePath =  WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 						$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 						//load mPDF library

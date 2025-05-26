@@ -60,16 +60,7 @@
                                         <input type="datetime-local" class="form-control" id="TicketDate" name="TicketDate" value="<?php echo $tickets['TicketDate']; ?>">
                                     </div>
                                 </div> -->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="TicketDate">Date Time</label>
-                                            <?php
-                                            // Convert the TicketDate from DB to 'YYYY-MM-DDTHH:MM' format
-                                            $ticketDate = date('Y-m-d\TH:i', strtotime($tickets['TicketDate']));
-                                            ?>
-                                            <input type="datetime-local" class="form-control" id="TicketDate" name="TicketDate" value="<?php echo $ticketDate; ?>">
-                                        </div>
-                                    </div>
+                                   
 
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -305,15 +296,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="TonBook">Load Type</label>
-                                        <select class="form-control" id="TonBook" name="TonBook">
-                                            <option value="0" <?php echo ($tickets['TonBook'] == 0) ? 'selected' : ''; ?>>Load</option>
-                                            <option value="1" <?php echo ($tickets['TonBook'] == 1) ? 'selected' : ''; ?>>Tonnage</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            
 
                                 
                                 </div>
