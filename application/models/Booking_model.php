@@ -1489,7 +1489,7 @@ class Booking_model extends CI_Model
 		return $return;
 	}
 
-	public function GetAllocatedBookingData2()
+	function GetAllocatedBookingData2()
 	{
 
 
