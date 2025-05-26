@@ -2723,7 +2723,7 @@ class Tickets extends BaseController
 			$Net = $this->security->xss_clean($this->input->post('Net'));
 			$MaterialPrice = $this->security->xss_clean($this->input->post('MaterialPrice'));
 			$driverid = $this->security->xss_clean($this->input->post('driverid'));
-			$date = str_replace('/', '-', $TicketDate);
+			//$date = str_replace('/', '-', $TicketDate);
 			// $TicketDate = date('d/m/Y H:i:s', strtotime($date));
 			//$TicketDate = date('Y-m-d H:i:s', strtotime($date));
 			//$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
