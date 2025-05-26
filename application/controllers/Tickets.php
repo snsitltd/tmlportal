@@ -2111,8 +2111,8 @@ class Tickets extends BaseController
 			$PaymentRefNo = $this->security->xss_clean($this->input->post('PaymentRefNo'));
 			$driversignature = $this->input->post('driversignature', FALSE);
 
-			$TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
-			$TicketDate = date('Y-m-d H:i:s', strtotime($TicketDate));
+			// $TicketDate = $this->security->xss_clean($this->input->post('TicketDate'));
+			// $TicketDate = date('Y-m-d H:i:s', strtotime($TicketDate));
 //print_r($SicCode); exit;
 			if ($LorryNo == 0) {
 				$CHKDUP['duplicate'] = $this->tickets_model->CheckDuplicateRegNo($VechicleRegNo);
@@ -2162,7 +2162,7 @@ class Tickets extends BaseController
 				'TotalAmount' => $TotalAmount,
 				'PaymentRefNo' => $PaymentRefNo,
 				'driversignature' => $driversignature,
-				'TicketDate' => $TicketDate
+				//'TicketDate' => $TicketDate
 			);
 
 
@@ -2179,7 +2179,7 @@ class Tickets extends BaseController
 
 					$html = $this->load->view('Tickets/ticket_pdf', $data, true);
 					//this the the PDF filename that user will get to download
-					$pdfFilePath =  WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+					$pdfFilePath =  WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					
 					
