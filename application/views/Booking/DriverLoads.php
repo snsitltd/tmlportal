@@ -150,11 +150,11 @@
                                     if ($conveyanceNo) {
                                         $url = "https://tml.snsitltd.com/assets/conveyance/{$record->ReceiptName}";
 
-                                        echo "<td><a href='{$url}' target='_blank'>{$conveyanceNo}</a></td>";
-                                    } else {
-                                        echo "<td>{$conveyanceNo}</td>";
-                                    }
-                                    echo "
+                    echo "<td><a href='{$url}' target='_blank'>{$conveyanceNo}</a></td>";
+                  } else {
+                    echo "<td>{$conveyanceNo}</td>";
+                  }
+                  echo "
                                         <td>{$jobStartDateTime}</td>
                                           <td>{$siteInDateTime}</td>
                                           <td>{$siteOutDateTime}</td>

@@ -1452,7 +1452,20 @@ class Booking_model extends CI_Model
 					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
 					$this->db->or_like('  DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		if (!empty($searchValue)) {
 
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking.BookingID', $s[$i]);
+					$this->db->or_like('tbl_company.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_opportunities.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -1475,6 +1488,7 @@ class Booking_model extends CI_Model
 		);
 		return $return;
 	}
+
 	public function GetAllocatedBookingData2()
 	{
 
@@ -1529,7 +1543,21 @@ class Booking_model extends CI_Model
 					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
 					$this->db->or_like('  DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y %T") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		}
+		if (!empty($searchValue)) {
 
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking.BookingID', $s[$i]);
+					$this->db->or_like('tbl_company.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_opportunities.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y %T") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -1796,7 +1824,21 @@ class Booking_model extends CI_Model
 					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
 					$this->db->or_like('  DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		}
+		if (!empty($searchValue)) {
 
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking.BookingID', $s[$i]);
+					$this->db->or_like('tbl_company.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_opportunities.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -2050,7 +2092,52 @@ class Booking_model extends CI_Model
 					$this->db->or_like('  DATE_FORMAT(tbl_booking.BookingDateTime,"%d-%m-%Y %T") ', $s[$i]);
 					$this->db->or_like(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		}
+		//Only select column that want to show in datatable or you can filte it mnually when send it
+		$this->db->start_cache();
+		$this->db->select(' tbl_booking_loads.BookingID  as BookingID  ');
+		$this->db->select(' tbl_booking.CompanyID  as CompanyID  ');
+		$this->db->select(' tbl_booking_loads.MaterialID ');
+		$this->db->select(' tbl_booking_loads.ConveyanceNo ');
+		$this->db->select(' tbl_booking_loads.LoadID ');
+		$this->db->select(' tbl_booking_loads.DriverName ');
+		$this->db->select(' tbl_booking_loads.VehicleRegNo ');
+		$this->db->select(' tbl_booking_loads.Status ');
+		$this->db->select(' tbl_drivers.RegNumber as rname ');
+		$this->db->select(' tbl_drivers.AppUser ');
+		$this->db->select(' tbl_booking.BookingType ');
+		$this->db->select(' tbl_booking.LoadType ');
+		$this->db->select(' tbl_booking.OpportunityID ');
+		$this->db->select(' DATE_FORMAT(tbl_booking_date.BookingDate,"%d-%m-%Y") as BookingDateTime ');
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") as CreateDateTime ');
+		$this->db->select('(select tbl_company.CompanyName FROM tbl_company where tbl_company.CompanyID = tbl_booking.CompanyID ) as CompanyName ');
+		$this->db->select('(select tbl_materials.MaterialName FROM tbl_materials where tbl_materials.MaterialID = tbl_booking_loads.MaterialID ) as MaterialName ');
+		$this->db->select('(select tbl_opportunities.OpportunityName FROM tbl_opportunities where tbl_opportunities.OpportunityID = tbl_booking.OpportunityID ) as OpportunityName ');
+		$this->db->join('tbl_booking', 'tbl_booking.BookingID = tbl_booking_loads.BookingID');
+		$this->db->join('tbl_booking_date', 'tbl_booking_date.BookingDateID = tbl_booking_loads.BookingDateID');
+		$this->db->join('tbl_drivers', 'tbl_drivers.LorryNo = tbl_booking_loads.DriverID');
+		$this->db->join('tbl_opportunities', 'tbl_opportunities.OpportunityID = tbl_booking.OpportunityID');
+		$this->db->join('tbl_company', 'tbl_company.CompanyID = tbl_booking.CompanyID');
+		$this->db->join('tbl_materials', 'tbl_materials.MaterialID = tbl_booking_loads.MaterialID');
+		$this->db->where('tbl_drivers.ContractorID', $ContractorID);
+		if (!empty($searchValue)) {
 
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking.BookingID', $s[$i]);
+					$this->db->or_like('tbl_booking_loads.ConveyanceNo', $s[$i]);
+					$this->db->or_like('tbl_company.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_opportunities.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_drivers.DriverName', $s[$i]);
+					$this->db->or_like('tbl_drivers.RegNumber', $s[$i]);
+					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking.BookingDateTime,"%d-%m-%Y %T") ', $s[$i]);
+					$this->db->or_like(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -2139,7 +2226,39 @@ class Booking_model extends CI_Model
 					$this->db->or_like('  DATE_FORMAT(tbl_booking.BookingDateTime,"%d-%m-%Y %T") ', $s[$i]);
 					$this->db->or_like(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		}
+		$this->db->select(' tbl_company.CompanyName ');
+		$this->db->select(' tbl_materials.MaterialName ');
+		$this->db->select(' tbl_opportunities.OpportunityName ');
 
+		$this->db->join('tbl_booking_date', ' tbl_booking_loads.BookingDateID = tbl_booking_date.BookingDateID ', 'LEFT');
+		$this->db->join('tbl_booking', 'tbl_booking_loads.BookingID = tbl_booking.BookingID ', 'LEFT');
+		$this->db->join('tbl_drivers', ' tbl_booking_loads.DriverID = tbl_drivers.LorryNo ', 'LEFT');
+		//$this->db->join('tbl_drivers_login', 'tbl_drivers_login.DriverID = tbl_drivers.DriverID', 'LEFT'); 		
+		$this->db->join('tbl_drivers_login', ' tbl_drivers.DriverID = tbl_drivers_login.DriverID ', 'LEFT');
+		$this->db->join('tbl_opportunities', 'tbl_booking.OpportunityID = tbl_opportunities.OpportunityID ', 'LEFT');
+		$this->db->join('tbl_company', 'tbl_booking.CompanyID = tbl_company.CompanyID ', 'LEFT');
+		$this->db->join('tbl_materials', 'tbl_booking.MaterialID = tbl_materials.MaterialID ', 'LEFT');
+
+		$this->db->where('tbl_booking_loads.Status < 4 ');
+		if (!empty($searchValue)) {
+
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking.BookingID', $s[$i]);
+					$this->db->or_like('tbl_booking_loads.ConveyanceNo', $s[$i]);
+					$this->db->or_like('tbl_company.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_opportunities.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_drivers.DriverName', $s[$i]);
+					$this->db->or_like('tbl_drivers.RegNumber', $s[$i]);
+					$this->db->or_like('tbl_materials.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking.BookingDateTime,"%d-%m-%Y %T") ', $s[$i]);
+					$this->db->or_like(' DATE_FORMAT(tbl_booking_loads.AllocatedDateTime,"%d-%m-%Y  %T") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -2660,7 +2779,6 @@ class Booking_model extends CI_Model
 		} else {
 			$orderBy = "tbl_tickets.TicketNumber ASC"; // default
 		}
-
 		$searchValue = trim(strtolower($_POST['search'])); // Search value  
 		//$BookingType = trim(strtolower($_POST['BookingType']));  
 		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));
@@ -2688,7 +2806,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -4173,7 +4290,6 @@ class Booking_model extends CI_Model
 				$this->db->like(' tbl_booking1.LorryType ', '3');
 				$this->db->group_end();
 			}
-
 		}
 		if (!empty(trim($Notes))) {
 			$this->db->group_start();
@@ -4459,7 +4575,6 @@ class Booking_model extends CI_Model
 				$this->db->like(' tbl_booking1.LorryType ', '3');
 				$this->db->group_end();
 			}
-
 		}
 		if (!empty(trim($Notes))) {
 			$this->db->group_start();
@@ -4744,7 +4859,6 @@ class Booking_model extends CI_Model
 				$this->db->like(' tbl_booking1.LorryType ', '3');
 				$this->db->group_end();
 			}
-
 		}
 		if (!empty(trim($Notes))) {
 			$this->db->group_start();
@@ -5049,7 +5163,6 @@ class Booking_model extends CI_Model
 				$this->db->like(' tbl_booking1.LorryType ', '3');
 				$this->db->group_end();
 			}
-
 		}
 		if (!empty(trim($Notes))) {
 			$this->db->group_start();
@@ -5349,7 +5462,6 @@ class Booking_model extends CI_Model
 				$this->db->like(' tbl_booking1.LorryType ', '3');
 				$this->db->group_end();
 			}
-
 		}
 		if (!empty(trim($Notes))) {
 			$this->db->group_start();
@@ -5635,7 +5747,6 @@ class Booking_model extends CI_Model
 				$this->db->like(' tbl_booking1.LorryType ', '3');
 				$this->db->group_end();
 			}
-
 		}
 		if (!empty(trim($Notes))) {
 			$this->db->group_start();
@@ -5983,7 +6094,21 @@ class Booking_model extends CI_Model
 					$this->db->or_like('tbl_booking1.MaterialName', $s[$i]);
 					$this->db->or_like('  DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		}
+		if (!empty($searchValue)) {
 
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking1.BookingID', $s[$i]);
+					$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_booking1.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -6059,7 +6184,21 @@ class Booking_model extends CI_Model
 					$this->db->or_like('tbl_booking1.MaterialName', $s[$i]);
 					$this->db->or_like('  DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") ', $s[$i]);
 					$this->db->group_end();
+				}
+			}
+		}
+		if (!empty($searchValue)) {
 
+			$s = explode(' ', $searchValue);
+			if (count($s) > 0) {
+				for ($i = 0; $i < count($s); $i++) {
+					$this->db->group_start();
+					$this->db->or_like('tbl_booking1.BookingID', $s[$i]);
+					$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]);
+					$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+					$this->db->or_like('tbl_booking1.MaterialName', $s[$i]);
+					$this->db->or_like('  DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") ', $s[$i]);
+					$this->db->group_end();
 				}
 			}
 		}
@@ -6431,7 +6570,6 @@ class Booking_model extends CI_Model
 					$this->db->or_like('  DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y %T") ', $s[$i]);
 					$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%d-%m-%Y  %T") ', $s[$i]);
 					$this->db->group_end();
-
 				}
 			}
 		}
@@ -7451,7 +7589,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -7683,7 +7820,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -7917,7 +8053,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -8146,7 +8281,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -8372,7 +8506,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -8576,7 +8709,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -8777,7 +8909,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -9019,7 +9150,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -9271,7 +9401,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -9514,7 +9643,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -10271,7 +10399,6 @@ class Booking_model extends CI_Model
 		} else {
 			$orderBy = "tbl_tickets.TicketNumber ASC"; // default
 		}
-
 		$searchValue = trim(strtolower($_POST['search'])); // Search value  
 		//$BookingType = trim(strtolower($_POST['BookingType']));  
 		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));
@@ -10299,7 +10426,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -10340,14 +10466,31 @@ class Booking_model extends CI_Model
 
 		$this->db->select(' tbl_booking_date1.BookingDateID ');
 		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d/%m/%Y %T"
+		) as SiteOut
+		');
 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');
 
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		$this->db->select('
+		DATE_FORMAT(
+			CASE 
+			WHEN tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.CancelDateTime 
+			ELSE tbl_booking_loads1.SiteOutDateTime 
+			END, "%d-%m-%Y"
+		) as SiteOutDateTime
+		');
+
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
 
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ', 'LEFT');
 		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID ', 'LEFT');
@@ -10532,7 +10675,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -10584,24 +10726,24 @@ class Booking_model extends CI_Model
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 	 
 
 		/*if( !empty($searchValue) ){   
-				  $s = explode(' ',$searchValue);
-				  if(count($s)>0){ 
-					  for($i=0;$i<count($s);$i++){   
-						  $this->db->group_start();   
-							  $this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
-							  $this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
-							  $this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
-							  $this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
-							  $this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
-							  $this->db->or_like('tbl_booking1.Price', $s[$i]); 
-							  $this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
-							  
-						  $this->db->group_end(); 
-					  }
-				  }    
-			  } */
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
+						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						$this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						$this->db->or_like('tbl_booking1.Price', $s[$i]); 
+						$this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } */
 
 
 		if (!empty(trim($ConveyanceNo))) {
@@ -10716,7 +10858,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -10738,25 +10879,25 @@ class Booking_model extends CI_Model
 		$this->db->where('tbl_booking1.BookingType  = 3 ');
 
 		/*if( !empty($searchValue) ){   
-				  $s = explode(' ',$searchValue);
-				  if(count($s)>0){ 
-					  for($i=0;$i<count($s);$i++){   
-						  $this->db->group_start();   
-							  $this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
-							  $this->db->or_like('tbl_tickets.Conveyance', $s[$i]); 
-							  $this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
-							  $this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
-							  $this->db->or_like('tbl_drivers.DriverName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
-							  $this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
-							  $this->db->or_like('tbl_booking1.Price', $s[$i]); 
-							  $this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
-							  
-						  $this->db->group_end(); 
-					  }
-				  }    
-			  } */
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
+						$this->db->or_like('tbl_tickets.Conveyance', $s[$i]); 
+						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						$this->db->or_like('tbl_drivers.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						$this->db->or_like('tbl_booking1.Price', $s[$i]); 
+						$this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } */
 
 
 		if (!empty(trim($ConveyanceNo))) {
@@ -10864,7 +11005,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -10919,24 +11059,24 @@ class Booking_model extends CI_Model
 		$this->db->where('tbl_booking_request.OpportunityID ', $OpportunityID);
 
 		/*if( !empty($searchValue) ){   
-				  $s = explode(' ',$searchValue);
-				  if(count($s)>0){ 
-					  for($i=0;$i<count($s);$i++){   
-						  $this->db->group_start();   
-							  $this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
-							  $this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
-							  $this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
-							  $this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
-							  $this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
-							  $this->db->or_like('tbl_booking1.Price', $s[$i]); 
-							  $this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
-							  
-						  $this->db->group_end(); 
-					  }
-				  }    
-			  } */
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
+						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						$this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						$this->db->or_like('tbl_booking1.Price', $s[$i]); 
+						$this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } */
 
 		if (!empty(trim($ConveyanceNo))) {
 			$this->db->group_start();
@@ -11056,7 +11196,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -11108,24 +11247,24 @@ class Booking_model extends CI_Model
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 	 
 
 		/*if( !empty($searchValue) ){   
-				  $s = explode(' ',$searchValue);
-				  if(count($s)>0){ 
-					  for($i=0;$i<count($s);$i++){   
-						  $this->db->group_start();   
-							  $this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
-							  $this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
-							  $this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
-							  $this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]); 
-							  $this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
-							  $this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
-							  $this->db->or_like('tbl_booking1.Price', $s[$i]); 
-							  $this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
-							  
-						  $this->db->group_end(); 
-					  }
-				  }    
-			  } */
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
+						$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						$this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						$this->db->or_like('tbl_booking1.Price', $s[$i]); 
+						$this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } */
 
 
 
@@ -11219,9 +11358,28 @@ class Booking_model extends CI_Model
 	{
 		//print_r($_POST);
 		//exit;
+		// if( !empty(trim($_POST['sort'])) ){  
+		// 	$Sort = explode(' ', trim($_POST['sort'])); 
+
+		// 	//print_r($Sort);
+		// 	//exit;
+
+		// 	if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_tickets.Conveyance '; }  
+
+		// 	///if($Sort[0]=='JobStartDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y%m%d%H%i%S") ';  }   
+		// 	if($Sort[0]=='SiteOutDateTime2'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y%m%d%H%i%S") ';  }  
+		// 	if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
+		// 	if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
+		// 	if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; }  
+		// 	if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
+		// 	if($Sort[0]=='DriverName'){ $columnName = ' tbl_booking_loads1.DriverName '; } 
+		// 	if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.LoadPrice '; } 
+		// 	if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
+
+		// 	$columnSortOrder = $Sort[1]; 
 		if (!empty(trim($_POST['sort']))) {
 			$Sort = explode(' ', trim($_POST['sort']));
-			$columnSortOrder = $Sort[1];
+			$columnSortOrder = strtoupper($Sort[1]); // Ensure ASC/DESC is in uppercase
 
 			switch ($Sort[0]) {
 				case 'ConveyanceNo':
@@ -11303,7 +11461,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -11312,10 +11469,10 @@ class Booking_model extends CI_Model
 		$this->db->start_cache();
 
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
-				when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
-				when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
-				when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled' 
-		end) as Status");
+             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+			 when  (tbl_booking_loads1.Status = '8') then 'Invoice Cancelled' 
+        end) as Status");
 
 
 		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');
@@ -11344,8 +11501,22 @@ class Booking_model extends CI_Model
 
 		$this->db->select(' tbl_booking_date1.BookingDateID ');
 		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		$this->db->select('
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOutDateTime
+		');
 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
+	//	$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") as SiteOutDateTime2 ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');
 
@@ -11354,7 +11525,22 @@ class Booking_model extends CI_Model
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d/%m/%Y %T") as JobStart ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
+		$this->db->select('
+			DATE_FORMAT(
+				CASE 
+					WHEN tbl_booking_loads1.SiteOutDateTime IS NULL 
+						OR tbl_booking_loads1.SiteOutDateTime = "0000-00-00 00:00:00" THEN 
+						CASE 
+							WHEN tbl_booking_loads1.CancelDateTime IS NULL 
+								OR tbl_booking_loads1.CancelDateTime = "0000-00-00 00:00:00" THEN tbl_booking_loads1.JobStartDateTime
+							ELSE tbl_booking_loads1.CancelDateTime
+						END
+					ELSE tbl_booking_loads1.SiteOutDateTime
+				END, "%d-%m-%Y"
+			) as SiteOut
+		');
+
+		//$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');
 
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime2,"%d/%m/%Y %T") as HaulageIn ');
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d/%m/%Y %T") as HaulageOut ');
@@ -11543,7 +11729,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -11735,7 +11920,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -11886,7 +12070,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -12152,7 +12335,6 @@ class Booking_model extends CI_Model
 
 			$ED = explode('/', trim($RS[1]));
 			$EndDate = $ED[2] . '-' . $ED[1] . '-' . $ED[0];
-
 		}
 		//Only select column that want to show in datatable or you can filte it mnually when send it
 		$this->db->start_cache();
@@ -12212,3 +12394,4 @@ class Booking_model extends CI_Model
 
 }
 
+}

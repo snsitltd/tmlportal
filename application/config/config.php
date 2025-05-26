@@ -35,7 +35,9 @@ $base .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME'
 $config['base_url'] = $base;
 
 
-// $config['base_url'] = "http";
+//$config['base_url'] = "http://localhost/tmlportal/";
+//$config['base_url'] = "https://tml.snsitltd.co.uk/";
+
 /*
 |--------------------------------------------------------------------------
 | Index File
