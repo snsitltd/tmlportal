@@ -3366,7 +3366,7 @@ class Tickets extends BaseController
 					//download it.
 					$this->m_pdf->pdf->Output($pdfFilePath, "F");
 
-					echo base_url($openPath);
+					//echo base_url($openPath);
 				} else {
 					echo "SAME";
 				}
