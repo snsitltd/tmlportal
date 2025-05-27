@@ -3289,7 +3289,7 @@ class Tickets extends BaseController
 			$TotalAmount = $this->security->xss_clean($this->input->post('TotalAmount'));
 			$PaymentRefNo = $this->security->xss_clean($this->input->post('PaymentRefNo'));
 			$driversignature = $this->input->post('driversignature', FALSE);
-			print_r($OpportunityID); //exit;	
+			//print_r($OpportunityID); //exit;	
 			if ($LorryNo == 0) {
 				$CHKDUP['duplicate'] = $this->tickets_model->CheckDuplicateRegNo($VechicleRegNo);
 				if ($CHKDUP['duplicate'] > 0) {
