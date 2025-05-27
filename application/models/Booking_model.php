@@ -2845,6 +2845,7 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+			 when  (tbl_booking_loads1.Status = '8') then 'Cancelled Invoice' 
         end) as Status"); 
 		
 		$this->db->select(' tbl_tickets.TicketNumber ');      
@@ -3001,6 +3002,11 @@ class Booking_model extends CI_Model{
 			if(strtolower($Status[0])=='w' ){
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}
+			if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
 				$this->db->group_end();  
 			} 
         }
@@ -9645,6 +9651,7 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+			 when  (tbl_booking_loads1.Status = '8') then 'Cancelled Invoice' 
         end) as Status"); 
 		  
 		 
@@ -9786,6 +9793,10 @@ class Booking_model extends CI_Model{
 			}else if(strtolower($Status[0])=='w' ){
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
 				$this->db->group_end();  
 			}else{ 
 				$this->db->group_start(); 
@@ -10588,6 +10599,7 @@ class Booking_model extends CI_Model{
 		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
              when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
              when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+			 when  (tbl_booking_loads1.Status = '8') then 'Cancelled Invoice' 
         end) as Status"); 
 		  
 		 
@@ -10738,6 +10750,10 @@ class Booking_model extends CI_Model{
 			}else if(strtolower($Status[0])=='w' ){
 				$this->db->group_start(); 
 				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='i' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '8'); 
 				$this->db->group_end();  
 			}else{ 
 				$this->db->group_start(); 
