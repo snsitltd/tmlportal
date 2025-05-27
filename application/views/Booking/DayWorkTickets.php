@@ -259,7 +259,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 				if(data["Status"]=="Finished"){ Status = '<button  class="btn   btn-success StatusUpdate" data-PDF = "'+data["ReceiptName"]+'" data-Status = "'+data["Status"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">'+data["Status"]+'</button> '; }  	 
 				if(data["Status"]=="Cancelled"){ Status = '<button  class="btn   btn-danger StatusUpdate" data-PDF = "'+data["ReceiptName"]+'"  data-Status = "'+data["Status"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">'+data["Status"]+'</button> ';  } 
 				if(data["Status"]=="Wasted"){ Status = '<button  class="btn   btn-warning StatusUpdate" data-PDF = "'+data["ReceiptName"]+'"  data-Status = "'+data["Status"]+'" data-LoadID = "'+data["LoadID"]+'" title="Click To Update Status ">'+data["Status"]+'</button> '; } 
-				if(data["Status"] == "Invoice Cancelled") { 
+				if(data["Status"] == "Cancelled Invoice") { 
                     Status = '<button class="btn btn-secondary StatusUpdate" data-PDF="' + data["ReceiptName"] + '" data-Status="' + data["Status"] + '" data-LoadID="' + data["LoadID"] + '" title="Click To Update Status">' + data["Status"] + '</button>';
                 } 
  				if(data["Status"]=="Finished"){ 
