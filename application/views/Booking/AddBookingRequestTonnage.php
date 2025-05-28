@@ -210,7 +210,7 @@
 													<div class="row">
 														<div class="col-md-6">
 															<div class="form-group">
-																<label for="WaitingTime"> Waiting Time (Minute) </label>
+																<label for="WaitingTime"> Waiting Time (Minute)</label>
 																<input type="number" class="form-control "
 																	id="WaitingTime" value="15" name="WaitingTime"
 																	maxlength="10">
@@ -280,7 +280,7 @@
 																<tr>
 																	<th width="3"> </th>
 																	<th width="50">Booking Type</th>
-																	<th>Material </th>
+																	<th width="50">Material </th>
 																	<th width="50">SIC Code </th>
 																	<th width="50">Total Ton </th>
 																	<th width="50">Ton/ Load </th>
