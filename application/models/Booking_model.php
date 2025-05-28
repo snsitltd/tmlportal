@@ -3539,7 +3539,7 @@ class Booking_model extends CI_Model{
 		
 		$this->db->select(' tbl_materials.MaterialName ');			
 		$this->db->select(' tbl_materials.MaterialID ');		
-		$this->db->select(' tbl_materials.SicCode ');			 
+		$this->db->select(' tbl_booking1.SicCode ');			 
         $this->db->select(' tbl_booking1.SICCode as LoadSICCODE ');		
 		
 		$this->db->select(' tbl_booking_request.CompanyName ');    
