@@ -3034,7 +3034,7 @@ class Tickets extends BaseController
 					$html = $this->load->view('Tickets/ticket_pdf_out', $data, true);
 
 					//this the the PDF filename that user will get to download
-					$pdfFilePath =  "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+					$pdfFilePath =  "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 					//load mPDF library
@@ -3217,7 +3217,7 @@ class Tickets extends BaseController
 						$html = $this->load->view('Tickets/ticket_pdf', $data, true);
 						//this the the PDF filename that user will get to download
 						$pdfFilePath =  WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
-						$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+						$openPath =  "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 						//load mPDF library
 						$this->load->library('m_pdf');
@@ -3289,7 +3289,7 @@ class Tickets extends BaseController
 			$TotalAmount = $this->security->xss_clean($this->input->post('TotalAmount'));
 			$PaymentRefNo = $this->security->xss_clean($this->input->post('PaymentRefNo'));
 			$driversignature = $this->input->post('driversignature', FALSE);
-			print_r($OpportunityID); //exit;	
+		//	print_r($OpportunityID); //exit;	
 			if ($LorryNo == 0) {
 				$CHKDUP['duplicate'] = $this->tickets_model->CheckDuplicateRegNo($VechicleRegNo);
 				if ($CHKDUP['duplicate'] > 0) {
@@ -3354,7 +3354,7 @@ class Tickets extends BaseController
 
 					$html = $this->load->view('Tickets/ticket_pdf', $data, true);
 					//this the the PDF filename that user will get to download
-					$pdfFilePath =  WEB_ROOT_PATH . "tmlportal/assets/pdf_file/" . $TicketUniqueID . ".pdf";
+					$pdfFilePath =  WEB_ROOT_PATH . "assets/pdf_file/" . $TicketUniqueID . ".pdf";
 					$openPath =  "/assets/pdf_file/" . $TicketUniqueID . ".pdf";
 
 					//load mPDF library
