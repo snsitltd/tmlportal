@@ -229,7 +229,10 @@
 				$(row).find("td:eq(7)").html(DName);
 				$(row).find("td:eq(2)").html(' <a href="' + baseURL + 'view-company/' + data["CompanyID"] + '" target="_blank" title="' + data["CompanyName"] + '">' + data["CompanyName"] + '</a> ');
 				$(row).find("td:eq(3)").html(' <a href="' + baseURL + 'View-Opportunity/' + data["OpportunityID"] + '" target="_blank" title="' + data["OpportunityName"] + '">' + data["OpportunityName"] + '</a> ');
-				$(row).find("td:eq(-1)").html(' <a class="btn btn-sm btn-info" href="' + baseURL + 'View-' + data["TypeOfTicket"] + '-Ticket/' + data["TicketNo"] + '" title="View Ticket"><i class="fa fa-eye"></i></a> <a class="btn btn-sm btn-info" href="' + baseURL + 'edit-' + data["TypeOfTicket"] + '-ticket/' + data["TicketNo"] + '" title="Edit Ticket"><i class="fa fa-pencil"></i></a> <a class="btn btn-sm btn-danger deleteTicket" href="#" data-ticketno="' + data["TicketNo"] + '" title="Delete"><i class="fa fa-trash"></i></a>');
+				var pdf_path = '';
+				pdf_path = baseURL + 'assets/pdf_file/' + data["pdf_name"];
+
+				$(row).find("td:eq(-1)").html('<a class="btn btn-sm btn-warning" target="blank" href="' + pdf_path + '" title="View PDF"><i class="fa fa-file-pdf-o"></i></a> <a class="btn btn-sm btn-info" href="' + baseURL + 'View-' + data["TypeOfTicket"] + '-Ticket/' + data["TicketNo"] + '" title="View Ticket"><i class="fa fa-eye"></i></a> <a class="btn btn-sm btn-info" href="' + baseURL + 'edit-' + data["TypeOfTicket"] + '-ticket/' + data["TicketNo"] + '" title="Edit Ticket"><i class="fa fa-pencil"></i></a> <a class="btn btn-sm btn-danger deleteTicket" href="#" data-ticketno="' + data["TicketNo"] + '" title="Delete"><i class="fa fa-trash"></i></a>');
 				$(row).find('td:eq(0)').attr('data-sort', data['TicketNumber_sort']);
 				$(row).find('td:eq(1)').attr('data-sort', data['TicketDate1']);
 			},
