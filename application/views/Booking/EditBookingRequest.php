@@ -167,11 +167,12 @@
 								<tr>                          
 									<th width="3" ></th>  
 									<th width="50" >Booking Type</th> 
-									<th   >Material </th>   
+									<th width="50" >Material </th>   
 									<th width="50" >SIC Code </th>   
 									
 									<th width="50" >Load Type </th>
 									<th width="50" >Lorry Type </th>
+									<th width="50" >Load/ Tonnage </th>
 									<th width="50" >Loads/ Lorry</th> 
 									<th width="110" >Request Date </th> 
 									<th width="80" >PurchaseOrderNo</th>   
@@ -183,7 +184,7 @@
 								<?php 
 								if(!empty($BookingDates)){ 
 									foreach($BookingDates as $key=>$record){ ?>
-								<tr id="<?php echo $record->BookingID; ?>"> 
+								<!-- < id="<?php echo $record->BookingID; ?>">  -->
 										<td><input type="hidden" id="BookingID<?php echo $record->BookingID; ?>"  name="BookingID[<?php echo $record->BookingID; ?>]" value="<?php echo $record->BookingID; ?>"  > 
 										<input type="hidden" id="TotalLoadAllocated<?php echo $record->BookingID; ?>"  name="TotalLoadAllocated[<?php echo $record->BookingID; ?>]" value="<?php echo $record->TotalLoadAllocated; ?>"  > </td> 
 										<td>
@@ -230,7 +231,13 @@
 												<option value="2" <?php if($record->LorryType ==2){ ?> selected <?php } ?>  >Grab</option> 
 												<option value="3" <?php if($record->LorryType ==3){ ?> selected <?php } ?>  >Bin</option> 
                                         </select>   
-										</td> 
+										</td>
+										<td>
+											<select class="form-control TonBook" id="TonBook<?php echo $record->BookingID; ?>" name="TonBook[<?php echo $record->BookingID; ?>]"  <?php if($record->TotalLoadAllocated>0){ ?>  <?php } ?>  data-live-search="true" > 
+											<option value="" <?php if($record->TonBook ==3 || $record->TonBook == '' ){ ?> selected <?php } ?>  >Select</option> 
+												<option value="1" <?php if($record->TonBook ==0){ ?> selected <?php } ?>  >Load</option> 
+												<option value="2" <?php if($record->TonBook ==1){ ?> selected <?php } ?>  >Tonnage</option> 
+										</td>
 										<td>
 											<select class="form-control Loads" id="Loads<?php echo $record->BookingID; ?>" name="Loads[<?php echo $record->BookingID; ?>]" required="required"  <?php if($record->TotalLoadAllocated>0){ ?> disabled <?php } ?>   data-live-search="true" > 
                                             <?php for($i=1;$i<100;$i++){ ?>

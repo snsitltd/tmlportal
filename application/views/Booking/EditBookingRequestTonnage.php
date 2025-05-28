@@ -167,10 +167,10 @@
 								<tr>                          
 									<th width="3" > </th>  
 									<th width="50" >Booking Type</th> 
-									<th  >Material </th>   
+									<th width="50" >Material </th>   
 									<th width="50"  >SIC Code </th>   
 									<th width="100"  >Total Ton </th>   
-									<th width="100"  >Ton/ Load </th> 
+									<th width="100"  >Load/ Tonnage</th> 
 									<th width="80" >Load Type </th>
 									<th width="50" >Lorry Type </th>
 									<th width="50" >Loads/ Lorry</th> 
@@ -223,10 +223,16 @@
 										<td>
 											<input type="number" class="form-control required TonPerLoad"  style="text-align:right"  min="1" id="TonPerLoad<?php echo $record->BookingID; ?>" data-BID="<?php echo $record->BookingID; ?>" name="TonPerLoad[<?php echo $record->BookingID; ?>]" maxlength="99999"  value="<?php echo $record->TonPerLoad; ?>" >  
 										</td>
-										<td>
+										<!-- <td>
 											<select class="form-control LoadType" id="LoadType<?php echo $record->BookingID; ?>" name="LoadType[<?php echo $record->BookingID; ?>]"  <?php if($record->TotalLoadAllocated>0){ ?> disabled <?php } ?>  required="required"  > 
 												<option value="1" <?php if($record->LoadType ==1){ ?> selected <?php } ?> >Loads</option>                                           
 											</select> 
+										</td> -->
+										<td>
+											<select class="form-control TonBook" id="TonBook<?php echo $record->BookingID; ?>" name="TonBook[<?php echo $record->BookingID; ?>]"  <?php if($record->TotalLoadAllocated>0){ ?>  <?php } ?>  data-live-search="true" > 
+											<option value="" <?php if($record->TonBook ==3 || $record->TonBook == '' ){ ?> selected <?php } ?>  >Select</option> 
+												<option value="1" <?php if($record->TonBook ==0){ ?> selected <?php } ?>  >Load</option> 
+												<option value="2" <?php if($record->TonBook ==1){ ?> selected <?php } ?>  >Tonnage</option> 
 										</td>
 										<td>
 											<select class="form-control LorryType" id="LorryType<?php echo $record->BookingID; ?>" name="LorryType[<?php echo $record->BookingID; ?>]"  <?php if($record->TotalLoadAllocated>0){ ?> disabled <?php } ?>  data-live-search="true" >  

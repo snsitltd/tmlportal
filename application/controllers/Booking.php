@@ -7341,6 +7341,9 @@ class Booking extends BaseController
 					$PurchaseOrderNo = $this->security->xss_clean($this->input->post('PurchaseOrderNo'));
 					$OpenPO = $this->security->xss_clean($this->input->post('OpenPO'));
 					$TotalHidden = $this->security->xss_clean($this->input->post('TotalHidden'));
+
+					$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
+					//print_r($TonBook); exit;
 //print_r($BookingDateTime); exit;
 					if ($ContactID == '0') {
 						if (trim($ContactName) == '') {
@@ -7429,7 +7432,8 @@ class Booking extends BaseController
 									'PurchaseOrderNo' => $PurchaseOrderNo[$BArray[$i]],
 									'OpenPO' => $OP,
 									'TotalAmount' => $TotalHidden[$BArray[$i]],
-									'UpdatedBy' => $this->session->userdata['userId']
+									'UpdatedBy' => $this->session->userdata['userId'],
+									'TonBook' => $TonBook[$BArray[$i]]
 								);
 								$cond1 = array('BookingID' => $BArray[$i]);
 								$this->Common_model->update("tbl_booking1", $BookingInfo, $cond1);
@@ -7636,7 +7640,8 @@ class Booking extends BaseController
 					$PurchaseOrderNo = $this->security->xss_clean($this->input->post('PurchaseOrderNo'));
 					$OpenPO = $this->security->xss_clean($this->input->post('OpenPO'));
 					$TotalHidden = $this->security->xss_clean($this->input->post('TotalHidden'));
-
+					$TonBook = $this->security->xss_clean($this->input->post('TonBook'));
+					//print_r($TonBook); exit;
 					if ($ContactID == '0') {
 						if (trim($ContactName) == '') {
 							$this->session->set_flashdata('error', 'Contact Name Must Not be blank');
@@ -7729,7 +7734,8 @@ class Booking extends BaseController
 									'PurchaseOrderNo' => $PurchaseOrderNo[$BArray[$i]],
 									'OpenPO' => $OP,
 									'TotalAmount' => $TotalHidden[$BArray[$i]],
-									'UpdatedBy' => $this->session->userdata['userId']
+									'UpdatedBy' => $this->session->userdata['userId'],
+									'TonBook' => $TonBook[$BArray[$i]]
 								);
 								$cond1 = array('BookingID' => $BArray[$i]);
 								$this->Common_model->update("tbl_booking1", $BookingInfo, $cond1);
