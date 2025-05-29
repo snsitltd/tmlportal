@@ -42,7 +42,7 @@
             </div>
         <?php } ?>
                     <?php $this->load->helper("form"); ?>
-                    <form role="form" id="EditCollectionTicketAJAX" name="EditCollectionTicketAJAX"   action="<?php echo base_url("EditCollectionTicketAJAX"); ?>"  method="post"  >  
+                    <form role="form" id="EditCollectionTicket" name="EditCollectionTicket"   action="<?php echo base_url("EditCollectionTicketAJAX"); ?>"  method="post"  >  
                         <div class="box-body">
                         <div class="col-md-6">                              
                             <div class="row"> 
