@@ -169,7 +169,7 @@
                                         $searchIDTic = urlencode($ticketNumber);
                                     
                                         // Construct the first URL for conveyance PDF
-                                        $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->TicketPdfName;
+                                        $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->ReceiptName;
                                     
                                         // Construct the second URL for the original tip ticket
                                         $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";

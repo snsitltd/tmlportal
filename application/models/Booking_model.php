@@ -3139,6 +3139,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_request.CompanyName ');		  
 		$this->db->select(' tbl_booking_request.OpportunityID ');		  
 		$this->db->select(' tbl_booking_request.OpportunityName ');	 
+		$this->db->select(' tbl_booking_loads1.ReceiptName');
 
 		$this->db->select(' tbl_tipaddress.TipName ');	  
 		$this->db->select(' tbl_tipticket.TipTicketID ');	  
