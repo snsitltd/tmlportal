@@ -148,10 +148,12 @@
                                     // Conveyance No with a link logic
                                     $conveyanceNo = isset($record->ConveyanceNo) ? $record->ConveyanceNo : null;
                                     if ($conveyanceNo) {
-                                        $url = "https://tml.snsitltd.com/assets/conveyance/{$record->ReceiptName}";
+                                        $url = "https://tml.snsitltd.co.uk/assets/conveyance/{$record->ReceiptName}";
 
                     echo "<td><a href='{$url}' target='_blank'>{$conveyanceNo}</a></td>";
-                  } else {
+                
+ 
+                } else {
                     echo "<td>{$conveyanceNo}</td>";
                   }
                   echo "
@@ -161,7 +163,7 @@
                                           <td>{$tipTicketDateTime}</td>";
                                     $searchIDTic = urlencode($ticketNumber);
                                         // Construct the first URL for /All-Tickets with search ID
-                                    $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->TicketPdfName;
+                                    $url1 = "https://tml.snsitltd.co.uk/assets/pdf_file/" . $record->pdf_file;
                                     if ($tipTicketID) {
                                         // Base URL for tip tickets
                                         $baseUrl = "https://tml.snsitltd.com/";
@@ -169,7 +171,7 @@
                                         $searchIDTic = urlencode($ticketNumber);
                                     
                                         // Construct the first URL for conveyance PDF
-                                        $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->TicketPdfName;
+                                        $url1 = "https://tml.snsitltd.co.uk/assets/conveyance/" . $record->pdf_file;
                                     
                                         // Construct the second URL for the original tip ticket
                                         $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";
