@@ -163,7 +163,7 @@
                                           <td>{$tipTicketDateTime}</td>";
                                     $searchIDTic = urlencode($ticketNumber);
                                         // Construct the first URL for /All-Tickets with search ID
-                                    $url1 = "https://tml.snsitltd.co.uk/assets/conveyance/" . $record->ReceiptName;
+                                    $url1 = "https://tml.snsitltd.co.uk/assets/pdf_file/" . $record->pdf_name;
                                     if ($tipTicketID) {
                                         // Base URL for tip tickets
                                         $baseUrl = "https://tml.snsitltd.com/";
