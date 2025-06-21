@@ -3131,7 +3131,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_loads1.ReceiptName');
 		$this->db->select(' tbl_tickets.pdf_name');
 
-		$this->db->select(' tbl_tipaddress.TipName ');	  
+		//$this->db->select(' tbl_tipaddress.TipName ');	  
 		$this->db->select(' tbl_tipticket.TipTicketID ');	  
 		$this->db->select(' tbl_tipticket.TipID as TicketTipID ');	  
 		$this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
@@ -3142,8 +3142,17 @@ class Booking_model extends CI_Model{
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 
 		$this->db->join('tbl_tipticket', 'tbl_booking_loads1.LoadID =tbl_tipticket.LoadID ',"LEFT"); 
 		$this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID =tbl_tickets.LoadID ',"LEFT");  
-		$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
+		//$this->db->join(' tbl_tipaddress', 'tbl_booking_loads1.TipID =tbl_tipaddress.TipID ',"LEFT");   
 		$this->db->join(' tbl_materials', ' tbl_booking_loads1.MaterialID = tbl_materials.MaterialID',"LEFT");  
+		// Join for booking load tip name
+		$this->db->join('tbl_tipaddress as tip_load', 'tbl_booking_loads1.TipID = tip_load.TipID', 'LEFT');
+		$this->db->select('tip_load.TipName as LoadTipName');
+
+		// Join for tip ticket tip name
+		$this->db->join('tbl_tipaddress as tip_ticket', 'tbl_tipticket.TipID = tip_ticket.TipID', 'LEFT');
+		$this->db->select('tip_ticket.TipName as TicketTipName');
+
+		
 		if($driver>0){
 			$this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
 		} 

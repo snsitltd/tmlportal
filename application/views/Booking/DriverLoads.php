@@ -126,8 +126,10 @@
                                     // Ensure all fields have a value, set default value if missing
                                     $companyName = !empty($record->CompanyName) ? $record->CompanyName : 'N/A';
                                     $opportunityName = !empty($record->OpportunityName) ? $record->OpportunityName : 'N/A';
-                                    $tipName = !empty($record->TipName) ? $record->TipName : 'N/A';
-                                    $materialName = !empty($record->MaterialName) ? $record->MaterialName : 'N/A';
+                                   // $tipName = !empty($record->TipName) ? $record->TipName : 'N/A';
+                                   $tipFromLoad = !empty($record->LoadTipName) ? $record->LoadTipName : 'N/A';
+                                   $tipFromTicket = !empty($record->TicketTipName) ? $record->TicketTipName : ''; 
+                                   $materialName = !empty($record->MaterialName) ? $record->MaterialName : 'N/A';
                                     $conveyanceNo = !empty($record->ConveyanceNo) ? $record->ConveyanceNo : 'N/A';
                                     $jobStartDateTime = !empty($record->JobStartDateTime) ? $record->JobStartDateTime : 'N/A';
                                     $siteInDateTime = !empty($record->SiteInDateTime) ? $record->SiteInDateTime : 'N/A';
@@ -141,7 +143,7 @@
                                     // Display data in rows
                                     echo "<tr style='outline: thin solid'>
                                             <td>{$companyName} <br> {$opportunityName}</td>
-                                            <td>{$tipName}  {$suppNo}</td>
+                                            <td>{$tipFromLoad}  {$suppNo}</td>
                                             <td>{$materialName}</td>";
                             
                                     
@@ -179,7 +181,8 @@
                                         // Display each URL as a plain clickable number
                                         echo "<td>";
                                         echo "<a href='{$url1}' target='_blank'>{$ticketNumber}</a><br>";
-                                        echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a>";
+                                        echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
+                                        echo "<a href='{$url2}' target='_blank'>{$tipFromTicket}</a>";
                                         echo "</td>";
                                     } else {
                                         // If there's no tip ticket, just show the conveyance link
