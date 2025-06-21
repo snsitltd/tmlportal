@@ -195,7 +195,7 @@
 
                                     // Construct the second URL for the original tip ticket
                          $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";
-                                    
+                           $urlConveyance = "https://tml.snsitltd.com/assets/conveyance/{$receiptName}";          
                         // Tip Ticket logic: based on TypeOfTicket
                         echo "<td>";
                         if (!empty($tipTicketID)) {
