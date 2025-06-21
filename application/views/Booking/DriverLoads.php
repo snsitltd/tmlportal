@@ -86,7 +86,7 @@
 		<?php } ?>
 		
         <div class="row"> 
-			<div class="col-xs-12"> 
+			<!-- <div class="col-xs-12"> 
                 <div class="box">
                     <div class="box-header">
                         <h3 class="box-title"><b>Driver Loads (Collection and Delivery)</b></h3>
@@ -206,9 +206,108 @@
                         </table>
                     </div>
                 </div>  
-            </div>
+            </div> -->
 
+<div class="col-xs-12"> 
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title"><b>Driver Loads (Collection and Delivery)</b></h3>
+        </div>
+        <div class="box-body no-padding">
+            <table class="table table-striped" border="1">
+                <tr style="outline: thin solid">
+                    <th colspan="4"></th>
+                    <th colspan="4"><center>Site Times</center></th>
+                    <th colspan="2"></th>
+                </tr> 
+                <tr style="outline: thin solid">
+                    <th style="text-align:center">Company Name / Site Address</th>
+                    <th style="text-align:center">Tip Address</th>
+                    <th style="text-align:center">Material</th>
+                    <th width="100" style="text-align:center">Conv. No.</th>
+                    <th width="140" style="text-align:center">Start Time</th>
+                    <th width="140" style="text-align:center">Time In</th>
+                    <th width="140" style="text-align:center">Time Out</th>
+                    <th width="140" style="text-align:center">Tip In Time</th>
+                    <th width="90" style="text-align:center">Tip Ticket</th>  
+                    <th width="50" style="text-align:center">Expense</th>  
+                </tr> 
 
+                <?php 
+                $combinedData = array_merge($DriverLoadsCollection, $DriverLoadsDelivery);
+
+                usort($combinedData, function($a, $b) {
+                    return strtotime($a->AllocatedDateTime) - strtotime($b->AllocatedDateTime);
+                });
+
+                if (!empty($combinedData)) {
+                    foreach ($combinedData as $record) { 
+                        $companyName = !empty($record->CompanyName) ? $record->CompanyName : 'N/A';
+                        $opportunityName = !empty($record->OpportunityName) ? $record->OpportunityName : 'N/A';
+                        $tipName = !empty($record->TipName) ? $record->TipName : 'N/A';
+                        $materialName = !empty($record->MaterialName) ? $record->MaterialName : 'N/A';
+                        $conveyanceNo = !empty($record->ConveyanceNo) ? $record->ConveyanceNo : 'N/A';
+                        $jobStartDateTime = !empty($record->JobStartDateTime) ? $record->JobStartDateTime : 'N/A';
+                        $siteInDateTime = !empty($record->SiteInDateTime) ? $record->SiteInDateTime : 'N/A';
+                        $siteOutDateTime = !empty($record->SiteOutDateTime) ? $record->SiteOutDateTime : 'N/A';
+                        $tipTicketDateTime = !empty($record->TicketDateTime) ? $record->TicketDateTime : 'N/A';
+                        $ticketNumber = !empty($record->TicketNumber) ? $record->TicketNumber : '';
+                        $tipTicketID = !empty($record->TipTicketID) ? $record->TipTicketID : '';
+                        $suppNo = !empty($record->SuppNo) ? $record->SuppNo : '';
+                        $expenses = !empty($record->Expenses) ? $record->Expenses : 'N/A';
+                        $receiptName = !empty($record->ReceiptName) ? $record->ReceiptName : '';
+                        $pdfName = !empty($record->pdf_name) ? $record->pdf_name : '';
+                        $typeOfTicket = !empty($record->TypeOfTicket) ? $record->TypeOfTicket : ''; // from tbl_ticket
+
+                        echo "<tr style='outline: thin solid'>
+                            <td>{$companyName}<br>{$opportunityName}</td>
+                            <td>{$tipName} {$suppNo}</td>
+                            <td>{$materialName}</td>";
+
+                        // Conveyance No link
+                        $urlConveyance = "https://tml.snsitltd.com/assets/conveyance/{$receiptName}";
+                        echo "<td><a href='{$urlConveyance}' target='_blank'>{$conveyanceNo}</a></td>";
+
+                        // Site Times
+                        echo "
+                            <td>{$jobStartDateTime}</td>
+                            <td>{$siteInDateTime}</td>
+                            <td>{$siteOutDateTime}</td>
+                            <td>{$tipTicketDateTime}</td>";
+                         // Construct the second URL for the original tip ticket
+                         $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";
+                                    
+                        // Tip Ticket logic: based on TypeOfTicket
+                        echo "<td>";
+                        if (!empty($tipTicketID)) {
+                            if ($typeOfTicket === 'out') {
+                                // Show conveyance receipt
+                                echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a><br>";
+                                 echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
+                            } else {
+                                // Show PDF ticket
+                                $pdfUrl = "https://tml.snsitltd.com/assets/pdf_file/{$pdfName}";
+                                echo "<a href='{$pdfUrl}' target='_blank'>{$ticketNumber}</a><br>";
+                                 echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
+                            }
+                        } else {
+                            // No tip ticket ID, show receipt
+                            echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a>";
+                        }
+                        echo "</td>";
+
+                        // Expenses
+                        echo "<td>{$expenses}</td></tr>";
+                    }
+                } else {
+                    echo "<tr style='outline: thin solid'><td colspan='10'>There are no records available for collection or delivery.</td></tr>";
+                }
+                ?>
+
+            </table>
+        </div>
+    </div>  
+</div>
         </div>     
 		
 
