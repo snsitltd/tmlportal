@@ -137,7 +137,10 @@
                                     $tipTicketID = !empty($record->TipTicketID) ? $record->TipTicketID : '';
                                     $suppNo = !empty($record->SuppNo) ? $record->SuppNo : '';
                                     $expenses = !empty($record->Expenses) ? $record->Expenses : 'N/A';
-                            
+                                    $receiptName = !empty($record->ReceiptName) ? $record->ReceiptName : '';
+                                    $pdfName = !empty($record->pdf_name) ? $record->pdf_name : '';
+                                    $typeOfTicket = !empty($record->TypeOfTicket) ? $record->TypeOfTicket : ''; // from tbl_ticket
+
                                     // Display data in rows
                                     echo "<tr style='outline: thin solid'>
                                             <td>{$companyName} <br> {$opportunityName}</td>
