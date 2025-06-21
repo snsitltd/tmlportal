@@ -160,37 +160,57 @@
                                           <td>{$siteOutDateTime}</td>
                                           <td>{$tipTicketDateTime}</td>";
                                     $searchIDTic = urlencode($ticketNumber);
-                                        // Construct the first URL for /All-Tickets with search ID
-                                 // $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->TicketPdfName;
-                                  $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->pdf_name;  
-                                //  $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->ReceiptName;
-                                    if ($tipTicketID) {
-                                        // Base URL for tip tickets
-                                        $baseUrl = "https://tml.snsitltd.com/";
-                                        $searchID = urlencode($tipTicketID);
-                                        $searchIDTic = urlencode($ticketNumber);
+                                //         // Construct the first URL for /All-Tickets with search ID
+                                //  // $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->TicketPdfName;
+                                //   $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->pdf_name;  
+                                // //  $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->ReceiptName;
+                                //     if ($tipTicketID) {
+                                //         // Base URL for tip tickets
+                                //         $baseUrl = "https://tml.snsitltd.com/";
+                                //         $searchID = urlencode($tipTicketID);
+                                //         $searchIDTic = urlencode($ticketNumber);
                                     
-                                        // Construct the first URL for conveyance PDF
-                                        $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->ReceiptName;
-                                       // $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->pdf_name;  
-                                        // Construct the second URL for the original tip ticket
-                                        $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";
+                                //         // Construct the first URL for conveyance PDF
+                                //         $url1 = "https://tml.snsitltd.com/assets/conveyance/" . $record->ReceiptName;
+                                //        // $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->pdf_name;  
+                                //         // Construct the second URL for the original tip ticket
+                                //         $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";
                                     
-                                        // Display each URL as a plain clickable number
-                                        echo "<td>";
-                                        echo "<a href='{$url1}' target='_blank'>{$ticketNumber}</a><br>";
-                                        echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a>";
-                                        echo "</td>";
-                                    } else {
-                                        // If there's no tip ticket, just show the conveyance link
-                                        echo "<td>";
-                                        echo "<a href='{$url1}' target='_blank'>{$record->TicketNumber}</a>";
+                                //         // Display each URL as a plain clickable number
+                                //         echo "<td>";
+                                //         echo "<a href='{$url1}' target='_blank'>{$ticketNumber}</a><br>";
+                                //         echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a>";
+                                //         echo "</td>";
+                                //     } else {
+                                //         // If there's no tip ticket, just show the conveyance link
+                                //         echo "<td>";
+                                //         echo "<a href='{$url1}' target='_blank'>{$record->TicketNumber}</a>";
                                        
-                                        echo "</td>";
-                                    }
+                                //         echo "</td>";
+                                //     }
 
 
-
+                                    // Construct the second URL for the original tip ticket
+                         $url2 = $baseUrl . "assets/tiptickets/" . $searchID . ".pdf";
+                                    
+                        // Tip Ticket logic: based on TypeOfTicket
+                        echo "<td>";
+                        if (!empty($tipTicketID)) {
+                            if ($typeOfTicket === 'out') {
+                                // Show conveyance receipt
+                                echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a><br>";
+                                 echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
+                            } else {
+                                // Show PDF ticket
+                                $pdfUrl = "https://tml.snsitltd.com/assets/pdf_file/{$pdfName}";
+                                echo "<a href='{$pdfUrl}' target='_blank'>{$ticketNumber}</a><br>";
+                                 echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
+                            }
+                        } else {
+                            // No tip ticket ID, show receipt
+                            echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a>";
+                        }
+                        echo "</td>";
                                     
                                     echo "<td>{$expenses}</td></tr>";
                                 }
