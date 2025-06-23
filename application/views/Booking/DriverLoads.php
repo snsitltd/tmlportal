@@ -258,10 +258,11 @@
                         $receiptName = !empty($record->ReceiptName) ? $record->ReceiptName : '';
                         $pdfName = !empty($record->pdf_name) ? $record->pdf_name : '';
                         $typeOfTicket = !empty($record->TypeOfTicket) ? $record->TypeOfTicket : ''; // from tbl_ticket
-
+                        $tipFromLoad = !empty($record->LoadTipName) ? $record->LoadTipName : 'N/A';
+                        $tipFromTicket = !empty($record->TicketTipName) ? $record->TicketTipName : ''; 
                         echo "<tr style='outline: thin solid'>
                             <td>{$companyName}<br>{$opportunityName}</td>
-                            <td>{$tipName} {$suppNo}</td>
+                            <td>{$tipFromLoad} {$suppNo}</td>
                             <td>{$materialName}</td>";
 
                         // Conveyance No link
@@ -289,6 +290,7 @@
                                 $pdfUrl = "https://tml.snsitltd.com/assets/pdf_file/{$pdfName}";
                                 echo "<a href='{$pdfUrl}' target='_blank'>{$ticketNumber}</a><br>";
                                  echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
+                                   echo "<a href='{$url2}' target='_blank'>{$tipFromTicket}</a>";
                             }
                         } else {
                             // No tip ticket ID, show receipt
