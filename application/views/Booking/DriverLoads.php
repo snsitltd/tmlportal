@@ -163,6 +163,7 @@
                                           <td>{$siteOutDateTime}</td>
                                           <td>{$tipTicketDateTime}</td>";
                                     $searchIDTic = urlencode($ticketNumber);
+                                      $searchID = urlencode($tipTicketID);
                                 //         // Construct the first URL for /All-Tickets with search ID
                                 //  // $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->TicketPdfName;
                                 //   $url1 = "https://tml.snsitltd.com/assets/pdf_file/" . $record->pdf_name;  
