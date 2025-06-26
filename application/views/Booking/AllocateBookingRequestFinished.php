@@ -143,8 +143,24 @@
 			columnDefs: [{ data: null, targets: -1 }],   
 			createdRow: function (row, data, dataIndex) {  
 				var btype = ''; var Ltype =""; var LorryType = '';
-				if(data["BookingType"] ==1){ $(row).addClass("even1");   btype = 'Collection' ; }else{ $(row).addClass("odd1");  btype = 'Delivery' ;  } 
-				
+		//		if(data["BookingType"] ==1){ $(row).addClass("even1");   btype = 'Collection' ; }else{ $(row).addClass("odd1");  btype = 'Delivery' ;  } 
+			if (data["BookingType"] == 1) {
+    $(row).addClass("even1");
+    btype = 'Collection';
+} else if (data["BookingType"] == 2) {
+    $(row).addClass("odd1");
+    btype = 'Delivery';
+} else if (data["BookingType"] == 3) {
+    $(row).addClass("daywork1");
+    btype = 'Daywork';
+} else if (data["BookingType"] == 4) {
+    $(row).addClass("haulage1");
+    btype = 'Haulage';
+} else {
+    $(row).addClass("notfound1");
+    btype = 'Booking Not Found';
+}
+	
 				if(data["TonBook"]==1){
 					Ltype = "Tonnage";
 				}else{	
