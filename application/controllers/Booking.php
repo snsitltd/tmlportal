@@ -13645,7 +13645,7 @@ class Booking extends BaseController
 					</div></body></html>';
 
 					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $data['LoadInfo']->ReceiptName;
-					$mpdf = new mPDF('utf-8', array(70, 240), '', '', 5, 5, 5, 5, 5, 5);
+					$mpdf = new mPDF('utf-8', array(70, 260), '', '', 5, 5, 5, 5, 5, 5);
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
 					$mpdf->Output($pdfFilePath);
