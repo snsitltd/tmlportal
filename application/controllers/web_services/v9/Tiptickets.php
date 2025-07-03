@@ -333,23 +333,150 @@ class Tiptickets extends REST_Controller {
             'data' => $data
         ], REST_Controller::HTTP_OK);   
     }
-	
-	public function create_test_post(){
-	    
-	    $logData = [
-	        'driver_id' => $this->post('driver_id'),
-	        'lorry_no' => $this->post('lorry_no'),
-            'api_call' => __METHOD__, // Get current method name
-            'api_request' => json_encode($this->post())
-        ];
-        
-        $this->log_api_data($logData);
-    	    
-	    $this->response([
-            'status' => true,
-            'message' => "Devam testing",
-        ], REST_Controller::HTTP_OK);   
+
+
+	public function update_ref_post(){
+		$token = $this->post('token');
+		if(REST_Controller::TOKEKEYS != $token){
+            $status = "0";
+            $message ='Invalid API Key';
+        }
+		$tipTicketId = $this->post('TipTicketID');
+		$tipID = $this->post('TipID');
+		$tTIPID = $tipID;
+		$tipadQRY = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$tTIPID'");
+		$tipadQRY = $tipadQRY->row_array();
+                         
+                 $query = $this->db->get_where('tbl_tipticket', ['TipTicketID' => $tipTicketId]);
+			$result = $query->row_array();
+
+			if ($result) {
+				echo json_encode([
+					'status' => 'success',
+					'data' => $result
+				]);
+			} else {
+				echo json_encode([
+					'status' => 'error',
+					'message' => 'No data found'
+				]);
+			}
 	}
+	
+	public function create_test_post()
+	{
+		$token = $this->post('token');
+		$tipRef = $this->post('TipRefNo');
+		// Validate token
+		if (REST_Controller::TOKEKEYS != $token) {
+			echo json_encode([
+				'status' => 0,
+				'message' => 'Invalid API Key'
+			]);
+			return;
+		}
+		$tipTicketId = $this->post('TipTicketID');
+		$tipID = $this->post('TipID');
+		
+		$this->db->where('TipTicketID', $tipTicketId);
+		$updated = $this->db->update('tbl_tipticket', ['TipRefNo' => $tipRef]);
+
+		
+
+		// Get tip ticket
+		$result = $this->db->get_where('tbl_tipticket', ['TipTicketID' => $tipTicketId])->row_array();
+		if (!$result) {
+			echo json_encode([
+				'status' => 0,
+				'message' => 'Tip ticket not found'
+			]);
+			return;
+		}
+
+		// Get tip address
+		$tipadQRY = $this->db->get_where('tbl_tipaddress', ['TipID' => $tipID])->row_array();
+
+		// Get load details
+		$loadData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $result['LoadID']])->result();
+		$loadOne = $loadData[0];
+
+		// Get driver signature
+		$con['returnType'] = 'single';
+		$con['conditions'] = [
+			'DriverID' => $result['DriverLoginID'],
+			'Status' => 0
+		];
+		$user = $this->Drivers_API_Model->getRows($con);
+
+		// Get PDF content settings
+		$PDFContent = $this->db->get_where('tbl_content_settings', ['id' => 1])->row();
+
+		// Build PDF HTML
+		$html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"></head><body>
+			<div style="width:100%; font-size: 10px;">
+				<div style="width:100%;">
+					<div style="width:35%; float:left;">
+						<img src="/assets/Uploads/Logo/' . $PDFContent->logo . '" width="80">
+					</div>
+					<div style="width:65%; float:right; text-align:right;">
+						<b>' . $PDFContent->outpdf_title . '</b><br/>
+						' . $PDFContent->address . '<br/>
+						<b>Phone:</b> ' . $PDFContent->outpdf_phone . '
+					</div>
+				</div>
+				<div style="width:100%; float:left;">
+					<b>Email:</b> ' . $PDFContent->email . '<br/>
+					<b>Web:</b> ' . $PDFContent->website . '<br/>
+					<b>Waste License No:</b> ' . $PDFContent->waste_licence . '<br/>
+					<b>' . $PDFContent->head1 . '</b><br/><br/>
+					<b>' . $PDFContent->head2 . '</b><br/><br/>
+					<div style="text-align:center;"><b>Tip Ticket Details</b></div><br/>
+					<b>Tip Ticket ID:</b> ' . $tipTicketId . '<br/>
+					<b>Permit Reference No:</b> ' . $tipadQRY['PermitRefNo'] . '<br/>
+					<b>Date Time:</b> ' . date("d-m-Y H:i:s", strtotime($result['CreatedDateTime'])) . '<br/>
+					<b>Site Address:</b> ' . $result['SiteAddress'] . '<br/>
+					<b>Tip Name:</b> ' . $tipadQRY['TipName'] . '<br/>
+					<b>Tip Address:</b> ' . $tipadQRY['Street1'] . ' ' . $tipadQRY['Street2'] . ' ' . $tipadQRY['Town'] . ' ' . $tipadQRY['County'] . ' ' . $tipadQRY['PostCode'] . '<br/>
+					<b>Driver Name:</b> ' . $result['DriverName'] . '<br/>
+					<b>Vehicle Reg. No.:</b> ' . $loadOne->VehicleRegNo . '<br/>
+					<b>Material Name:</b> ' . $result['MaterialName'] . '<br/>
+					<b>Tip Ticket No:</b> ' . $result['TipTicketNo'] . '<br/>
+					<b>Tip Reference No:</b> ' . $result['TipRefNo'] . '<br/>
+					<b>Start Time:</b> ' . $loadOne->JobStartDateTime . '<br/>
+					<b>End Time:</b> ' . $loadOne->JobEndDateTime . '<br/>
+					<b>Remarks:</b> ' . $result['remarks'] . '<br/><br/>
+				</div>
+				<div><img src="/assets/DriverSignature/' . $user['Signature'] . '" width="100" height="40" style="float:left;"></div><br/>
+				<div style="width:100%; float:left;">
+					<div style="font-size:9px;">
+						<b>VAT Reg. No:</b> ' . $PDFContent->VATRegNo . '<br/>
+						<b>Company Reg. No:</b> ' . $PDFContent->CompanyRegNo . '<br/>
+						' . $PDFContent->FooterText . '
+					</div>
+				</div>
+			</div></body></html>';
+
+		// Ensure the output directory exists
+		$directory = WEB_ROOT_PATH . "tmlportal/assets/tiptickets/";
+		if (!is_dir($directory)) {
+			mkdir($directory, 0777, true);
+		}
+
+		// Save PDF
+		$pdfFilePath = $directory . $tipTicketId . ".pdf";
+
+		$mpdf =  new mPDF('utf-8', array(70,160),'','',5,5,5,5,5,5);
+		$mpdf->keep_table_proportions = false;
+		$mpdf->WriteHTML($html);
+		$mpdf->Output($pdfFilePath, 'F');
+
+		echo json_encode([
+			'status' => 1,
+			'message' => 'PDF created successfully',
+			'file' => base_url("tmlportal/assets/tiptickets/" . $tipTicketId . ".pdf")
+		]);
+	}
+
 	
 	public function update_post(){
         
