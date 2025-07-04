@@ -551,7 +551,8 @@ class Booking extends BaseController
 							$object->getActiveSheet()->getCell('H' . $excel_row)->getHyperlink()->setUrl($url);
 						}
 						$object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row['PurchaseOrderNo']);
-						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
+						// $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, html_entity_decode($row['MaterialName']));
 						$object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $Price);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $row['DriverName']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $row['VehicleRegNo']);
@@ -988,10 +989,13 @@ class Booking extends BaseController
 								}
 
 								$TB = ($row['TonBook'] == 1) ? ' Tonnage ' : ' Load ';
-								$MaterialText = $row['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
-								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText);
+								// $MaterialText = $row['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
+								$MaterialText = html_entity_decode($row['MaterialName']) . ' Collected ' . $LT . ' ' . $TB;
+								// $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText);
+								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, html_entity_decode($row['MaterialName']));
 							} else {
-								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
+								// $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row['MaterialName']);
+								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, html_entity_decode($row['MaterialName']));
 							}
 
 							$Price = ($row['BookingMaterialID'] == $row['MaterialID']) ? (is_numeric($row['Price']) ? $row['Price'] : 0) : 0;
@@ -1226,11 +1230,12 @@ class Booking extends BaseController
 								} else {
 									$TB = ' Load ';
 								}
-
-								$MaterialText = $tickets[$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
+								$MaterialText = html_entity_decode($tickets[$i]['MaterialName']) . ' Collected ' . $LT . ' ' . $TB;
+								// $MaterialText = $tickets[$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
 								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $MaterialText);
 							} else {
-								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tickets[$i]['MaterialName']);
+								$object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, html_entity_decode($tickets[$i]['MaterialName']));
+								// $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $tickets[$i]['MaterialName']);
 							}
 							$Price = is_numeric($tickets[$i]['Price']) ? $tickets[$i]['Price'] : 0;
 							//if ($tickets[$i]['BookingMaterialID'] == $tickets[$i]['MaterialID']) {
@@ -1505,10 +1510,13 @@ class Booking extends BaseController
 							$TB = ' Load ';
 						}
 
-						$MaterialText = $data['SplitExcelConveyanceTickets'][$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
-						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $MaterialText);
+						// $MaterialText = $data['SplitExcelConveyanceTickets'][$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
+						$MaterialText = html_entity_decode($data['SplitExcelConveyanceTickets'][$i]['MaterialName']) . ' Collected ' . $LT . ' ' . $TB;
+						// $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $MaterialText);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, html_entity_decode($MaterialText));
 					} else {
-						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['MaterialName']);
+						// $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['MaterialName']);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, html_entity_decode($data['SplitExcelConveyanceTickets'][$i]['MaterialName']));
 					}
 
 					$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['WaitingCharge']);
@@ -1774,10 +1782,13 @@ class Booking extends BaseController
 							$TB = ' Load ';
 						}
 
-						$MaterialText = $data['SplitExcelConveyanceTickets'][$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
-						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $MaterialText);
+						// $MaterialText = $data['SplitExcelConveyanceTickets'][$i]['MaterialName'] . ' Collected ' . $LT . ' ' . $TB;
+						// $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $MaterialText);
+						$MaterialText = html_entity_decode($data['SplitExcelConveyanceTickets'][$i]['MaterialName']) . ' Collected ' . $LT . ' ' . $TB;
+						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, html_entity_decode($MaterialText));
 					} else {
-						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['MaterialName']);
+						// $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['MaterialName']);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, html_entity_decode($data['SplitExcelConveyanceTickets'][$i]['MaterialName']));
 					}
 
 					$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $data['SplitExcelConveyanceTickets'][$i]['WaitingCharge']);
