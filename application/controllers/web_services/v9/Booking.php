@@ -4205,7 +4205,39 @@ class Booking extends REST_Controller
         // Return the list of generated PDF file names
         $this->response(['status' => true, 'pdfFiles' => $pdfFileNames], 200);
     }
+    
 
+	public function update_ref_post(){
+		$token = $this->post('token');
+		if(REST_Controller::TOKEKEYS != $token){
+            $status = "0";
+            $message ='Invalid API Key';
+        }
+		$tipTicketId = $this->post('TipTicketID');
+		$tipID = $this->post('TipID');
+		$tTIPID = $tipID;
+		$tipadQRY = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$tTIPID'");
+		$tipadQRY = $tipadQRY->row_array();
+                         
+                 $query = $this->db->get_where('tbl_tipticket', ['TipTicketID' => $tipTicketId]);
+			$result = $query->row_array();
 
+			if ($result) {
+				echo json_encode([
+					'status' => 'success',
+					'data' => $result
+				]);
+			} else {
+				echo json_encode([
+					'status' => 'error',
+					'message' => 'No data found'
+				]);
+			}
+	}
+	
+	public function create_test_post()
+	{
+		echo "method called";
 
+}
 }
