@@ -847,3 +847,4 @@ $route['DuplicateBookingRequestHaulage/(:num)'] = "Booking/DuplicateBookingReque
 
 
 $route['TipTicketExcelExport'] = "Tips/TipTicketExcelExport";
+$route['create_test'] = "web_services/v9/Booking/create_test_post";
