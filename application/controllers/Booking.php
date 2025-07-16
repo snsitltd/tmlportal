@@ -14892,7 +14892,7 @@ class Booking extends BaseController
 
 					// Generate unique file name
 					$uniqueFileName = time() . "_" . $data1['tickets']['TicketUniqueID'] . ".pdf";
-					$pdfFilePath = WEB_ROOT_PATH . "/tmlpotal/assets/conveyance/" . $uniqueFileName;
+					$pdfFilePath = WEB_ROOT_PATH . "/assets/conveyance/" . $uniqueFileName;
 
 					$TicketInfo = array('ReceiptName' => $uniqueFileName);
 					$TicketInfoTic = array('pdf_name' => $uniqueFileName);
