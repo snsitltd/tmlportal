@@ -14904,6 +14904,7 @@ class Booking extends BaseController
 					$mpdf->keep_table_proportions = false;
 					$mpdf->WriteHTML($html);
 					$mpdf->Output($pdfFilePath);
+					$this->session->set_flashdata('success', 'Booking Details has been updated successfully');
 
 					// Log file generation
 					$SiteLogInfo = [
