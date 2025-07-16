@@ -75,34 +75,12 @@ $active_group = 'default';
 $query_builder = TRUE;
 //'database' => 'tmlsnslt_tml__',
 
-$db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => '213.175.208.242',
-	'username' => 'tmlsnsitltdco_tml_new',
-	'password' => '6*0f;oUAiJFf',
-	'database' => 'tmlsnsitltdco_tml_new',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => 'tbl_',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);
-
 // $db['default'] = array(
 // 	'dsn'	=> '',
 // 	'hostname' => '213.175.208.242',
-// 	'username' => 'tmlsnslt_tml',
-// 	'password' => 'qmw7V7vEiT3C',
-// 	'database' => 'tmlsnslt_tml',
+// 	'username' => 'tmlsnsitltdco_tml_new',
+// 	'password' => '6*0f;oUAiJFf',
+// 	'database' => 'tmlsnsitltdco_tml_new',
 // 	'dbdriver' => 'mysqli',
 // 	'dbprefix' => 'tbl_',
 // 	'pconnect' => FALSE,
@@ -118,6 +96,28 @@ $db['default'] = array(
 // 	'failover' => array(),
 // 	'save_queries' => TRUE
 // );
+
+$db['default'] = array(
+	'dsn'	=> '',
+	'hostname' => '213.175.208.242',
+	'username' => 'tmlsnslt_tml',
+	'password' => 'qmw7V7vEiT3C',
+	'database' => 'tmlsnslt_tml',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => 'tbl_',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 
 //'dbdriver' => 'mysqli',
 
