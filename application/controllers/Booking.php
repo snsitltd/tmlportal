@@ -11042,7 +11042,7 @@ class Booking extends BaseController
 								<b>SIC Code: </b> ' . $data1['tickets']['LoadSICCODE'] . ' <br> 
 								<b>Gross Weight: </b> ' . round($data1['tickets']['GrossWeight']) . ' KGs <br>		 
 								<b>Tare Weight: </b> ' . round($data1['tickets']['Tare']) . ' KGs <br>		 
-								<b>Net Weight: </b> ' . $data1['tickets']['Net'] . ' KGs <br> 
+								<b>Net Weight: </b> ' . round($data1['tickets']['Net']) . ' KGs <br> 
 								<p style="font-size: 7px;"> ' . $PDFContent[0]->outpdf_para1 . ' <br>  
 								' . $PDFContent[0]->outpdf_para2 . '<br>  
 								<b>' . $PDFContent[0]->outpdf_para3 . '</b></p></div> 
