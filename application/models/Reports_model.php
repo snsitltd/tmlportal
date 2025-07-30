@@ -182,8 +182,7 @@ class Reports_model extends CI_Model{
 		//exit;
 	    return $query->result();
 	}
-	public function get_ea_report($searchdate, $type,$material,$county){ 
-					 
+	public function get_ea_report($searchdate, $type,$material,$county,$user){ 
 		$searchdates= explode('-', $searchdate); 			
 		$f = explode('/',$searchdates[0]);
 		$firstDate = trim($f[2]).'-'.trim($f[1]).'-'.trim($f[0]);
@@ -196,6 +195,7 @@ class Reports_model extends CI_Model{
 		LEFT JOIN  `tbl_opportunities` ON  `tbl_opportunities`.`OpportunityID` = `tbl_tickets`.`OpportunityID` 
 		JOIN `tbl_materials` ON `tbl_tickets`.`MaterialID` = `tbl_materials`.`MaterialID`  
 		WHERE `tbl_tickets`.`TypeOfTicket` <> 'Collection' AND `tbl_tickets`.`Net` <> 0 AND `tbl_tickets`.`delete_notes` IS NULL
+		AND tbl_tickets.CompanyID != '56SMQ2FGVTJLUX-EZ7WN398-H1CBK4YIDAR'
 		AND DATE(tbl_tickets.CreateDate) >= '".$firstDate."' AND DATE(tbl_tickets.CreateDate) <= '".$SecondDate."' ";
 		if($type !=""){
 			$sql .= " AND tbl_tickets.TypeOfTicket = '".$type."' ";
@@ -208,10 +208,16 @@ class Reports_model extends CI_Model{
 			$con = implode("','",$county);
 			$sql .= " AND trim(tbl_opportunities.County) in('".$con."') ";
 		}
+		if($user){
+			if(count($user)>0){ 
+				$u = implode(',',$user); 
+				$sql .= " AND tbl_tickets.CreateUserID in(".$u.") ";    
+			}
+		}
 		$sql .= " GROUP BY `tbl_tickets`.`TypeOfTicket`, `tbl_tickets`.`MaterialID`, tbl_opportunities.County ";
 		$query = $this->db->query($sql);
-		//echo $this->db->last_query(); 
-		//exit;
+		// echo $this->db->last_query(); 
+		// exit;
 	    return $query->result();
 	}
 
