@@ -67,18 +67,6 @@
 									</div>                            
                                 </div>
                             </div>  
-                           
-                                <div class="col-md-3">                                
-                                    <div class="form-group">
-                                       <label for="role">Users</label>
-                                       <select class="form-control" name="user[]" id="user" multiple data-live-search="true" > 
-                                            <?php foreach($Users as $value){ ?>
-                                             <option value="<?php echo $value->userId; ?>"  <?php if(set_value('user')){ if (in_array($value->userId, set_value('user'))){ echo "selected"; }} ?> ><?php echo $value->name ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div> 
-                                </div>
-                           
                             <div class="row">
                                 <div class="col-md-6"> </div> 
                             </div>     
