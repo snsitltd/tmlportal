@@ -450,11 +450,12 @@ class Reports extends BaseController
 				$material = $this->input->post('material');
 				$county = $this->input->post('county');
 				$searchdate = $this->input->post('searchdate');
+				$user = $this->input->post('user'); 
 				 
 				 if($type!=""){ $data['ptype'] = $type; }else{ $data['ptype'] = " IN | OUT "; }
 				 if(!empty($county)){ $data['pcounty'] = implode(",",$county); }else{ $data['pcounty'] = "ALL COUNTY"; }
 				 $search_array = array(); 
-				 $data['ticketsRecords'] = $this->Reports_model->get_ea_report($searchdate,$type,$material,$county);   
+				 $data['ticketsRecords'] = $this->Reports_model->get_ea_report($searchdate,$type,$material,$county, $user);   
 			} 
              if(isset($_POST['export']))  { 
 				$type	 = $this->input->post('tickettype');
@@ -466,7 +467,7 @@ class Reports extends BaseController
 				 $data['searchdate'] = $searchdate;
 				 if(!empty($county)){ $data['pcounty'] = implode(",",$county); }else{ $data['pcounty'] = "ALL COUNTY"; }
 				 $search_array = array(); 
-				 $data['ticketsRecords'] = $this->Reports_model->get_ea_report($searchdate,$type,$material,$county);   
+				 $data['ticketsRecords'] = $this->Reports_model->get_ea_report($searchdate,$type,$material,$county, $user);   
 				 
 				 if(!empty($data['ticketsRecords'])){
                    $object = new PHPExcel();
@@ -525,7 +526,7 @@ class Reports extends BaseController
 				 $data['searchdate'] = $searchdate;
 				 if(!empty($county)){ $data['pcounty'] = implode(",",$county); }else{ $data['pcounty'] = "ALL COUNTY"; }
 				 $search_array = array(); 
-				 $data['ticketsRecords'] = $this->Reports_model->get_ea_report($searchdate,$type,$material,$county);   
+				 $data['ticketsRecords'] = $this->Reports_model->get_ea_report($searchdate,$type,$material,$county, $user);   
 				 
 				if(!empty($data['ticketsRecords'])){ 
 					$PDFNAME = 'EAREPORTS-'.date("YmdHis"); //$this->generateRandomString();
@@ -543,7 +544,8 @@ class Reports extends BaseController
              }
 		 	
         $data['county'] = $this->Common_model->get_all('county');   
-		$data['materialsRecords'] = $this->Common_model->get_all('materials');  
+		$data['materialsRecords'] = $this->Common_model->get_all('materials'); 
+		$data['Users'] = $this->Common_model->GetAllUsers(); 
         $this->global['pageTitle'] = WEB_PAGE_TITLE.' : EA Report';
         $this->global['active_menu'] = 'eareports';
         $this->loadViews("Reports/eareports", $this->global, $data, NULL);
