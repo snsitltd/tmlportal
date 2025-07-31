@@ -3907,7 +3907,7 @@ class Booking extends BaseController
 				$MaterialID = $this->input->post('MaterialID1');
 				$LoadID = $this->input->post('LoadID');
 				//exit;
-				$LoadInfo = array('MaterialID' => $MaterialID);
+				$LoadInfo = array('MaterialID' => $MaterialID , 'LoadPrice' => 0);
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
@@ -4129,7 +4129,7 @@ class Booking extends BaseController
 				$TicketNo = $this->input->post('TicketNo');
 				//exit;
 
-				$TInfo = array('MaterialID' => $MaterialID);
+				$TInfo = array('MaterialID' => $MaterialID, 'LoadPrice' => 0);
 				$Tcond = array('LoadID ' => $LoadID);
 				$update1 = $this->Common_model->update("tbl_tickets", $TInfo, $Tcond);
 
