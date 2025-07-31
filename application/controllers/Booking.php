@@ -4129,7 +4129,7 @@ class Booking extends BaseController
 				$TicketNo = $this->input->post('TicketNo');
 				//exit;
 
-				$TInfo = array('MaterialID' => $MaterialID, 'LoadPrice' => 0);
+				$TInfo = array('MaterialID' => $MaterialID);
 				$Tcond = array('LoadID ' => $LoadID);
 				$update1 = $this->Common_model->update("tbl_tickets", $TInfo, $Tcond);
 
