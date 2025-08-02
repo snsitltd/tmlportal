@@ -213,6 +213,7 @@
                         } else {
                             // No tip ticket ID, show receipt
                             echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a>";
+                            echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
                         }
                         echo "</td>";
                                     
