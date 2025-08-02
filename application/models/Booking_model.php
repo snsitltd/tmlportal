@@ -3147,7 +3147,8 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_tipticket.TipID as TicketTipID ');	  
 		$this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
 		$this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime ');  	 	  		 
-		$this->db->select(' tbl_tickets.TicketNumber');  	 	  		 
+		$this->db->select(' tbl_tickets.TicketNumber');  
+		$this->db->select(' tbl_tickets.TypeOfTicket');	 	  		 
 		 
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 
@@ -3208,7 +3209,9 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_tipticket.TipID as TicketTipID ');	  
 		$this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y %T") as TipTicketDateTime ');  	 	  		
 		$this->db->select(' tbl_tickets.TicketNumber');  
-		$this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime '); 		
+		$this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y %T") as TicketDateTime ');
+		$this->db->select(' tbl_tickets.TicketNumber');  	
+		$this->db->select(' tbl_tickets.TypeOfTicket'); 		
 		
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ',"LEFT"); 
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ',"LEFT"); 

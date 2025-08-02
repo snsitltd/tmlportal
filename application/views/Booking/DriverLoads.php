@@ -199,8 +199,8 @@
                            $urlConveyance = "https://tml.snsitltd.com/assets/conveyance/{$receiptName}";          
                         // Tip Ticket logic: based on TypeOfTicket
                         echo "<td>";
-                        if (!empty($tipTicketID)) {
-                            if ($typeOfTicket === 'out') {
+                        if (!empty($ticketNumber)) {
+                            if ($typeOfTicket === 'Out') {
                                 // Show conveyance receipt
                                 echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a><br>";
                                  echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
