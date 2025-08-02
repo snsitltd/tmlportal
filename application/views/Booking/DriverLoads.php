@@ -280,8 +280,8 @@
                                     
                         // Tip Ticket logic: based on TypeOfTicket
                         echo "<td>";
-                        if (!empty($tipTicketID)) {
-                            if ($typeOfTicket === 'out') {
+                        if (!empty($ticketNumber)) {
+                            if ($typeOfTicket === 'Out') {
                                 // Show conveyance receipt
                                 echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a><br>";
                                  echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
@@ -295,6 +295,7 @@
                         } else {
                             // No tip ticket ID, show receipt
                             echo "<a href='{$urlConveyance}' target='_blank'>{$ticketNumber}</a>";
+                             echo "<a href='{$url2}' target='_blank'>{$tipTicketID}</a><br>";
                         }
                         echo "</td>";
 
