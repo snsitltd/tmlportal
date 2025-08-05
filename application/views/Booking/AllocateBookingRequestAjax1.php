@@ -69,10 +69,10 @@ $cls = "driverlstd";
 						
 					<?php }else{ ?>	
 					
-						<?php $ht =  explode(',',$rl->HType); ?> 
-						<?php if (in_array($BookingInfo['MaterialType'], $ht)) { ?>	
+						<?php //$ht =  explode(',',$rl->HType); ?> 
+						<?php //if (in_array($BookingInfo['MaterialType'], $ht)) { ?>	
 							<option value="<?php echo $rl->TipID ?>" ><?php echo $rl->TipName ?></option>
-						<?php } ?>
+						<?php //} ?>
 						
 					<?php } ?> 
 					

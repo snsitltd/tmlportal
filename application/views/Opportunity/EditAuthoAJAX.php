@@ -10,8 +10,8 @@
 					<div class="form-group">
 						<label for="Loads"> Status</label>
 						<select class="form-control " id="Status" name="Status" required="required"   data-live-search="true" > 
-							<option value="0" <?php if($Autho['Status']==0){ ?> selected <?php } ?> >Authorised</option> 
-							<option value="1" <?php if($TableID!=""){ if($Autho['Status']==1){ ?> selected <?php }}else{ echo "selected"; } ?> >UnAuthorised</option> 
+ 						<option value="0" <?php if (isset($Autho['Status']) && $Autho['Status'] == 0) echo 'selected'; ?>>Authorised</option>
+						<option value="1" <?php if($TableID!=""){ if($Autho['Status']==1){ ?> selected <?php }}else{ echo "selected"; } ?> >UnAuthorised</option> 
 						</select>   
 					</div> 					
 				</div>     
