@@ -3130,6 +3130,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_request.OpportunityName ');	 
 		$this->db->select(' tbl_booking_loads1.ReceiptName');
 		$this->db->select(' tbl_tickets.pdf_name');
+		$this->db->where(' tbl_tickets.IsInBound !=', 1); 
 
 		//$this->db->select(' tbl_tipaddress.TipName ');	  
 		$this->db->select(' tbl_tipticket.TipTicketID ');	  
@@ -3158,7 +3159,8 @@ class Booking_model extends CI_Model{
 			$this->db->where('tbl_booking_loads1.DriverLoginID',$driver); 
 		} 
 		$this->db->where('tbl_booking_loads1.Status > 3'); 
-		$this->db->where(' tbl_booking1.BookingType','1');  
+		$this->db->where(' tbl_booking1.BookingType','1'); 
+		
 	  	//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.AllocatedDateTime,"%Y-%m-%d") ', $firstDate);    
 		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
 		$this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
@@ -3201,6 +3203,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_request.OpportunityName ');	 
 		$this->db->select(' tbl_booking_loads1.ReceiptName');
 		$this->db->select(' tbl_tickets.pdf_name'); 
+		$this->db->where(' tbl_tickets.IsInBound !=', 1); 
 
 		$this->db->select(' tbl_tipaddress.TipName ');	  
 		$this->db->select(' tbl_tipticket.TipID as TicketTipID ');	  
@@ -3220,6 +3223,7 @@ class Booking_model extends CI_Model{
 		}
 		$this->db->where(' tbl_booking1.BookingType','2'); 
 		$this->db->where('tbl_booking_loads1.Status > 3'); 
+
 		//$this->db->where(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y-%m-%d") ', $firstDate);    
 		$this->db->where(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y-%m-%d") ', $firstDate);    
 		
