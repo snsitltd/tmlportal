@@ -1986,6 +1986,7 @@ class Booking extends BaseController
 					foreach ($table_columns as $field) {
 						$object->getActiveSheet()->getStyle('A1:M1')->getFont()->setBold(true);
 						$object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+						$col = PHPExcel_Cell::stringFromColumnIndex($column);
 						$object->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
 
 						$column++;
@@ -13066,7 +13067,7 @@ class Booking extends BaseController
 			$Status = $this->input->post('Status');
 			$Price = $this->input->post('Price');
 
-			$data['SplitExcelDayWorkTickets'] = $this->Booking_model->SplitExcelDayWorkTickets($OpportunityID, $CompanyName, $OpportunityName, $reservation, $SiteOutDateTime, $ConveyanceNo, $MaterialName, $DriverName, $VehicleRegNo, $Status, $Search, $Price);
+			$data['SplitExcelDayWorkTicketsAll'] = $this->Booking_model->SplitExcelDayWorkTickets($OpportunityID, $CompanyName, $OpportunityName, $reservation, $SiteOutDateTime, $ConveyanceNo, $MaterialName, $DriverName, $VehicleRegNo, $Status, $Search, $Price);
 
 			if (count($data['SplitExcelDayWorkTicketsAll']) > 0) {
 				$Array = array();
