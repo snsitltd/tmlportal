@@ -7739,6 +7739,7 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking1.TonBook ');	
 		$this->db->select(' tbl_booking1.LorryType ');	
 		$this->db->select(' tbl_materials.Status as MStatus ');
+		$this->db->select('tbl_booking1.MaterialID as BookingMaterialID');
 		
 		//$this->db->select(' tbl_booking1.Price ');		
 		$this->db->select(' tbl_booking_loads1.LoadPrice as Price ');		

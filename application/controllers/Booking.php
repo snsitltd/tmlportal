@@ -525,9 +525,14 @@ class Booking extends BaseController
 
 					// Fill data
 					$excel_row = 2;
+					// foreach ($groupedData[$type] as $row) {
+					// 	$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
 					foreach ($groupedData[$type] as $row) {
-						$Price = is_numeric($row['Price']) ? $row['Price'] : 0;
-
+						if ((int)$row['BookingMaterialID'] === (int)$row['MaterialID']) {
+    					$Price = $row['Price']; // from tbl_booking_loads1.LoadPrice
+					} else {
+					    $Price = 0;
+					}
 						// Fill row data
 						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row['ConveyanceNo']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime']);
