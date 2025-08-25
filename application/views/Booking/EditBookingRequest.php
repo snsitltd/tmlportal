@@ -191,7 +191,9 @@
 											<select class="form-control BookingType  " id="BookingType<?php echo $record->BookingID; ?>" <?php if($record->TotalLoadAllocated>0){ ?> disabled <?php } ?> data-BID="<?php echo $record->BookingID; ?>" name="BookingType[<?php echo $record->BookingID; ?>]" required="required"  >
 												<option value="">Booking Type </option>                                        
 												<option value="1" <?php if($record->BookingType ==1){ ?> selected <?php } ?> >Collection</option>                                          
-												<option value="2" <?php if($record->BookingType ==2){ ?> selected <?php } ?> >Delivery</option>                                        
+												<option value="2" <?php if($record->BookingType ==2){ ?> selected <?php } ?> >Delivery</option> 
+												<option value="3" <?php if($record->BookingType ==3){ ?> selected <?php } ?> >Daywork</option>
+												<option value="4" <?php if($record->BookingType ==4){ ?> selected <?php } ?> >Haulage</option>                                       
 											</select><div ></div>
 										</td>
 										<td>
@@ -209,6 +211,12 @@
 													<?php if($record1->Status  == $status){ ?>
 													<option value="<?php echo $record1->MaterialID; ?>"  <?php if($record1->Status == "1"){ ?>   <?php } ?>   <?php if($record->MaterialID ==$record1->MaterialID){ ?> selected <?php } ?>  data-sic="<?php echo $record1->SicCode; ?>" data-materialid="<?php echo $record1->MaterialID; ?>"   ><?php echo $record1->MaterialName; ?></option>
 													<?php }} ?>
+												<?php } ?>
+												<?php if ($record->BookingType == 4) { ?>
+												    <option value="Haulage" selected>Haulage</option>
+												<?php } ?>
+												<?php if ($record->BookingType == 3) { ?>
+												    <option value="Daywork" selected>Daywork</option>
 												<?php } ?>
 														
 											</select>   <div ></div>
