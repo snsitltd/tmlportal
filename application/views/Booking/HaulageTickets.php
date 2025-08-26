@@ -265,7 +265,7 @@ var GetTableDataApiEndpoint = 'AjaxHaulageTickets';//Endpoint processing and ret
  				if(data["Status"]=="Finished"){ 
 					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'" data-HaulageInDateTime = "'+data["HaulageIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-HaulageOutDateTime = "'+data["HaulageOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime2"]+'</button> ');	
 				}else{
-					$(row).find("td:eq(1)").html(data["JobStartDateTime"]);	
+					$(row).find("td:eq(1)").html(data["JobStart"]);	
 				}
 				$(row).find("td:eq(2)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'view-company/'+data["CompanyID"]+'" target="_blank" title="'+data["CompanyName"]+'">'+data["CompanyName"]+' </a> ');
 				$(row).find("td:eq(3)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'View-Opportunity/'+data["OpportunityID"]+'" target="_blank" title="'+data["OpportunityName"]+'">'+data["OpportunityName"]+'</a> ');

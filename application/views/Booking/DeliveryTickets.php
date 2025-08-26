@@ -240,7 +240,7 @@ var GetTableDataApiEndpoint1 = 'AjaxDeliveryTickets';//Endpoint processing and r
 					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-TicketNo = "'+data["TicketNo"]+'"    data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime"]+'</button> ');	
 					$(row).find("td:eq(5)").html('<button  class="btn btn-warning  btn-info MaterialUpdate" data-MaterialID = "'+data["MaterialID"]+'" data-TicketNo = "'+data["TicketNo"]+'"  data-LoadID = "'+data["LoadID"]+'" title="Click To Update Material ">'+data["MaterialName"]+'</button> ');	
 				}else{
-					$(row).find("td:eq(1)").html(data["SiteOutDateTime"]);		
+					$(row).find("td:eq(1)").html(data["JobStart"]);		
 					$(row).find("td:eq(5)").html(data["MaterialName"]);	
 				}
 				$(row).find("td:eq(2)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'view-company/'+data["CompanyID"]+'" target="_blank" title="'+data["CompanyName"]+'">'+data["CompanyName"]+' </a> ');
