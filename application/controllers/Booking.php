@@ -533,9 +533,16 @@ class Booking extends BaseController
 					} else {
 					    $Price = 0;
 					}
+					$siteOut = trim($row['SiteOutDateTime']);
+					if ($siteOut == "00-00-0000" || $siteOut == "0000-00-00" || $siteOut == "0000-00-00 00:00:00" || $siteOut == "" || $siteOut == null) {
+						$siteOut = $row['JobStartDateTime'];  
+					}
+					
+
 						// Fill row data
 						$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row['ConveyanceNo']);
-						$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime']);
+						// $object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime']);
+						$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $siteOut);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row['CompanyName']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row['OpportunityName']);
 						$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row['TipName']);
@@ -956,7 +963,6 @@ class Booking extends BaseController
 									$object->getActiveSheet()->getCell('A' . $excel_row)->getHyperlink()->setUrl('http://193.117.210.98:8081/ticket/Conveyance/' . trim($row['TicketConveyance']) . '.pdf');
 								}
 							}
-
 							$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime']);
 							$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row['CompanyName']);
 							$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row['OpportunityName']);

@@ -7772,7 +7772,8 @@ class Booking_model extends CI_Model{
 		$this->db->select(' tbl_booking_request.OpportunityName '); 
 		$this->db->select(' tbl_tipaddress.TipName ');
 		$this->db->select(' concat(tbl_tipaddress.Street1,tbl_tipaddress.Street2,tbl_tipaddress.Town,tbl_tipaddress.County,tbl_tipaddress.PostCode) as TipAddress '); 
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');  	 	  	 	      
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime '); 
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStartDateTime '); 	 	  	 	      
 		
 		$this->db->select(' ROUND((TIMESTAMPDIFF(SECOND, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime)/60))  as WaitTime ');  	 	  	 	      
 		 
@@ -7830,14 +7831,20 @@ class Booking_model extends CI_Model{
         }
 		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
 			$this->db->group_start(); 
-			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime) >=', $StartDate);
-			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime) <=', $EndDate);  
+			// $this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime) >=', $StartDate);
+			// $this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime) <=', $EndDate);
+			$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) >=', $StartDate);
+    		$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) <=', $EndDate);
  			$this->db->group_end();  
         }
 		if( !empty(trim($SiteOutDateTime)) ){    
 			$this->db->group_start(); 
- 			$this->db->like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") ', trim($SiteOutDateTime)); 
- 			$this->db->group_end();  
+ 			// $this->db->like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") ', trim($SiteOutDateTime)); 
+ 			 $this->db->like(
+			'DATE_FORMAT(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y %T")', 
+			trim($SiteOutDateTime)
+		);
+			$this->db->group_end();  
         }
 		if( !empty(trim($CompanyName)) ){    
 			$this->db->group_start(); 
