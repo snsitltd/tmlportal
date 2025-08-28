@@ -10709,14 +10709,14 @@ class Booking_model extends CI_Model{
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ','LEFT'); 	  
 		$this->db->join('tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ','LEFT');    
 		
-		//$this->db->where('tbl_booking_loads1.Status > 3 ');  
+		$this->db->where('tbl_booking_loads1.Status > 3 ');  
 		$this->db->where('tbl_booking1.BookingType  = 4 '); 
-		$this->db->where('DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y-%m-%d") >= (CURDATE() - INTERVAL 90 DAY)');   
-		$this->db->group_start(); 
-		$this->db->where('tbl_booking_loads1.Status = 4 ');
-		$this->db->or_where(' tbl_booking_loads1.Status = 5  ');
-		$this->db->or_where(' tbl_booking_loads1.Status = 6  ');
-		$this->db->group_end(); 
+		// $this->db->where('DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y-%m-%d") >= (CURDATE() - INTERVAL 90 DAY)');   
+		// $this->db->group_start(); 
+		// $this->db->where('tbl_booking_loads1.Status = 4 ');
+		// $this->db->or_where(' tbl_booking_loads1.Status = 5  ');
+		// $this->db->or_where(' tbl_booking_loads1.Status = 6  ');
+		// $this->db->group_end(); 
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 
 				 
 		if( !empty($searchValue) ){   
@@ -10930,19 +10930,20 @@ class Booking_model extends CI_Model{
 		
 		$this->db->select(' tbl_booking_request.OpportunityName ');  
 		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');  	 	  	 	      
-		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") as SiteOutDateTime2 ');  	 	  	 	      
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") as SiteOutDateTime2 ');  	
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStartDateTime ');  	  	 	      
 		  
 		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT'); 	 
 		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ','LEFT'); 		   
 		$this->db->join('tbl_drivers', 'tbl_booking_loads1.DriverID = tbl_drivers.LorryNo ','LEFT'); 		  
 		$this->db->join('tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ','LEFT');  
-		//$this->db->where('tbl_booking_loads1.Status > 3 '); 
+		$this->db->where('tbl_booking_loads1.Status > 3 '); 
 		$this->db->where('tbl_booking1.BookingType  = 4 '); 
-		$this->db->group_start(); 
-		$this->db->where('tbl_booking_loads1.Status = 4 ');
-		$this->db->or_where(' tbl_booking_loads1.Status = 5  ');
-		$this->db->or_where(' tbl_booking_loads1.Status = 6  ');
-		$this->db->group_end(); 
+		// $this->db->group_start(); 
+		// $this->db->where('tbl_booking_loads1.Status = 4 ');
+		// $this->db->or_where(' tbl_booking_loads1.Status = 5  ');
+		// $this->db->or_where(' tbl_booking_loads1.Status = 6  ');
+		// $this->db->group_end(); 
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 	 
 		
 		/*if( !empty($searchValue) ){   
@@ -10979,13 +10980,19 @@ class Booking_model extends CI_Model{
         }
 		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
 			$this->db->group_start(); 
-			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) >=', $StartDate);
-			$this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) <=', $EndDate);  
+			// $this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) >=', $StartDate);
+			// $this->db->where('DATE(tbl_booking_loads1.SiteOutDateTime2) <=', $EndDate); 
+			$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime2,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) >=', $StartDate);
+    		$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime2,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) <=', $EndDate); 
  			$this->db->group_end();  
         }
 		if( !empty(trim($SiteOutDateTime2)) ){    
 			$this->db->group_start(); 
- 			$this->db->like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") ', trim($SiteOutDateTime2)); 
+ 			// $this->db->like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") ', trim($SiteOutDateTime2)); 
+			$this->db->like(
+			'DATE_FORMAT(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime2,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y %T")', 
+			trim($SiteOutDateTime2)
+		);
  			$this->db->group_end();  
         }
 		if( !empty(trim($CompanyName)) ){    

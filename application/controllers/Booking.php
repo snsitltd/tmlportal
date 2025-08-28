@@ -13864,12 +13864,16 @@ class Booking extends BaseController
 			foreach ($data['SplitExcelHaulageTicketsAll'] as $row) {
 				$url = '';
 				$Price = 0; //$Status = '';  
-
+				$siteOut = trim($row['SiteOutDateTime2']);
+					if ($siteOut == "00-00-0000" || $siteOut == "0000-00-00" || $siteOut == "0000-00-00 00:00:00" || $siteOut == "" || $siteOut == null) {
+						$siteOut = $row['JobStartDateTime'];  
+					}
 				$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row['ConveyanceNo']);
 				if ($row['ReceiptName'] != "") {
 					$object->getActiveSheet()->getCell('A' . $excel_row)->getHyperlink()->setUrl(base_url('assets/conveyance/' . $row['ReceiptName']));
 				}
-				$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime2']);
+				// $object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row['SiteOutDateTime2']);
+				$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $siteOut);
 				$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row['CompanyName']);
 				$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row['OpportunityName']);
 				$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row['PurchaseOrderNo']);
