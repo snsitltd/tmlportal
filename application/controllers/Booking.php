@@ -12637,6 +12637,23 @@ class Booking extends BaseController
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
+				/* =================== Site Logs ===================  */
+				$LoadInfoJson = json_encode($LoadInfo);
+				$condJson = json_encode($cond);
+
+				$SiteLogInfo = array(
+					'TableName' => 'tbl_booking_loads1',
+					'PrimaryID' => $LoadID,
+					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedByUserID' => $this->session->userdata['userId'],
+					'SitePage' => 'Daywork date update',
+					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
+					'BrowserAgent' => getBrowserAgent(),
+					'AgentString' => $this->agent->agent_string(),
+					'UserPlatform' => $this->agent->platform()
+				);
+				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
+				/* ===================================== */
 
 				if ($update) {
 
@@ -12775,6 +12792,24 @@ class Booking extends BaseController
 				$LoadInfo = array('Status' => $Status);
 				$cond = array('LoadID' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+
+				/* =================== Site Logs ===================  */
+				$LoadInfoJson = json_encode($LoadInfo);
+				$condJson = json_encode($cond);
+
+				$SiteLogInfo = array(
+					'TableName' => 'tbl_booking_loads1',
+					'PrimaryID' => $LoadID,
+					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedByUserID' => $this->session->userdata['userId'],
+					'SitePage' => 'delivery status update',
+					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
+					'BrowserAgent' => getBrowserAgent(),
+					'AgentString' => $this->agent->agent_string(),
+					'UserPlatform' => $this->agent->platform()
+				);
+				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
+				/* ===================================== */
 
 				if ($update) {
 					if ($Status == 4) {
@@ -13577,6 +13612,24 @@ class Booking extends BaseController
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
+				/* =================== Site Logs ===================  */
+				$LoadInfoJson = json_encode($LoadInfo);
+				$condJson = json_encode($cond);
+
+				$SiteLogInfo = array(
+					'TableName' => 'tbl_booking_loads1',
+					'PrimaryID' => $LoadID,
+					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedByUserID' => $this->session->userdata['userId'],
+					'SitePage' => 'Haulage date update',
+					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
+					'BrowserAgent' => getBrowserAgent(),
+					'AgentString' => $this->agent->agent_string(),
+					'UserPlatform' => $this->agent->platform()
+				);
+				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
+
+				/* ===================================== */
 
 				if ($update) {
 
@@ -13717,6 +13770,24 @@ class Booking extends BaseController
 				$LoadInfo = array('Status' => $Status);
 				$cond = array('LoadID' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+
+				/* =================== Site Logs ===================  */
+				$LoadInfoJson = json_encode($LoadInfo);
+				$condJson = json_encode($cond);
+
+				$SiteLogInfo = array(
+					'TableName' => 'tbl_booking_loads1',
+					'PrimaryID' => $LoadID,
+					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedByUserID' => $this->session->userdata['userId'],
+					'SitePage' => 'delivery status update',
+					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
+					'BrowserAgent' => getBrowserAgent(),
+					'AgentString' => $this->agent->agent_string(),
+					'UserPlatform' => $this->agent->platform()
+				);
+				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
+				/* ===================================== */
 
 				if ($update) {
 					if ($Status == 4) {
