@@ -266,11 +266,17 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime"]+'</button> ');	
 				}else{
 					//$(row).find("td:eq(1)").html(data["JobStart"]);	
-					if (data["SiteOut"] && data["SiteOut"] !== "00:00:00") {
-					$(row).find("td:eq(1)").html(data["SiteOut"]);
+					if (
+					data["SiteOutDateTime"] && 
+					data["SiteOutDateTime"] == "0000-00-00 00:00:00" &&
+					data["SiteOutDateTime"] == "0000-00-00" &&
+					data["SiteOutDateTime"].trim() == ""
+				) {
+					$(row).find("td:eq(1)").html(data["JobStart"]);
 				} else {
 					$(row).find("td:eq(1)").html(data["JobStart"]);
-				}	
+				}
+
 				}
 				$(row).find("td:eq(2)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'view-company/'+data["CompanyID"]+'" target="_blank" title="'+data["CompanyName"]+'">'+data["CompanyName"]+' </a> ');
 				$(row).find("td:eq(3)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'View-Opportunity/'+data["OpportunityID"]+'" target="_blank" title="'+data["OpportunityName"]+'">'+data["OpportunityName"]+'</a> ');
