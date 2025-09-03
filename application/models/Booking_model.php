@@ -53,7 +53,7 @@ class Booking_model extends CI_Model{
         $this->db->like('tbl_site_logs.SitePage', 'date update');
         $this->db->or_like('tbl_site_logs.SitePage', 'status update');
         $this->db->or_like('tbl_site_logs.SitePage', 'material update');
-        $this->db->or_like('tbl_site_logs.SitePage', 'tipupdate');
+        $this->db->or_like('tbl_site_logs.SitePage', 'tip update');
         $this->db->or_like('tbl_site_logs.SitePage', 'booking update');
     	$this->db->group_end();
 		$this->db->not_like('tbl_site_logs.SitePage', 'pdf');

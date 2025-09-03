@@ -148,15 +148,31 @@ if($Loads[0]->DriverName!=""){ $DriverName = ucfirst($Loads[0]->DriverName); $VR
 	  <i class="fa fa-clock-o bg-red"></i>
 	</li>
   </ul>
+
+<div style="margin: 30px 0; text-align:center;">
+  <span style="
+        background: #000; 
+        color: #fff; 
+        padding: 6px 15px; 
+        font-size: x-large; 
+        border-radius: 6px;
+        font-weight: bold;
+        display: inline-block;">
+    Activity Timeline
+  </span>
+</div>
+
+
+
 <?php if(!empty($updatelogs)){ ?>
     <ul class="timeline">
 
-	  <!-- ✅ Heading for Update Logs -->
+	  <!-- ✅ Heading for Update Logs
         <li class="time-label">
             <span class="bg-black p-2 rounded">
 				Activity Timeline
             </span>
-        </li>
+        </li> -->
 
         <?php foreach($updatelogs as $log){ ?>
             <!-- Timeline Date -->
@@ -170,7 +186,21 @@ if($Loads[0]->DriverName!=""){ $DriverName = ucfirst($Loads[0]->DriverName); $VR
             <li>
                 <i class="fa fa-edit bg-orange"></i>
                 <div class="timeline-item">
-
+				<?php
+								// Check if "material update" appears anywhere in SitePage (case-insensitive)
+								if (stripos($log->SitePage, 'material update') !== false) {
+									$log->SitePage = "Material";
+								}
+								if (stripos($log->SitePage, 'date update') !== false) {
+									$log->SitePage = "Date";
+								}
+								if (stripos($log->SitePage, 'tip update') !== false) {
+									$log->SitePage = "Tip";
+								}
+								if (stripos($log->SitePage, 'booking update') !== false) {
+									$log->SitePage = "Booking";
+								}
+								?>
                     <!-- Header -->
                     <h3 class="timeline-header">
                         <strong style="color:#3c8dbc;"><?php echo $log->CreatedByName; ?></strong>
@@ -195,10 +225,48 @@ if($Loads[0]->DriverName!=""){ $DriverName = ucfirst($Loads[0]->DriverName); $VR
                                     echo "<pre class='bg-light p-2 rounded small'>".json_encode($decodedNew, JSON_PRETTY_PRINT)."</pre>";
                                 }
                                 echo "</div>";
-                            } else {
-                                echo "<p>".htmlspecialchars($log->UpdatedValue)."</p>";
-                            }
-                        ?>
+                            } 
+
+else {
+    $rawValue = $log->UpdatedValue;
+
+    // Check if "=>" exists, meaning multiple JSON objects are joined
+    if (strpos($rawValue, '=>') !== false) {
+        $parts = explode('=>', $rawValue);
+        echo "<ul style='padding-left:15px;'>";
+        foreach ($parts as $jsonPart) {
+            $decoded = json_decode(trim($jsonPart), true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $key => $value) {
+                    $label = ucwords(str_replace('_', ' ', trim($key)));
+                    echo "<li><strong>{$label}:</strong> " . htmlspecialchars($value) . "</li>";
+                }
+            } else {
+                // Fallback if part is not JSON
+                echo "<li>" . htmlspecialchars(trim($jsonPart)) . "</li>";
+            }
+        }
+        echo "</ul>";
+    } else {
+        // Just a single JSON or plain text
+        $decoded = json_decode($rawValue, true);
+        if (is_array($decoded)) {
+            echo "<ul style='padding-left:15px;'>";
+            foreach ($decoded as $key => $value) {
+                $label = ucwords(str_replace('_', ' ', trim($key)));
+                echo "<li><strong>{$label}:</strong> " . htmlspecialchars($value) . "</li>";
+            }
+            echo "</ul>";
+        } else {
+            echo "<p>" . htmlspecialchars($rawValue) . "</p>";
+        }
+    }
+}
+?>
+
+
+
+                        
                     </div>
                 </div>
             </li>
