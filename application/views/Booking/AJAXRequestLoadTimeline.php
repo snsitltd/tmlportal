@@ -36,7 +36,7 @@ if ($Loads[0]->DriverName != "") {
 </style>
 
 <div class="load-timeline-header">
-    Lord/Lorry Timeline
+    Load/Lorry Timeline
 </div>
 
 			<ul class="timeline">
