@@ -269,63 +269,52 @@ if ($Loads[0]->DriverName != "") {
 
 								<!-- Body -->
 								<div class="timeline-body">
-									<?php
-									// Try to decode UpdatedValue
-									$decodedOld = json_decode($log->UpdatedCondition, true);
-									$decodedNew = json_decode($log->UpdatedValue, true);
+    <?php
+    $decodedOld = json_decode($log->UpdatedCondition, true);
+    $decodedNew = json_decode($log->UpdatedValue, true);
 
-									if (json_last_error() === JSON_ERROR_NONE) {
-										echo "<div class='log-diff'>";
-										if (!empty($decodedOld)) {
-											echo "<p><span class='text-muted'>Old:</span></p>";
-											echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedOld, JSON_PRETTY_PRINT) . "</pre>";
-										}
-										if (!empty($decodedNew)) {
-											echo "<p><span class='text-muted'>New:</span></p>";
-											echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedNew, JSON_PRETTY_PRINT) . "</pre>";
-										}
-										echo "</div>";
-									} else {
-										$rawValue = $log->UpdatedValue;
+    if (json_last_error() === JSON_ERROR_NONE) {
+        echo "<div class='log-diff'>";
+        if (!empty($decodedOld)) {
+            echo "<p><span class='text-muted'>Old:</span></p>";
+            echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedOld, JSON_PRETTY_PRINT) . "</pre>";
+        }
+        if (!empty($decodedNew)) {
+            echo "<p><span class='text-muted'>New:</span></p>";
+            echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedNew, JSON_PRETTY_PRINT) . "</pre>";
+        }
+        echo "</div>";
+    } else {
+        $rawValue = $log->UpdatedValue;
 
-										// Check if "=>" exists, meaning multiple JSON objects are joined
-										if (strpos($rawValue, '=>') !== false) {
-											$parts = explode('=>', $rawValue);
-											echo "<ul style='padding-left:15px;'>";
-											foreach ($parts as $jsonPart) {
-												$decoded = json_decode(trim($jsonPart), true);
-												if (is_array($decoded)) {
-													foreach ($decoded as $key => $value) {
-														$label = ucwords(str_replace('_', ' ', trim($key)));
-														echo "<li><strong>{$label}:</strong> " . htmlspecialchars($value) . "</li>";
-													}
-												} else {
-													// Fallback if part is not JSON
-													echo "<li>" . htmlspecialchars(trim($jsonPart)) . "</li>";
-												}
-											}
-											echo "</ul>";
-										} else {
-											// Just a single JSON or plain text
-											$decoded = json_decode($rawValue, true);
-											if (is_array($decoded)) {
-												echo "<ul style='padding-left:15px;'>";
-												foreach ($decoded as $key => $value) {
-													$label = ucwords(str_replace('_', ' ', trim($key)));
-													echo "<li><strong>{$label}:</strong> " . htmlspecialchars($value) . "</li>";
-												}
-												echo "</ul>";
-											} else {
-												echo "<p>" . htmlspecialchars($rawValue) . "</p>";
-											}
-										}
-									}
-									?>
+        if (strpos($rawValue, '=>') !== false) {
+            $parts = explode('=>', $rawValue);
+            foreach ($parts as $jsonPart) {
+                $decoded = json_decode(trim($jsonPart), true);
+                if (is_array($decoded)) {
+                    foreach ($decoded as $key => $value) {
+                        $label = ucwords(str_replace('_', ' ', trim($key)));
+                        echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
+                    }
+                } else {
+                    echo "<div>" . htmlspecialchars(trim($jsonPart)) . "</div>";
+                }
+            }
+        } else {
+            $decoded = json_decode($rawValue, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $key => $value) {
+                    $label = ucwords(str_replace('_', ' ', trim($key)));
+                    echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
+                }
+            } else {
+                echo "<p>" . htmlspecialchars($rawValue) . "</p>";
+            }
+        }
+    }
+    ?>
+</div>
 
-
-
-
-								</div>
 							</div>
 						</li>
 					<?php } ?>
