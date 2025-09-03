@@ -37,7 +37,35 @@ class Booking_model extends CI_Model{
 		$result = $query->result(); 		  
         return $result;
     }
-	
+	function ShowUpdateLogs($LoadID)
+    {
+        $this->db->select(' DATE_FORMAT(tbl_site_logs.CreateDateTime,"%d/%m/%Y %T") as LogDateTime ');        
+		$this->db->select(' tbl_site_logs.SitePage, tbl_site_logs.PrimaryID, tbl_site_logs.UpdateType, tbl_site_logs.UpdatedValue, tbl_site_logs.UpdatedCondition  ');        
+		$this->db->select('tbl_users.userId , tbl_users.name as CreatedByName '); 
+		
+        $this->db->from('tbl_site_logs');
+		$this->db->join('tbl_users', 'tbl_site_logs.UpdatedByUserID = tbl_users.userId ','LEFT');  
+        $this->db->where('tbl_site_logs.TableName', 'tbl_booking_loads1');
+		$this->db->where('tbl_site_logs.PrimaryID', $LoadID);  
+		
+		// ✅ Apply filter on SitePage instead of UpdatedValue
+    	$this->db->group_start();
+        $this->db->like('tbl_site_logs.SitePage', 'date update');
+        $this->db->or_like('tbl_site_logs.SitePage', 'status update');
+        $this->db->or_like('tbl_site_logs.SitePage', 'material update');
+        $this->db->or_like('tbl_site_logs.SitePage', 'tipupdate');
+        $this->db->or_like('tbl_site_logs.SitePage', 'booking update');
+    	$this->db->group_end();
+		$this->db->not_like('tbl_site_logs.SitePage', 'pdf');
+
+		$this->db->order_by('tbl_site_logs.CreateDateTime', 'desc');  
+        $query = $this->db->get(); 
+       //echo $this->db->last_query();       
+	   //exit;
+        //$result = $query->row_array();  
+		$result = $query->result(); 		  
+        return $result;
+    }
 	
 	public function GetBookingDetails($BookingRequestID,$BookingType){
 		$this->db->select('tbl_booking1.BookingType');  

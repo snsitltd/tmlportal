@@ -5650,9 +5650,9 @@ class Booking extends BaseController
 
 			$data['Loads'] = $this->Booking_model->ShowRequestLoadDetails($LoadID);
 			$data['Photos'] = $this->Booking_model->ShowRequestLoadPhotos($LoadID);
-
-			//var_dump($data['Loads']);
-			//exit; 
+			$data['updatelogs'] = $this->Booking_model->ShowUpdateLogs($LoadID);
+			// var_dump($data['logs']);
+			// exit; 
 			//echo json_encode(var_dump($data['Loads'])); 
 			//exit;
 			//$html =  $LoadID." ==== ";

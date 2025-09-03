@@ -148,6 +148,65 @@ if($Loads[0]->DriverName!=""){ $DriverName = ucfirst($Loads[0]->DriverName); $VR
 	  <i class="fa fa-clock-o bg-red"></i>
 	</li>
   </ul>
+<?php if(!empty($updatelogs)){ ?>
+    <ul class="timeline">
+
+	  <!-- ✅ Heading for Update Logs -->
+        <li class="time-label">
+            <span class="bg-black p-2 rounded">
+				Activity Timeline
+            </span>
+        </li>
+
+        <?php foreach($updatelogs as $log){ ?>
+            <!-- Timeline Date -->
+            <li class="time-label">
+                <span class="bg-gray p-1 rounded">
+                    <?php echo date("d/m/Y H:i:s", strtotime($log->LogDateTime)); ?>
+                </span>
+            </li>
+
+            <!-- Timeline Item -->
+            <li>
+                <i class="fa fa-edit bg-orange"></i>
+                <div class="timeline-item">
+
+                    <!-- Header -->
+                    <h3 class="timeline-header">
+                        <strong style="color:#3c8dbc;"><?php echo $log->CreatedByName; ?></strong>
+                        updated <b><?php echo ucfirst($log->SitePage); ?></b>
+                    </h3>
+
+                    <!-- Body -->
+                    <div class="timeline-body">
+                        <?php 
+                            // Try to decode UpdatedValue
+                            $decodedOld = json_decode($log->UpdatedCondition, true);
+                            $decodedNew = json_decode($log->UpdatedValue, true);
+
+                            if(json_last_error() === JSON_ERROR_NONE){
+                                echo "<div class='log-diff'>";
+                                if(!empty($decodedOld)){
+                                    echo "<p><span class='text-muted'>Old:</span></p>";
+                                    echo "<pre class='bg-light p-2 rounded small'>".json_encode($decodedOld, JSON_PRETTY_PRINT)."</pre>";
+                                }
+                                if(!empty($decodedNew)){
+                                    echo "<p><span class='text-muted'>New:</span></p>";
+                                    echo "<pre class='bg-light p-2 rounded small'>".json_encode($decodedNew, JSON_PRETTY_PRINT)."</pre>";
+                                }
+                                echo "</div>";
+                            } else {
+                                echo "<p>".htmlspecialchars($log->UpdatedValue)."</p>";
+                            }
+                        ?>
+                    </div>
+                </div>
+            </li>
+        <?php } ?>
+
+    </ul>
+<?php } ?>
+
 </div>
 <!-- /.col -->
 </div>
