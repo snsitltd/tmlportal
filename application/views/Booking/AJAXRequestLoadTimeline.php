@@ -22,20 +22,20 @@ if ($Loads[0]->DriverName != "") {
 		<div class="col-md-12">
 			<!-- The time line -->
 			 <style>
-.activity-timeline-header {
+.load-timeline-header {
     background: #d2d6de;
     color: #000000ff;
     padding: 10px 20px;
-    font-size: x-large;
+    font-size: large;
     font-weight: bold;
     border-radius: 6px;
     text-align: left;
-    margin: 30px 0;
-	margin-top: 50px; 
+	margin-top: 10px;
+	margin-bottom: 30px;
 }
 </style>
 
-<div class="activity-timeline-header">
+<div class="load-timeline-header">
     Lord/Lorry Timeline
 </div>
 
@@ -206,12 +206,12 @@ if ($Loads[0]->DriverName != "") {
     background: #d2d6de;
     color: #000000ff;
     padding: 10px 20px;
-    font-size: x-large;
+    font-size: large;
     font-weight: bold;
     border-radius: 6px;
     text-align: left;
-    margin: 30px 0;
-	margin-top: 50px; 
+   	margin: 30px 0;
+	margin-top: 60px;
 }
 </style>
 
