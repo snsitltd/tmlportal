@@ -8,12 +8,37 @@ if ($Loads[0]->DriverName != "") {
 	$DriverName =  ucfirst($Loads[0]->dname);
 	$VRN = strtoupper($Loads[0]->vrn);
 } ?>
+<style>
+/* Hide only the header of this specific modal */
+#empModal .modal-header {
+    display: none !important;
+}
+
+</style>
 
 <section class="content">
 	<!-- row -->
 	<div class="row">
 		<div class="col-md-12">
 			<!-- The time line -->
+			 <style>
+.activity-timeline-header {
+    background: #d2d6de;
+    color: #000000ff;
+    padding: 10px 20px;
+    font-size: x-large;
+    font-weight: bold;
+    border-radius: 6px;
+    text-align: left;
+    margin: 30px 0;
+	margin-top: 50px; 
+}
+</style>
+
+<div class="activity-timeline-header">
+    Lord/Lorry Timeline
+</div>
+
 			<ul class="timeline">
 				<!-- timeline time label -->
 
@@ -176,19 +201,23 @@ if ($Loads[0]->DriverName != "") {
 					<i class="fa fa-clock-o bg-red"></i>
 				</li>
 			</ul>
+<style>
+.activity-timeline-header {
+    background: #d2d6de;
+    color: #000000ff;
+    padding: 10px 20px;
+    font-size: x-large;
+    font-weight: bold;
+    border-radius: 6px;
+    text-align: left;
+    margin: 30px 0;
+	margin-top: 50px; 
+}
+</style>
 
-			<div style="margin: 30px 0; text-align:center;">
-				<span style="
-        background: #000; 
-        color: #fff; 
-        padding: 6px 15px; 
-        font-size: x-large; 
-        border-radius: 6px;
-        font-weight: bold;
-        display: inline-block;">
-					Activity Timeline
-				</span>
-			</div>
+<div class="activity-timeline-header">
+    Activity Timeline
+</div>
 
 
 
@@ -227,6 +256,9 @@ if ($Loads[0]->DriverName != "") {
 								}
 								if (stripos($log->SitePage, 'booking update') !== false) {
 									$log->SitePage = "Booking";
+								}
+								if (stripos($log->SitePage, 'status update') !== false) {
+									$log->SitePage = "Status";
 								}
 								?>
 								<!-- Header -->
@@ -303,13 +335,12 @@ if ($Loads[0]->DriverName != "") {
 				<!-- ✅ Show this when no logs found -->
 				<div style="margin: 30px 0; text-align:center;">
 					<span style="
-            background: #f0f0f0;
             color: #555;
             padding: 6px 15px;
             font-size: medium;
             border-radius: 6px;
             display: inline-block;">
-						No previous activity updates were found.
+						No Activity Timeline. 
 					</span>
 				</div>
 			<?php } ?>
