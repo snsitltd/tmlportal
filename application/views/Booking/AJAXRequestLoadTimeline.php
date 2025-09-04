@@ -9,11 +9,10 @@ if ($Loads[0]->DriverName != "") {
 	$VRN = strtoupper($Loads[0]->vrn);
 } ?>
 <style>
-/* Hide only the header of this specific modal */
-#empModal .modal-header {
-    display: none !important;
-}
-
+	/* Hide only the header of this specific modal */
+	#empModal .modal-header {
+		display: none !important;
+	}
 </style>
 
 <section class="content">
@@ -21,23 +20,23 @@ if ($Loads[0]->DriverName != "") {
 	<div class="row">
 		<div class="col-md-12">
 			<!-- The time line -->
-			 <style>
-.load-timeline-header {
-    background: #d2d6de;
-    color: #000000ff;
-    padding: 10px 20px;
-    font-size: large;
-    font-weight: bold;
-    border-radius: 6px;
-    text-align: left;
-	margin-top: 10px;
-	margin-bottom: 30px;
-}
-</style>
+			<style>
+				.load-timeline-header {
+					background: #d2d6de;
+					color: #000000ff;
+					padding: 10px 20px;
+					font-size: large;
+					font-weight: bold;
+					border-radius: 6px;
+					text-align: left;
+					margin-top: 10px;
+					margin-bottom: 30px;
+				}
+			</style>
 
-<div class="load-timeline-header">
-    Load/Lorry Timeline
-</div>
+			<div class="load-timeline-header">
+				Load/Lorry Timeline
+			</div>
 
 			<ul class="timeline">
 				<!-- timeline time label -->
@@ -201,23 +200,23 @@ if ($Loads[0]->DriverName != "") {
 					<i class="fa fa-clock-o bg-red"></i>
 				</li>
 			</ul>
-<style>
-.activity-timeline-header {
-    background: #d2d6de;
-    color: #000000ff;
-    padding: 10px 20px;
-    font-size: large;
-    font-weight: bold;
-    border-radius: 6px;
-    text-align: left;
-   	margin: 30px 0;
-	margin-top: 60px;
-}
-</style>
+			<style>
+				.activity-timeline-header {
+					background: #d2d6de;
+					color: #000000ff;
+					padding: 10px 20px;
+					font-size: large;
+					font-weight: bold;
+					border-radius: 6px;
+					text-align: left;
+					margin: 30px 0;
+					margin-top: 60px;
+				}
+			</style>
 
-<div class="activity-timeline-header">
-    Activity Timeline
-</div>
+			<div class="activity-timeline-header">
+				Activity Timeline
+			</div>
 
 
 
@@ -269,51 +268,59 @@ if ($Loads[0]->DriverName != "") {
 
 								<!-- Body -->
 								<div class="timeline-body">
-    <?php
-    $decodedOld = json_decode($log->UpdatedCondition, true);
-    $decodedNew = json_decode($log->UpdatedValue, true);
+									<?php
+									$decodedOld = json_decode($log->UpdatedCondition, true);
+									$decodedNew = json_decode($log->UpdatedValue, true);
 
-    if (json_last_error() === JSON_ERROR_NONE) {
-        echo "<div class='log-diff'>";
-        if (!empty($decodedOld)) {
-            echo "<p><span class='text-muted'>Old:</span></p>";
-            echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedOld, JSON_PRETTY_PRINT) . "</pre>";
-        }
-        if (!empty($decodedNew)) {
-            echo "<p><span class='text-muted'>New:</span></p>";
-            echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedNew, JSON_PRETTY_PRINT) . "</pre>";
-        }
-        echo "</div>";
-    } else {
-        $rawValue = $log->UpdatedValue;
+									if (json_last_error() === JSON_ERROR_NONE) {
+										echo "<div class='log-diff'>";
+										if (!empty($decodedOld)) {
+											echo "<p><span class='text-muted'>Old:</span></p>";
+											echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedOld, JSON_PRETTY_PRINT) . "</pre>";
+										}
+										if (!empty($decodedNew)) {
+											echo "<p><span class='text-muted'>New:</span></p>";
+											echo "<div class='bg-light p-2 rounded small'>";
+											foreach ($decodedNew as $key => $value) {
+												if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID
+												$label = ucwords(str_replace('_', ' ', trim($key)));
+												echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
+											}
+											echo "</div>";
+										}
+										echo "</div>";
+									} else {
+										$rawValue = $log->UpdatedValue;
 
-        if (strpos($rawValue, '=>') !== false) {
-            $parts = explode('=>', $rawValue);
-            foreach ($parts as $jsonPart) {
-                $decoded = json_decode(trim($jsonPart), true);
-                if (is_array($decoded)) {
-                    foreach ($decoded as $key => $value) {
-                        $label = ucwords(str_replace('_', ' ', trim($key)));
-                        echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-                    }
-                } else {
-                    echo "<div>" . htmlspecialchars(trim($jsonPart)) . "</div>";
-                }
-            }
-        } else {
-            $decoded = json_decode($rawValue, true);
-            if (is_array($decoded)) {
-                foreach ($decoded as $key => $value) {
-                    $label = ucwords(str_replace('_', ' ', trim($key)));
-                    echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-                }
-            } else {
-                echo "<p>" . htmlspecialchars($rawValue) . "</p>";
-            }
-        }
-    }
-    ?>
-</div>
+										if (strpos($rawValue, '=>') !== false) {
+											$parts = explode('=>', $rawValue);
+											foreach ($parts as $jsonPart) {
+												$decoded = json_decode(trim($jsonPart), true);
+												if (is_array($decoded)) {
+													foreach ($decoded as $key => $value) {
+														if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID
+														$label = ucwords(str_replace('_', ' ', trim($key)));
+														echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
+													}
+												} else {
+													echo "<div>" . htmlspecialchars(trim($jsonPart)) . "</div>";
+												}
+											}
+										} else {
+											$decoded = json_decode($rawValue, true);
+											if (is_array($decoded)) {
+												foreach ($decoded as $key => $value) {
+													if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID
+													$label = ucwords(str_replace('_', ' ', trim($key)));
+													echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
+												}
+											} else {
+												echo "<p>" . htmlspecialchars($rawValue) . "</p>";
+											}
+										}
+									}
+									?>
+								</div>
 
 							</div>
 						</li>
@@ -329,7 +336,7 @@ if ($Loads[0]->DriverName != "") {
             font-size: medium;
             border-radius: 6px;
             display: inline-block;">
-						No Activity Timeline. 
+						No Activity Timeline.
 					</span>
 				</div>
 			<?php } ?>
