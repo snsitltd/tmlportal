@@ -303,11 +303,16 @@ if ($Loads[0]->DriverName != "") {
 						else continue; // ❌ Skip material and other updates
 					?>
 						<!-- Timeline Date (Removed Background) -->
-						<li class="time-label">
-							<span style="font-weight:bold; color:#333;">
-								<?php echo date("d/m/Y H:i:s", strtotime($log->LogDateTime)); ?>
-							</span>
-						</li>
+						<?php
+$dateObj = DateTime::createFromFormat('Y-m-d H:i:s', $log->LogDateTime);
+$formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
+?>
+<li class="time-label">
+    <span style="font-weight:bold; color:#333; background: #d2d6de">
+        <?= $formattedDate; ?>
+    </span>
+</li>
+
 
 						<!-- Timeline Item -->
 						<li>
@@ -338,7 +343,7 @@ if ($Loads[0]->DriverName != "") {
 										echo "<div class='log-diff'>";
 
 										if (!empty($decodedOld)) {
-											echo "<p><span class='text-muted'>From :</span></p>";
+											echo "<p style='margin-top:10px;'><strong style='color: #ff851b;'>Updated From :</strong></p>";
 											foreach ($decodedOld as $key => $value) {
 												if (strtolower(trim($key)) === 'loadid') continue;
 
@@ -351,7 +356,7 @@ if ($Loads[0]->DriverName != "") {
 										}
 
 										if (!empty($decodedNew)) {
-											echo "<p><span class='text-muted'>To :</span></p>";
+											echo "<p style='margin-top:10px;'><strong style='color: #ff851b;'>Updated To :</strong></p>";
 											foreach ($decodedNew as $key => $value) {
 												if (strtolower(trim($key)) === 'loadid') continue;
 

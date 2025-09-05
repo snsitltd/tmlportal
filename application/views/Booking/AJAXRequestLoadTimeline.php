@@ -215,107 +215,141 @@ if ($Loads[0]->DriverName != "") {
 			</style>
 
 			<div class="activity-timeline-header">
-				Activity Timeline
-			</div>
+    Activity Timeline
+</div>
 
-			<?php if (!empty($updatelogs)) : ?>
+<?php if (!empty($updatelogs)) : ?>
 
-				<?php
-				if (!function_exists('isJson')) {
-					function isJson($string)
-					{
-						if (!is_string($string)) return false;
-						json_decode($string);
-						return json_last_error() === JSON_ERROR_NONE;
-					}
-				}
-
-				$CI = &get_instance();
-
-				function decodeLogDataSimple($rawValue, $CI)
-				{
-					$decodedArr = [];
-					if (empty($rawValue)) return $decodedArr;
-
-					if (isJson($rawValue)) {
-						$decoded = json_decode($rawValue, true);
-						if (is_array($decoded)) {
-							foreach ($decoded as $key => $val) {
-								if (strtolower($key) === 'loadprice') continue;
-
-								if (strtolower($key) === 'tipid') {
-								$tipRow = $CI->db->get_where('tbl_tipaddress', ['TipID' => $val])->row();
-								$val = $tipRow ? $tipRow->TipName : "(Unknown Tip)";
-								$key = "Tip Name";
-								}
-								
-								if (strtolower($key) === 'materialid') {
-									$material = $CI->db->get_where('tbl_materials', ['MaterialID' => $val])->row();
-									$val = $material ? $material->MaterialName : "(Unknown Material)";
-									$key = "Material Name";
-								}
-
-								$prettyKey = ucwords(str_replace('_', ' ', preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)));
-								$decodedArr[$prettyKey] = $val;
-							}
-						}
-					} else {
-						// Plain text (like "Value: Material Name : Concrete")
-						$clean = trim(preg_replace('/^Value\s*:/i', '', $rawValue));
-
-						// 🔧 Remove "Material Name :" if it's at the start of the value
-						$clean = preg_replace('/^Material\s*Name\s*:\s*/i', '', $clean);
-
-						if (!empty($clean)) {
-							$decodedArr["Material Name"] = $clean;
-						}
-					}
-
-					return $decodedArr;
-				}
-
-				function renderOldNewBlocks($oldDataArr, $newDataArr)
-{
-    $html = "";
-    $hiddenKeys = ['BookingID', 'BookingDateID']; // keys to hide
-
-    if (!empty($oldDataArr) || !empty($newDataArr)) {
-        $html .= "<p><strong>From :</strong></p>";
-        if (!empty($oldDataArr)) {
-            foreach ($oldDataArr as $key => $value) {
-                // Normalize key to remove spaces and compare lowercase
-                $normalizedKey = str_replace(' ', '', strtolower($key));
-                if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue; 
-                $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
-            }
-        } else {
-            $html .= "<div><em>No Old Data</em></div>";
-        }
-
-        $html .= "<p style='margin-top:10px;'><strong>To :</strong></p>";
-        if (!empty($newDataArr)) {
-            foreach ($newDataArr as $key => $value) {
-                $normalizedKey = str_replace(' ', '', strtolower($key));
-                if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue;
-                $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
-            }
-        } else {
-            $html .= "<div><em>No New Data</em></div>";
+    <?php
+    if (!function_exists('isJson')) {
+        function isJson($string)
+        {
+            if (!is_string($string)) return false;
+            json_decode($string);
+            return json_last_error() === JSON_ERROR_NONE;
         }
     }
-    return $html;
-}
 
+    $CI = &get_instance();
 
-				?>
+    function decodeLogDataSimple($rawValue, $CI)
+    {
+        $decodedArr = [];
+        if (empty($rawValue)) return $decodedArr;
+
+        if (isJson($rawValue)) {
+            $decoded = json_decode($rawValue, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $key => $val) {
+                    if (strtolower($key) === 'loadprice') continue;
+
+                    // ✅ Tip Name
+                    if (strtolower($key) === 'tipid') {
+                        $tipRow = $CI->db->get_where('tbl_tipaddress', ['TipID' => $val])->row();
+                        $val = $tipRow ? $tipRow->TipName : "(Unknown Tip)";
+                        $key = "Tip Name";
+                    }
+
+                    // ✅ Material Name
+                    if (strtolower($key) === 'materialid') {
+                        $material = $CI->db->get_where('tbl_materials', ['MaterialID' => $val])->row();
+                        $val = $material ? $material->MaterialName : "(Unknown Material)";
+                        $key = "Material Name";
+                    }
+
+                     // ✅ Strict Date Format Conversion
+                if (!empty($val) && preg_match('/^\d{4}-\d{2}-\d{2}/', $val)) { 
+                    // Only if value looks like a date in YYYY-MM-DD format
+                    $dateObj = DateTime::createFromFormat('Y-m-d H:i:s', $val);
+                    if ($dateObj) {
+                        $val = $dateObj->format('d/m/Y H:i:s'); // ✅ Force DD/MM/YYYY format
+                    }
+                }
+
+                    $prettyKey = ucwords(str_replace('_', ' ', preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)));
+                    $decodedArr[$prettyKey] = $val;
+                }
+            }
+        } else {
+            // Handle plain text logs
+            $clean = trim(preg_replace('/^Value\s*:/i', '', $rawValue));
+            $clean = preg_replace('/^Material\s*Name\s*:\s*/i', '', $clean);
+
+            if (!empty($clean)) {
+                $decodedArr["Material Name"] = $clean;
+            }
+        }
+
+        return $decodedArr;
+    }
+
+    function renderOldNewBlocks($oldDataArr, $newDataArr)
+    {
+        // ✅ Status Map
+        $statusMap = [
+            4 => 'Finished',
+            5 => 'Cancelled',
+            6 => 'Wasted Journey',
+            7 => 'Invoice Cancelled',
+            8 => 'Invoice Cancelled'
+        ];
+
+        $html = "";
+        $hiddenKeys = ['BookingID', 'BookingDateID'];
+
+        if (!empty($oldDataArr) || !empty($newDataArr)) {
+            // 🔶 Yellow "Updated From"
+            $html .= "<p><strong style='color: #ff851b;'>Updated From :</strong></p>";
+            if (!empty($oldDataArr)) {
+                foreach ($oldDataArr as $key => $value) {
+                    $normalizedKey = str_replace(' ', '', strtolower($key));
+                    if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue;
+
+                    // ✅ Convert Status number to name
+                    if (strtolower($key) === 'status' && isset($statusMap[$value])) {
+                        $value = $statusMap[$value];
+                    }
+
+                    $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
+                }
+            } else {
+                $html .= "<div><em>No Old Data</em></div>";
+            }
+
+            // 🔶 Yellow "Updated To"
+            $html .= "<p style='margin-top:10px;'><strong style='color: #ff851b;'>Updated To :</strong></p>";
+            if (!empty($newDataArr)) {
+                foreach ($newDataArr as $key => $value) {
+                    $normalizedKey = str_replace(' ', '', strtolower($key));
+                    if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue;
+
+                    // ✅ Convert Status number to name
+                    if (strtolower($key) === 'status' && isset($statusMap[$value])) {
+                        $value = $statusMap[$value];
+                    }
+
+                    $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
+                }
+            } else {
+                $html .= "<div><em>No New Data</em></div>";
+            }
+        }
+        return $html;
+    }
+    ?>
 
 				<ul class="timeline">
 					<?php foreach ($updatelogs as $log) : ?>
-						<li class="time-label">
-							<span class="bg-gray p-1 rounded">
-								<?= date("d/m/Y H:i:s", strtotime($log->LogDateTime)); ?>
-							</span>
-						</li>
+						<?php
+$dateObj = DateTime::createFromFormat('Y-m-d H:i:s', $log->LogDateTime);
+$formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
+?>
+<li class="time-label">
+    <span style="font-weight:bold; color:#333; background: #d2d6de">
+        <?= $formattedDate; ?>
+    </span>
+</li>
+
 
 						<li>
 							<i class="fa fa-edit bg-orange"></i>
@@ -323,7 +357,7 @@ if ($Loads[0]->DriverName != "") {
 								<?php
 								if (stripos($log->SitePage, 'material update') !== false) $log->SitePage = "Material";
 								if (stripos($log->SitePage, 'date update') !== false) $log->SitePage = "Date";
-								if (stripos($log->SitePage, 'tip update') !== false) $log->SitePage = "Tip";
+								if (stripos($log->SitePage, 'tip update') !== false) $log->SitePage = "Tip Address";
 								if (stripos($log->SitePage, 'booking update') !== false) $log->SitePage = "Booking";
 								if (stripos($log->SitePage, 'status update') !== false) $log->SitePage = "Status";
 
