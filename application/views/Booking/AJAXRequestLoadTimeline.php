@@ -218,132 +218,140 @@ if ($Loads[0]->DriverName != "") {
 				Activity Timeline
 			</div>
 
+			<?php if (!empty($updatelogs)) : ?>
+
+				<?php
+				if (!function_exists('isJson')) {
+					function isJson($string)
+					{
+						if (!is_string($string)) return false;
+						json_decode($string);
+						return json_last_error() === JSON_ERROR_NONE;
+					}
+				}
+
+				$CI = &get_instance();
+
+				function decodeLogDataSimple($rawValue, $CI)
+				{
+					$decodedArr = [];
+					if (empty($rawValue)) return $decodedArr;
+
+					if (isJson($rawValue)) {
+						$decoded = json_decode($rawValue, true);
+						if (is_array($decoded)) {
+							foreach ($decoded as $key => $val) {
+								if (strtolower($key) === 'loadprice') continue;
+
+								if (strtolower($key) === 'tipid') {
+								$tipRow = $CI->db->get_where('tbl_tipaddress', ['TipID' => $val])->row();
+								$val = $tipRow ? $tipRow->TipName : "(Unknown Tip)";
+								$key = "Tip Name";
+								}
+								
+								if (strtolower($key) === 'materialid') {
+									$material = $CI->db->get_where('tbl_materials', ['MaterialID' => $val])->row();
+									$val = $material ? $material->MaterialName : "(Unknown Material)";
+									$key = "Material Name";
+								}
+
+								$prettyKey = ucwords(str_replace('_', ' ', preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)));
+								$decodedArr[$prettyKey] = $val;
+							}
+						}
+					} else {
+						// Plain text (like "Value: Material Name : Concrete")
+						$clean = trim(preg_replace('/^Value\s*:/i', '', $rawValue));
+
+						// 🔧 Remove "Material Name :" if it's at the start of the value
+						$clean = preg_replace('/^Material\s*Name\s*:\s*/i', '', $clean);
+
+						if (!empty($clean)) {
+							$decodedArr["Material Name"] = $clean;
+						}
+					}
+
+					return $decodedArr;
+				}
+
+				function renderOldNewBlocks($oldDataArr, $newDataArr)
+{
+    $html = "";
+    $hiddenKeys = ['BookingID', 'BookingDateID']; // keys to hide
+
+    if (!empty($oldDataArr) || !empty($newDataArr)) {
+        $html .= "<p><strong>From :</strong></p>";
+        if (!empty($oldDataArr)) {
+            foreach ($oldDataArr as $key => $value) {
+                // Normalize key to remove spaces and compare lowercase
+                $normalizedKey = str_replace(' ', '', strtolower($key));
+                if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue; 
+                $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
+            }
+        } else {
+            $html .= "<div><em>No Old Data</em></div>";
+        }
+
+        $html .= "<p style='margin-top:10px;'><strong>To :</strong></p>";
+        if (!empty($newDataArr)) {
+            foreach ($newDataArr as $key => $value) {
+                $normalizedKey = str_replace(' ', '', strtolower($key));
+                if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue;
+                $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
+            }
+        } else {
+            $html .= "<div><em>No New Data</em></div>";
+        }
+    }
+    return $html;
+}
 
 
-			<?php if (!empty($updatelogs)) { ?>
+				?>
+
 				<ul class="timeline">
-
-					<!-- ✅ Heading for Update Logs
-        <li class="time-label">
-            <span class="bg-black p-2 rounded">
-				Activity Timeline
-            </span>
-        </li> -->
-
-					<?php foreach ($updatelogs as $log) { ?>
-						<!-- Timeline Date -->
+					<?php foreach ($updatelogs as $log) : ?>
 						<li class="time-label">
 							<span class="bg-gray p-1 rounded">
-								<?php echo date("d/m/Y H:i:s", strtotime($log->LogDateTime)); ?>
+								<?= date("d/m/Y H:i:s", strtotime($log->LogDateTime)); ?>
 							</span>
 						</li>
 
-						<!-- Timeline Item -->
 						<li>
 							<i class="fa fa-edit bg-orange"></i>
-							<div class="timeline-item">
+							<div class="timeline-item p-3">
 								<?php
-								// Check if "material update" appears anywhere in SitePage (case-insensitive)
-								if (stripos($log->SitePage, 'material update') !== false) {
-									$log->SitePage = "Material";
-								}
-								if (stripos($log->SitePage, 'date update') !== false) {
-									$log->SitePage = "Date";
-								}
-								if (stripos($log->SitePage, 'tip update') !== false) {
-									$log->SitePage = "Tip";
-								}
-								if (stripos($log->SitePage, 'booking update') !== false) {
-									$log->SitePage = "Booking";
-								}
-								if (stripos($log->SitePage, 'status update') !== false) {
-									$log->SitePage = "Status";
-								}
+								if (stripos($log->SitePage, 'material update') !== false) $log->SitePage = "Material";
+								if (stripos($log->SitePage, 'date update') !== false) $log->SitePage = "Date";
+								if (stripos($log->SitePage, 'tip update') !== false) $log->SitePage = "Tip";
+								if (stripos($log->SitePage, 'booking update') !== false) $log->SitePage = "Booking";
+								if (stripos($log->SitePage, 'status update') !== false) $log->SitePage = "Status";
+
+								$oldArr = decodeLogDataSimple($log->OldValue, $CI);
+								$newArr = decodeLogDataSimple($log->UpdatedValue, $CI);
 								?>
-								<!-- Header -->
+
 								<h3 class="timeline-header">
-									<strong style="color:#3c8dbc;"><?php echo $log->CreatedByName; ?></strong>
-									updated <b><?php echo ucfirst($log->SitePage); ?></b>
+									<strong style="color:#3c8dbc;"><?= $log->CreatedByName; ?></strong>
+									updated <b><?= ucfirst($log->SitePage); ?></b>
 								</h3>
 
-								<!-- Body -->
 								<div class="timeline-body">
-									<?php
-									$decodedOld = json_decode($log->UpdatedCondition, true);
-									$decodedNew = json_decode($log->UpdatedValue, true);
-
-									if (json_last_error() === JSON_ERROR_NONE) {
-										echo "<div class='log-diff'>";
-										if (!empty($decodedOld)) {
-											echo "<p><span class='text-muted'>Old:</span></p>";
-											echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedOld, JSON_PRETTY_PRINT) . "</pre>";
-										}
-										if (!empty($decodedNew)) {
-											echo "<p><span class='text-muted'>New:</span></p>";
-											echo "<div class='bg-light p-2 rounded small'>";
-											foreach ($decodedNew as $key => $value) {
-												if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID
-												$label = ucwords(str_replace('_', ' ', trim($key)));
-												echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-											}
-											echo "</div>";
-										}
-										echo "</div>";
-									} else {
-										$rawValue = $log->UpdatedValue;
-
-										if (strpos($rawValue, '=>') !== false) {
-											$parts = explode('=>', $rawValue);
-											foreach ($parts as $jsonPart) {
-												$decoded = json_decode(trim($jsonPart), true);
-												if (is_array($decoded)) {
-													foreach ($decoded as $key => $value) {
-														if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID
-														$label = ucwords(str_replace('_', ' ', trim($key)));
-														echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-													}
-												} else {
-													echo "<div>" . htmlspecialchars(trim($jsonPart)) . "</div>";
-												}
-											}
-										} else {
-											$decoded = json_decode($rawValue, true);
-											if (is_array($decoded)) {
-												foreach ($decoded as $key => $value) {
-													if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID
-													$label = ucwords(str_replace('_', ' ', trim($key)));
-													echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-												}
-											} else {
-												echo "<p>" . htmlspecialchars($rawValue) . "</p>";
-											}
-										}
-									}
-									?>
+									<?= renderOldNewBlocks($oldArr, $newArr); ?>
 								</div>
-
 							</div>
 						</li>
-					<?php } ?>
-
+					<?php endforeach; ?>
 				</ul>
-			<?php } else { ?>
-				<!-- ✅ Show this when no logs found -->
+
+			<?php else : ?>
 				<div style="margin: 30px 0; text-align:center;">
-					<span style="
-            color: #555;
-            padding: 6px 15px;
-            font-size: medium;
-            border-radius: 6px;
-            display: inline-block;">
+					<span style="color:#555; padding:6px 15px; font-size:medium; border-radius:6px; display:inline-block;">
 						No Activity Timeline.
 					</span>
 				</div>
-			<?php } ?>
+			<?php endif; ?>
 
 		</div>
-		<!-- /.col -->
 	</div>
-	<!-- /.row -->
-
 </section>

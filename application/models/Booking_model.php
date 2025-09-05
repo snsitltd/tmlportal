@@ -37,35 +37,87 @@ class Booking_model extends CI_Model{
 		$result = $query->result(); 		  
         return $result;
     }
-	function ShowUpdateLogs($LoadID)
-    {
-        $this->db->select(' DATE_FORMAT(tbl_site_logs.CreateDateTime,"%d/%m/%Y %T") as LogDateTime ');        
-		$this->db->select(' tbl_site_logs.SitePage, tbl_site_logs.PrimaryID, tbl_site_logs.UpdateType, tbl_site_logs.UpdatedValue, tbl_site_logs.UpdatedCondition  ');        
-		$this->db->select('tbl_users.userId , tbl_users.name as CreatedByName '); 
-		
-        $this->db->from('tbl_site_logs');
-		$this->db->join('tbl_users', 'tbl_site_logs.UpdatedByUserID = tbl_users.userId ','LEFT');  
-        $this->db->where('tbl_site_logs.TableName', 'tbl_booking_loads1');
-		$this->db->where('tbl_site_logs.PrimaryID', $LoadID);  
-		
-		// ✅ Apply filter on SitePage instead of UpdatedValue
-    	$this->db->group_start();
-        $this->db->like('tbl_site_logs.SitePage', 'date update');
-        $this->db->or_like('tbl_site_logs.SitePage', 'status update');
-        $this->db->or_like('tbl_site_logs.SitePage', 'material update');
-        $this->db->or_like('tbl_site_logs.SitePage', 'tip update');
-        $this->db->or_like('tbl_site_logs.SitePage', 'booking update');
-    	$this->db->group_end();
-		$this->db->not_like('tbl_site_logs.SitePage', 'pdf');
+		function ShowUpdateLogs($LoadID)
+		{
+			$this->db->select('DATE_FORMAT(tbl_site_logs.CreateDateTime,"%d/%m/%Y %T") as LogDateTime');
+			$this->db->select('tbl_site_logs.SitePage, tbl_site_logs.PrimaryID, tbl_site_logs.UpdateType, tbl_site_logs.UpdatedValue, tbl_site_logs.UpdatedCondition');
+			$this->db->select('tbl_users.userId , tbl_users.name as CreatedByName');
+			$this->db->select('tbl_site_logs.OldValue');
+			$this->db->join('tbl_booking_loads1 b', 'b.LoadID = tbl_site_logs.PrimaryID', 'LEFT');
+			$this->db->join('tbl_materials m', 'm.MaterialID = b.MaterialID', 'LEFT');
+			$this->db->select('m.MaterialName as OldMaterialName');
 
-		$this->db->order_by('tbl_site_logs.CreateDateTime', 'desc');  
-        $query = $this->db->get(); 
-       //echo $this->db->last_query();       
-	   //exit;
-        //$result = $query->row_array();  
-		$result = $query->result(); 		  
-        return $result;
-    }
+			$this->db->from('tbl_site_logs');
+			$this->db->join('tbl_users', 'tbl_site_logs.UpdatedByUserID = tbl_users.userId ', 'LEFT');
+			$this->db->where('tbl_site_logs.TableName', 'tbl_booking_loads1');
+			$this->db->where('tbl_site_logs.PrimaryID', $LoadID);
+			$this->db->where("tbl_site_logs.OldValue != ''");
+			$this->db->where('tbl_site_logs.OldValue IS NOT NULL', null, false);
+
+
+			$this->db->group_start();
+			$this->db->like('tbl_site_logs.SitePage', 'date update');
+			$this->db->or_like('tbl_site_logs.SitePage', 'status update');
+			$this->db->or_like('tbl_site_logs.SitePage', 'material update');
+			$this->db->or_like('tbl_site_logs.SitePage', 'tip update');
+			$this->db->or_like('tbl_site_logs.SitePage', 'booking update');
+			$this->db->group_end();
+			$this->db->not_like('tbl_site_logs.SitePage', 'pdf');
+
+			$this->db->order_by('tbl_site_logs.CreateDateTime', 'desc');
+			$query = $this->db->get();
+			$result = $query->result();
+
+			foreach ($result as &$log) {
+				// ✅ Process OldValue
+				if (!empty($log->OldValue)) {
+					$log->OldValue = $this->convertMaterialIDToName($log->OldValue);
+				}
+
+				// ✅ Process UpdatedValue
+				if (!empty($log->UpdatedValue)) {
+					// Separate left JSON (before =>) if exists
+					$parts = explode('=>', $log->UpdatedValue);
+					$newValue = isset($parts[0]) ? trim($parts[0]) : null;
+
+					if ($newValue && $this->isJson($newValue)) {
+						$log->UpdatedValue = $this->convertMaterialIDToName($newValue);
+					}
+				}
+			}
+
+			return $result;
+		}
+		private function convertMaterialIDToName($jsonString)
+		{
+			if (!$this->isJson($jsonString)) {
+				// It might be in format "Material Name : xxx"
+				if (stripos($jsonString, 'MaterialID') !== false) {
+					// fallback parse (not JSON but contains ID)
+					preg_match('/MaterialID"?\s*:\s*"?(?<id>\d+)/i', $jsonString, $matches);
+					if (!empty($matches['id'])) {
+						$material = $this->db->get_where('tbl_materials', ['MaterialID' => $matches['id']])->row();
+						return json_encode(['Material Name' => $material ? $material->MaterialName : '']);
+					}
+				}
+				return $jsonString;
+			}
+
+			$decoded = json_decode($jsonString, true);
+			if (isset($decoded['MaterialID'])) {
+				$material = $this->db->get_where('tbl_materials', ['MaterialID' => $decoded['MaterialID']])->row();
+				unset($decoded['MaterialID']);
+				$decoded['Material Name'] = $material ? $material->MaterialName : '';
+			}
+
+	    	return json_encode($decoded);
+		}
+
+	private function isJson($string)
+	{
+		json_decode($string);
+		return (json_last_error() == JSON_ERROR_NONE);
+	}
 	
 	public function GetBookingDetails($BookingRequestID,$BookingType){
 		$this->db->select('tbl_booking1.BookingType');  

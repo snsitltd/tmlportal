@@ -8,35 +8,34 @@ if ($Loads[0]->DriverName != "") {
 	$DriverName =  ucfirst($Loads[0]->dname);
 	$VRN = strtoupper($Loads[0]->vrn);
 } ?>
-	 <style>
-/* Hide only the header of this specific modal */
-#empModal .modal-header {
-    display: none !important;
-}
-
+<style>
+	/* Hide only the header of this specific modal */
+	#empModal .modal-header {
+		display: none !important;
+	}
 </style>
 <section class="content">
 	<!-- row -->
 	<div class="row">
 		<div class="col-md-12">
 			<!-- The time line -->
-	 <style>
-.load-timeline-header {
-    background: #d2d6de;
-    color: #000000ff;
-    padding: 10px 20px;
-    font-size: large;
-    font-weight: bold;
-    border-radius: 6px;
-    text-align: left;
-	margin-top: 10px;
-	margin-bottom: 30px;
-}
-</style>
+			<style>
+				.load-timeline-header {
+					background: #d2d6de;
+					color: #000000ff;
+					padding: 10px 20px;
+					font-size: large;
+					font-weight: bold;
+					border-radius: 6px;
+					text-align: left;
+					margin-top: 10px;
+					margin-bottom: 30px;
+				}
+			</style>
 
-<div class="load-timeline-header">
-    Load/Lorry Timeline
-</div>
+			<div class="load-timeline-header">
+				Load/Lorry Timeline
+			</div>
 			<ul class="timeline">
 				<!-- timeline time label -->
 				<li class="time-label">
@@ -264,41 +263,48 @@ if ($Loads[0]->DriverName != "") {
 				</li>
 			</ul>
 
-	<style>
-.activity-timeline-header {
-    background: #d2d6de;
-    color: #000000ff;
-    padding: 10px 20px;
-    font-size: large;
-    font-weight: bold;
-    border-radius: 6px;
-    text-align: left;
-   	margin: 30px 0;
-	margin-top: 60px;
-}
-</style>
+			<style>
+				.activity-timeline-header {
+					background: #d2d6de;
+					color: #000000ff;
+					padding: 10px 20px;
+					font-size: large;
+					font-weight: bold;
+					border-radius: 6px;
+					text-align: left;
+					margin: 30px 0;
+					margin-top: 60px;
+				}
+			</style>
 
-<div class="activity-timeline-header">
-    Activity Timeline
-</div>
-
-
-
+			<div class="activity-timeline-header">
+				Activity Timeline
+			</div>
 
 			<?php if (!empty($updatelogs)) { ?>
 				<ul class="timeline">
 
-					<!-- ✅ Heading for Update Logs
-        <li class="time-label">
-            <span class="bg-black p-2 rounded">
-				Activity Timeline
-            </span>
-        </li> -->
+					<?php
+					$statusMap = [
+						4 => 'Finished',
+						5 => 'Cancelled',
+						6 => 'Wasted',
+						7 => 'Invoice Cancelled',
+						8 => 'Invoice Cancelled'
+					];
+					?>
 
-					<?php foreach ($updatelogs as $log) { ?>
-						<!-- Timeline Date -->
+					<?php foreach ($updatelogs as $log) {
+						$page = strtolower($log->SitePage);
+						if (strpos($page, 'date update') !== false) $pageName = "Date";
+						elseif (strpos($page, 'tip update') !== false) $pageName = "Tip";
+						elseif (strpos($page, 'booking update') !== false) $pageName = "Booking";
+						elseif (strpos($page, 'status update') !== false) $pageName = "Status";
+						else continue; // ❌ Skip material and other updates
+					?>
+						<!-- Timeline Date (Removed Background) -->
 						<li class="time-label">
-							<span class="bg-gray p-1 rounded">
+							<span style="font-weight:bold; color:#333;">
 								<?php echo date("d/m/Y H:i:s", strtotime($log->LogDateTime)); ?>
 							</span>
 						</li>
@@ -307,96 +313,69 @@ if ($Loads[0]->DriverName != "") {
 						<li>
 							<i class="fa fa-edit bg-orange"></i>
 							<div class="timeline-item">
-								<?php
-								// Check if "material update" appears anywhere in SitePage (case-insensitive)
-								if (stripos($log->SitePage, 'material update') !== false) {
-									$log->SitePage = "Material";
-								}
-								if (stripos($log->SitePage, 'date update') !== false) {
-									$log->SitePage = "Date";
-								}
-								if (stripos($log->SitePage, 'tip update') !== false) {
-									$log->SitePage = "Tip";
-								}
-								if (stripos($log->SitePage, 'booking update') !== false) {
-									$log->SitePage = "Booking";
-								}
-								if (stripos($log->SitePage, 'status update') !== false) {
-									$log->SitePage = "Status";
-								}
-								?>
+
 								<!-- Header -->
 								<h3 class="timeline-header">
 									<strong style="color:#3c8dbc;"><?php echo $log->CreatedByName; ?></strong>
-									updated <b><?php echo ucfirst($log->SitePage); ?></b>
+									updated <b><?php echo $pageName; ?></b>
 								</h3>
 
 								<!-- Body -->
 								<div class="timeline-body">
-   <?php
-									$decodedOld = json_decode($log->UpdatedCondition, true);
+									<?php
+									$decodedOld = json_decode($log->OldValue, true);
 									$decodedNew = json_decode($log->UpdatedValue, true);
 
 									if (json_last_error() === JSON_ERROR_NONE) {
-										// 🚀 Remove LoadID from old and new arrays before printing
+										// Hide unwanted keys
 										if (is_array($decodedOld)) {
-											unset($decodedOld['LoadID']);
+											unset($decodedOld['LoadID'], $decodedOld['BookingID'], $decodedOld['BookingDateID']);
 										}
 										if (is_array($decodedNew)) {
-											unset($decodedNew['LoadID']);
+											unset($decodedNew['LoadID'], $decodedNew['BookingID'], $decodedNew['BookingDateID']);
 										}
 
 										echo "<div class='log-diff'>";
+
 										if (!empty($decodedOld)) {
-											echo "<p><span class='text-muted'>Old:</span></p>";
-											echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedOld, JSON_PRETTY_PRINT) . "</pre>";
+											echo "<p><span class='text-muted'>From :</span></p>";
+											foreach ($decodedOld as $key => $value) {
+												if (strtolower(trim($key)) === 'loadid') continue;
+
+												$label = "<strong>" . ucwords(str_replace('_', ' ', trim($key))) . ":</strong>";
+												if (strtolower($key) === 'status' && isset($statusMap[$value])) {
+													$value = $statusMap[$value];
+												}
+												echo "<div>{$label} " . htmlspecialchars($value) . "</div>";
+											}
 										}
+
 										if (!empty($decodedNew)) {
-											echo "<p><span class='text-muted'>New:</span></p>";
-											echo "<pre class='bg-light p-2 rounded small'>" . json_encode($decodedNew, JSON_PRETTY_PRINT) . "</pre>";
+											echo "<p><span class='text-muted'>To :</span></p>";
+											foreach ($decodedNew as $key => $value) {
+												if (strtolower(trim($key)) === 'loadid') continue;
+
+												$label = "<strong>" . ucwords(str_replace('_', ' ', trim($key))) . ":</strong>";
+												if (strtolower($key) === 'status' && isset($statusMap[$value])) {
+													$value = $statusMap[$value];
+												}
+												echo "<div>{$label} " . htmlspecialchars($value) . "</div>";
+											}
 										}
+
 										echo "</div>";
 									} else {
-										$rawValue = $log->UpdatedValue;
-
-										if (strpos($rawValue, '=>') !== false) {
-											$parts = explode('=>', $rawValue);
-											foreach ($parts as $jsonPart) {
-												$decoded = json_decode(trim($jsonPart), true);
-												if (is_array($decoded)) {
-													foreach ($decoded as $key => $value) {
-														if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID here too
-														$label = ucwords(str_replace('_', ' ', trim($key)));
-														echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-													}
-												} else {
-													echo "<div>" . htmlspecialchars(trim($jsonPart)) . "</div>";
-												}
-											}
-										} else {
-											$decoded = json_decode($rawValue, true);
-											if (is_array($decoded)) {
-												foreach ($decoded as $key => $value) {
-													if (strtolower(trim($key)) === 'loadid') continue; // 🚀 Hide LoadID here too
-													$label = ucwords(str_replace('_', ' ', trim($key)));
-													echo "<div><strong>{$label}:</strong> " . htmlspecialchars($value) . "</div>";
-												}
-											} else {
-												echo "<p>" . htmlspecialchars($rawValue) . "</p>";
-											}
-										}
+										echo "<p>No valid log data found.</p>";
 									}
 									?>
-</div>
+								</div>
 
 							</div>
 						</li>
 					<?php } ?>
 
 				</ul>
-
 			<?php } else { ?>
-				<!-- ✅ Show this when no logs found -->
 				<div style="margin: 30px 0; text-align:center;">
 					<span style="
             color: #555;
@@ -408,6 +387,7 @@ if ($Loads[0]->DriverName != "") {
 					</span>
 				</div>
 			<?php } ?>
+
 		</div>
 		<!-- /.col -->
 	</div>
