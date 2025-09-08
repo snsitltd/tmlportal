@@ -3250,11 +3250,33 @@ class Booking extends BaseController
 						}
 					}
 				}
+
+				// ===== Fetch OLD TipID and TipName =====
+					$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+					$oldTipID = $oldData ? $oldData->TipID : null;
+					$oldTipName = null;
+					if ($oldTipID) {
+						$tipRow = $this->db->get_where('tbl_tipaddress', ['TipID' => $oldTipID])->row();
+						$oldTipName = $tipRow ? $tipRow->TipName : null;
+					}
+				// ======================================
+
 				if ($TicketNumber > 0 && $TicketNumber != '') {
 					$LoadInfo = array('TipID' => $TipID, 'TicketID' => $TicketNo);
 				} else {
 					$LoadInfo = array('TipID' => $TipID);
 				}
+
+				// ===== Fetch NEW TipID and TipName from updated record =====
+				$newData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+				$newTipID = $newData ? $newData->TipID : null;
+				$newTipName = null;
+				if ($newTipID) {
+					$tipRowNew = $this->db->get_where('tbl_tipaddress', ['TipID' => $newTipID])->row();
+					$newTipName = $tipRowNew ? $tipRowNew->TipName : null;
+				}
+				// ======================================
+
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
@@ -3262,11 +3284,15 @@ class Booking extends BaseController
 					/* =================== Site Logs ===================  */
 					$LoadInfoJson = json_encode($LoadInfo);
 					$condJson = json_encode($cond);
+					$oldValue = json_encode(['TipID' => $oldTipID, 'TipName' => $oldTipName]);
+    				$newValue = json_encode(['TipID' => $newTipID, 'TipName' => $newTipName]);
+
 
 					$SiteLogInfo = array(
 						'TableName' => 'tbl_booking_loads1',
 						'PrimaryID' => $LoadID,
-						'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+						'UpdatedValue'=> $newValue,
+        				'OldValue' => $oldValue,
 						'UpdatedByUserID' => $this->session->userdata['userId'],
 						'SitePage' => 'conveyance tip update',
 						'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
