@@ -13636,6 +13636,22 @@ class Booking extends BaseController
 
 			if ($this->input->server('REQUEST_METHOD') === 'POST') {
 
+				// ===== Fetch OLD data BEFORE update =====
+            $oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+
+            $oldValueArray = [];
+			if ($oldData) {
+				$oldValueArray = [
+					'JobStartDateTime' => $oldData->JobStartDateTime,
+					'SiteInDateTime'   => $oldData->SiteInDateTime,
+					'SiteOutDateTime'  => $oldData->SiteOutDateTime,
+					'SiteInDateTime2'  => $oldData->SiteInDateTime2,
+					'SiteOutDateTime2' => $oldData->SiteOutDateTime2,
+					'JobEndDateTime'   => $oldData->JobEndDateTime,
+				];
+			}
+			$oldValueJson = json_encode($oldValueArray);
+
 				$JobStartDatetime = $this->input->post('JobStartDatetime');
 				$SiteInDatetime = $this->input->post('SiteInDatetime');
 				$SiteOutDatetime = $this->input->post('SiteOutDatetime');
@@ -13687,6 +13703,7 @@ class Booking extends BaseController
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
 					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'OldValue'        => $oldValueJson,
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'Haulage date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
