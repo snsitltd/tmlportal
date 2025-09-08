@@ -14820,6 +14820,24 @@ class Booking extends BaseController
 			$BookingID = $BD[0];
 			$BookingDateID = $BD[1];
 
+			// =================== Fetch OLD Data ===================
+        $oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+        $oldValueArray = [];
+        if ($oldData) {
+            if (isset($oldData->BookingID)) {
+                $oldValueArray['BookingID'] = $oldData->BookingID;
+            }
+            if (isset($oldData->BookingDateID)) {
+                $oldValueArray['BookingDateID'] = $oldData->BookingDateID;
+            }
+            if (isset($oldData->BookingRequestID)) {
+                $oldValueArray['BookingRequestID'] = $oldData->BookingRequestID;
+            }
+        }
+        $oldValueJson = json_encode($oldValueArray);
+        // ========================================================
+
+
 			//print_r($BD);
 			//exit;
 			$LoadInfo = array('BookingRequestID' => $BookingRequestID, 'BookingID' => $BookingID, 'BookingDateID' => $BookingDateID);
@@ -14836,6 +14854,7 @@ class Booking extends BaseController
 						'TableName' => 'tbl_booking_loads1',
 						'PrimaryID' => $LoadID,
 						'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+						'OldValue'        => $oldValueJson,
 						'UpdatedByUserID' => $this->session->userdata['userId'],
 						'SitePage' => 'booking update conveyance',
 						'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -15007,6 +15026,7 @@ class Booking extends BaseController
 						'TableName' => 'tbl_booking_loads1',
 						'PrimaryID' => $LoadID,
 						'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+						'OldValue'        => $oldValueJson,
 						'UpdatedByUserID' => $this->session->userdata['userId'],
 						'SitePage' => 'booking update delivery',
 						'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -15137,6 +15157,7 @@ class Booking extends BaseController
 						'TableName' => 'tbl_booking_loads1',
 						'PrimaryID' => $LoadID,
 						'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+						'OldValue'        => $oldValueJson,
 						'UpdatedByUserID' => $this->session->userdata['userId'],
 						'SitePage' => 'booking update daywork',
 						'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -15238,6 +15259,7 @@ class Booking extends BaseController
 						'TableName' => 'tbl_booking_loads1',
 						'PrimaryID' => $LoadID,
 						'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+						'OldValue'        => $oldValueJson,
 						'UpdatedByUserID' => $this->session->userdata['userId'],
 						'SitePage' => 'booking update Haulage',
 						'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
