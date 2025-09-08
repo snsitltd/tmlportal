@@ -3948,6 +3948,17 @@ class Booking extends BaseController
 
 				$MaterialID = $this->input->post('MaterialID1');
 				$LoadID = $this->input->post('LoadID');
+
+				$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+				$OldMaterialName = null;
+				if ($oldData) {
+					// Fetch material name from tbl_materials using OLD materialID
+					if (!empty($oldData->MaterialID)) {
+						$materialRow = $this->db->get_where('tbl_materials', ['MaterialID' => $oldData->MaterialID])->row();
+						$OldMaterialName = $materialRow ? $materialRow->MaterialName : '(Unknown Material)';
+					}
+				}
+
 				//exit;
 				$LoadInfo = array('MaterialID' => $MaterialID , 'LoadPrice' => 0);
 				$cond = array('LoadID ' => $LoadID);
@@ -3963,6 +3974,7 @@ class Booking extends BaseController
 						'TableName' => 'tbl_booking_loads1',
 						'PrimaryID' => $LoadID,
 						'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+						'OldValue' => json_encode(['MaterialName' => $OldMaterialName], JSON_UNESCAPED_UNICODE),
 						'UpdatedByUserID' => $this->session->userdata['userId'],
 						'SitePage' => 'conveyance material update',
 						'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -4006,8 +4018,9 @@ class Booking extends BaseController
 							'TableName' => 'tbl_booking_loads1',
 							'PrimaryID' => $LoadID,
 							'UpdatedValue' => $PInfoJson . " => " . $PCondJson,
+							'OldValue' => json_encode(['MaterialName' => $OldMaterialName], JSON_UNESCAPED_UNICODE),
 							'UpdatedByUserID' => $this->session->userdata['userId'],
-							'SitePage' => 'conveyance material update',
+							'SitePage' => 'conveyance material price update',
 							'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
 							'BrowserAgent' => getBrowserAgent(),
 							'AgentString' => $this->agent->agent_string(),
@@ -4170,6 +4183,16 @@ class Booking extends BaseController
 				$LoadID = $this->input->post('LoadID');
 				$TicketNo = $this->input->post('TicketNo');
 				//exit;
+				
+				$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+				$OldMaterialName = null;
+				if ($oldData) {
+					// Fetch material name from tbl_materials using OLD materialID
+					if (!empty($oldData->MaterialID)) {
+						$materialRow = $this->db->get_where('tbl_materials', ['MaterialID' => $oldData->MaterialID])->row();
+						$OldMaterialName = $materialRow ? $materialRow->MaterialName : '(Unknown Material)';
+					}
+				}
 
 				$TInfo = array('MaterialID' => $MaterialID);
 				$Tcond = array('LoadID ' => $LoadID);
@@ -4183,6 +4206,7 @@ class Booking extends BaseController
 					'TableName' => 'tbl_tickets',
 					'PrimaryID' => TicketNo,
 					'UpdatedValue' => $TInfoJson . " => " . $TcondJson,
+					'OldValue' => json_encode(['MaterialName' => $OldMaterialName], JSON_UNESCAPED_UNICODE),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'delivery material update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -4205,6 +4229,7 @@ class Booking extends BaseController
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
 					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'OldValue' => json_encode(['MaterialName' => $OldMaterialName], JSON_UNESCAPED_UNICODE),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'delivery material update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -4251,8 +4276,9 @@ class Booking extends BaseController
 							'TableName' => 'tbl_booking_loads1',
 							'PrimaryID' => $LoadID,
 							'UpdatedValue' => $PInfoJson . " => " . $PCondJson,
+							'OldValue' => json_encode(['MaterialName' => $OldMaterialName], JSON_UNESCAPED_UNICODE),
 							'UpdatedByUserID' => $this->session->userdata['userId'],
-							'SitePage' => 'delivery material update',
+							'SitePage' => 'delivery material price update',
 							'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
 							'BrowserAgent' => getBrowserAgent(),
 							'AgentString' => $this->agent->agent_string(),
