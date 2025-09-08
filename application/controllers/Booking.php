@@ -10752,6 +10752,27 @@ class Booking extends BaseController
 
 			if ($this->input->server('REQUEST_METHOD') === 'POST') {
 
+				// Fetch OLD data BEFORE update
+			$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+			// print_r($oldData);
+			// exit;
+			$oldValueArray = [];
+			if ($oldData) {
+				if (isset($oldData->JobStartDateTime)) {
+					$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
+				}
+				if (isset($oldData->SiteInDateTime)) {
+					$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
+				}
+				if (isset($oldData->SiteOutDateTime)) {
+					$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
+				}
+				if (isset($oldData->JobEndDateTime)) {
+					$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
+				}
+			}
+			$oldValueJson = json_encode($oldValueArray);
+
 				$JobStartDatetime = $this->input->post('JobStartDatetime');
 				$SiteInDatetime = $this->input->post('SiteInDatetime');
 				$SiteOutDatetime = $this->input->post('SiteOutDatetime');
@@ -10787,6 +10808,7 @@ class Booking extends BaseController
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
 					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'OldValue'        => $oldValueJson,
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'conveyance date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -10947,6 +10969,27 @@ class Booking extends BaseController
 
 			if ($this->input->server('REQUEST_METHOD') === 'POST') {
 
+				// Fetch OLD data BEFORE update
+			$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+			// print_r($oldData);
+			// exit;
+			$oldValueArray = [];
+			if ($oldData) {
+				if (isset($oldData->JobStartDateTime)) {
+					$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
+				}
+				if (isset($oldData->SiteInDateTime)) {
+					$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
+				}
+				if (isset($oldData->SiteOutDateTime)) {
+					$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
+				}
+				if (isset($oldData->JobEndDateTime)) {
+					$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
+				}
+			}
+			$oldValueJson = json_encode($oldValueArray);
+
 				$JobStartDatetime = $this->input->post('JobStartDatetime');
 				$SiteInDatetime = $this->input->post('SiteInDatetime');
 				$SiteOutDatetime = $this->input->post('SiteOutDatetime');
@@ -10982,6 +11025,7 @@ class Booking extends BaseController
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
 					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'OldValue'        => $oldValueJson,
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'delivery date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -12612,6 +12656,27 @@ class Booking extends BaseController
 
 			if ($this->input->server('REQUEST_METHOD') === 'POST') {
 
+				// Fetch OLD data BEFORE update
+			$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+			// print_r($oldData);
+			// exit;
+			$oldValueArray = [];
+			if ($oldData) {
+				if (isset($oldData->JobStartDateTime)) {
+					$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
+				}
+				if (isset($oldData->SiteInDateTime)) {
+					$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
+				}
+				if (isset($oldData->SiteOutDateTime)) {
+					$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
+				}
+				if (isset($oldData->JobEndDateTime)) {
+					$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
+				}
+			}
+			$oldValueJson = json_encode($oldValueArray);
+
 				$JobStartDatetime = $this->input->post('JobStartDatetime');
 				$SiteInDatetime = $this->input->post('SiteInDatetime');
 				$SiteOutDatetime = $this->input->post('SiteOutDatetime');
@@ -12646,6 +12711,7 @@ class Booking extends BaseController
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
 					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'OldValue'        => $oldValueJson,
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'Daywork date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
