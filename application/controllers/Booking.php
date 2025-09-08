@@ -4463,9 +4463,23 @@ class Booking extends BaseController
 				$Status = $this->input->post('Status');
 				$LoadID = $this->input->post('LoadID');
 
+				$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+	            $oldStatus = $oldData ? $oldData->Status : null;
+
 				$LoadInfo = array('Status' => $Status);
 				$cond = array('LoadID' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+
+				// Map status numbers to names
+            $statusNames = [
+                4 => 'Complete',
+                5 => 'Cancel',
+                6 => 'Waste Journey',
+                7 => 'Invoice Cancel',
+                8 => 'Invoice Cancel'
+            ];
+            $oldStatusName = isset($statusNames[$oldStatus]) ? $statusNames[$oldStatus] : 'Unknown';
+            $newStatusName = isset($statusNames[$Status]) ? $statusNames[$Status] : 'Unknown';
 
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
@@ -4474,7 +4488,8 @@ class Booking extends BaseController
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedValue' => json_encode(['Status' => $newStatusName]) . " => " . json_encode($cond),
+                	'OldValue' => json_encode(['Status' => $oldStatusName]),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'conveyance status update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -4632,9 +4647,23 @@ class Booking extends BaseController
 				$LoadID = $this->input->post('LoadID');
 				$TicketNo = $this->input->post('TicketNo');
 
+				 $oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+	            $oldStatus = $oldData ? $oldData->Status : null;
+
 				$LoadInfo = array('Status' => $Status);
 				$cond = array('LoadID' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+
+				// Map status numbers to names
+            $statusNames = [
+                4 => 'Complete',
+                5 => 'Cancel',
+                6 => 'Waste Journey',
+                7 => 'Invoice Cancel',
+                8 => 'Invoice Cancel'
+            ];
+            $oldStatusName = isset($statusNames[$oldStatus]) ? $statusNames[$oldStatus] : 'Unknown';
+            $newStatusName = isset($statusNames[$Status]) ? $statusNames[$Status] : 'Unknown';
 
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
@@ -4643,7 +4672,8 @@ class Booking extends BaseController
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedValue' => json_encode(['Status' => $newStatusName]) . " => " . json_encode($cond),
+                	'OldValue' => json_encode(['Status' => $oldStatusName]),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'delivery status update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -12908,9 +12938,23 @@ class Booking extends BaseController
 				$Status = $this->input->post('Status');
 				$LoadID = $this->input->post('LoadID');
 
+				$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+	            $oldStatus = $oldData ? $oldData->Status : null;
+
 				$LoadInfo = array('Status' => $Status);
 				$cond = array('LoadID' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+
+				// Map status numbers to names
+            $statusNames = [
+                4 => 'Complete',
+                5 => 'Cancel',
+                6 => 'Waste Journey',
+                7 => 'Invoice Cancel',
+                8 => 'Invoice Cancel'
+            ];
+            $oldStatusName = isset($statusNames[$oldStatus]) ? $statusNames[$oldStatus] : 'Unknown';
+            $newStatusName = isset($statusNames[$Status]) ? $statusNames[$Status] : 'Unknown';
 
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
@@ -12919,7 +12963,8 @@ class Booking extends BaseController
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedValue' => json_encode(['Status' => $newStatusName]) . " => " . json_encode($cond),
+                	'OldValue' => json_encode(['Status' => $oldStatusName]),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'Daywork status update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -13903,9 +13948,23 @@ class Booking extends BaseController
 				$Status = $this->input->post('Status');
 				$LoadID = $this->input->post('LoadID');
 
+				$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+	            $oldStatus = $oldData ? $oldData->Status : null;
+
 				$LoadInfo = array('Status' => $Status);
 				$cond = array('LoadID' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
+
+				// Map status numbers to names
+            $statusNames = [
+                4 => 'Complete',
+                5 => 'Cancel',
+                6 => 'Waste Journey',
+                7 => 'Invoice Cancel',
+                8 => 'Invoice Cancel'
+            ];
+            $oldStatusName = isset($statusNames[$oldStatus]) ? $statusNames[$oldStatus] : 'Unknown';
+            $newStatusName = isset($statusNames[$Status]) ? $statusNames[$Status] : 'Unknown';
 
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
@@ -13914,7 +13973,8 @@ class Booking extends BaseController
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
+					'UpdatedValue' => json_encode(['Status' => $newStatusName]) . " => " . json_encode($cond),
+                	'OldValue' => json_encode(['Status' => $oldStatusName]),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'Haulage status update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
