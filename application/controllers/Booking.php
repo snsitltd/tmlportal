@@ -3280,6 +3280,16 @@ class Booking extends BaseController
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
+				// ===== Fetch NEW TipID and TipName from updated record =====
+				$newData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
+				$newTipID = $newData ? $newData->TipID : null;
+				$newTipName = null;
+				if ($newTipID) {
+					$tipRowNew = $this->db->get_where('tbl_tipaddress', ['TipID' => $newTipID])->row();
+					$newTipName = $tipRowNew ? $tipRowNew->TipName : null;
+				}
+				// ======================================
+
 				if ($update) {
 					/* =================== Site Logs ===================  */
 					$LoadInfoJson = json_encode($LoadInfo);
