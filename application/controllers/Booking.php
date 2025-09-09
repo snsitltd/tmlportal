@@ -10832,22 +10832,22 @@ class Booking extends BaseController
 			$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
 			// print_r($oldData);
 			// exit;
-			$oldValueArray = [];
-			if ($oldData) {
-				if (isset($oldData->JobStartDateTime)) {
-					$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
-				}
-				if (isset($oldData->SiteInDateTime)) {
-					$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
-				}
-				if (isset($oldData->SiteOutDateTime)) {
-					$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
-				}
-				if (isset($oldData->JobEndDateTime)) {
-					$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
-				}
-			}
-			$oldValueJson = json_encode($oldValueArray);
+			// $oldValueArray = [];
+			// if ($oldData) {
+			// 	if (isset($oldData->JobStartDateTime)) {
+			// 		$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
+			// 	}
+			// 	if (isset($oldData->SiteInDateTime)) {
+			// 		$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
+			// 	}
+			// 	if (isset($oldData->SiteOutDateTime)) {
+			// 		$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
+			// 	}
+			// 	if (isset($oldData->JobEndDateTime)) {
+			// 		$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
+			// 	}
+			// }
+			// $oldValueJson = json_encode($oldValueArray);
 
 
 
@@ -10880,15 +10880,48 @@ class Booking extends BaseController
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
 
+				 $oldValueArray = [];
+            $updatedValueArray = [];
+
+            if ($oldData) {
+                // Normalize both old & new before comparing (ignore seconds)
+				$oldJobStart = $oldData->JobStartDateTime ? date('Y-m-d H:i', strtotime($oldData->JobStartDateTime)) : null;
+				$oldSiteIn   = $oldData->SiteInDateTime ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime)) : null;
+				$oldSiteOut  = $oldData->SiteOutDateTime ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime)) : null;
+				$oldJobEnd   = $oldData->JobEndDateTime ? date('Y-m-d H:i', strtotime($oldData->JobEndDateTime)) : null;
+
+				$newJobStart = date('Y-m-d H:i', strtotime($JobStartDatetime));
+				$newSiteIn   = date('Y-m-d H:i', strtotime($SiteInDatetime));
+				$newSiteOut  = date('Y-m-d H:i', strtotime($SiteOutDatetime));
+				$newJobEnd   = date('Y-m-d H:i', strtotime($JobEndDatetime));
+
+				if ($oldJobStart !== $newJobStart) {
+					$oldValueArray['JobStartDatetime']   = $oldJobStart;
+					$updatedValueArray['JobStartDatetime'] = $newJobStart;
+				}
+				if ($oldSiteIn !== $newSiteIn) {
+					$oldValueArray['SiteInDatetime']   = $oldSiteIn;
+					$updatedValueArray['SiteInDatetime'] = $newSiteIn;
+				}
+				if ($oldSiteOut !== $newSiteOut) {
+					$oldValueArray['SiteOutDatetime']   = $oldSiteOut;
+					$updatedValueArray['SiteOutDatetime'] = $newSiteOut;
+				}
+				if ($oldJobEnd !== $newJobEnd) {
+					$oldValueArray['JobEndDatetime']   = $oldJobEnd;
+					$updatedValueArray['JobEndDatetime'] = $newJobEnd;
+				}
+            }
+
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
 				$condJson = json_encode($cond);
-
+			if (!empty($updatedValueArray)) {
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
-					'OldValue'        => $oldValueJson,
+					'UpdatedValue'    => json_encode($updatedValueArray),
+                    'OldValue'        => json_encode($oldValueArray),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'conveyance date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -10897,6 +10930,7 @@ class Booking extends BaseController
 					'UserPlatform' => $this->agent->platform()
 				);
 				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
+			}
 				/* ===================================== */
 
 				if ($update) {
@@ -11050,22 +11084,22 @@ class Booking extends BaseController
 			$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
 			// print_r($oldData);
 			// exit;
-			$oldValueArray = [];
-			if ($oldData) {
-				if (isset($oldData->JobStartDateTime)) {
-					$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
-				}
-				if (isset($oldData->SiteInDateTime)) {
-					$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
-				}
-				if (isset($oldData->SiteOutDateTime)) {
-					$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
-				}
-				if (isset($oldData->JobEndDateTime)) {
-					$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
-				}
-			}
-			$oldValueJson = json_encode($oldValueArray);
+			// $oldValueArray = [];
+			// if ($oldData) {
+			// 	if (isset($oldData->JobStartDateTime)) {
+			// 		$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
+			// 	}
+			// 	if (isset($oldData->SiteInDateTime)) {
+			// 		$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
+			// 	}
+			// 	if (isset($oldData->SiteOutDateTime)) {
+			// 		$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
+			// 	}
+			// 	if (isset($oldData->JobEndDateTime)) {
+			// 		$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
+			// 	}
+			// }
+			// $oldValueJson = json_encode($oldValueArray);
 
 			if ($this->input->server('REQUEST_METHOD') === 'POST') {
 
@@ -11096,15 +11130,48 @@ class Booking extends BaseController
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
+				 $oldValueArray = [];
+            $updatedValueArray = [];
+
+            if ($oldData) {
+                // Normalize both old & new before comparing (ignore seconds)
+				$oldJobStart = $oldData->JobStartDateTime ? date('Y-m-d H:i', strtotime($oldData->JobStartDateTime)) : null;
+				$oldSiteIn   = $oldData->SiteInDateTime ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime)) : null;
+				$oldSiteOut  = $oldData->SiteOutDateTime ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime)) : null;
+				$oldJobEnd   = $oldData->JobEndDateTime ? date('Y-m-d H:i', strtotime($oldData->JobEndDateTime)) : null;
+
+				$newJobStart = date('Y-m-d H:i', strtotime($JobStartDatetime));
+				$newSiteIn   = date('Y-m-d H:i', strtotime($SiteInDatetime));
+				$newSiteOut  = date('Y-m-d H:i', strtotime($SiteOutDatetime));
+				$newJobEnd   = date('Y-m-d H:i', strtotime($JobEndDatetime));
+
+				if ($oldJobStart !== $newJobStart) {
+					$oldValueArray['JobStartDatetime']   = $oldJobStart;
+					$updatedValueArray['JobStartDatetime'] = $newJobStart;
+				}
+				if ($oldSiteIn !== $newSiteIn) {
+					$oldValueArray['SiteInDatetime']   = $oldSiteIn;
+					$updatedValueArray['SiteInDatetime'] = $newSiteIn;
+				}
+				if ($oldSiteOut !== $newSiteOut) {
+					$oldValueArray['SiteOutDatetime']   = $oldSiteOut;
+					$updatedValueArray['SiteOutDatetime'] = $newSiteOut;
+				}
+				if ($oldJobEnd !== $newJobEnd) {
+					$oldValueArray['JobEndDatetime']   = $oldJobEnd;
+					$updatedValueArray['JobEndDatetime'] = $newJobEnd;
+				}
+            }
+
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
 				$condJson = json_encode($cond);
-
+			if (!empty($updatedValueArray)) {
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
-					'OldValue'        => $oldValueJson,
+					'UpdatedValue'    => json_encode($updatedValueArray),
+                    'OldValue'        => json_encode($oldValueArray),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'delivery date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -11113,6 +11180,7 @@ class Booking extends BaseController
 					'UserPlatform' => $this->agent->platform()
 				);
 				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
+			}
 				/* ===================================== */
 
 				if ($update) {
@@ -12736,22 +12804,22 @@ class Booking extends BaseController
 			$oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
 			// print_r($oldData);
 			// exit;
-			$oldValueArray = [];
-			if ($oldData) {
-				if (isset($oldData->JobStartDateTime)) {
-					$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
-				}
-				if (isset($oldData->SiteInDateTime)) {
-					$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
-				}
-				if (isset($oldData->SiteOutDateTime)) {
-					$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
-				}
-				if (isset($oldData->JobEndDateTime)) {
-					$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
-				}
-			}
-			$oldValueJson = json_encode($oldValueArray);
+			// $oldValueArray = [];
+			// if ($oldData) {
+			// 	if (isset($oldData->JobStartDateTime)) {
+			// 		$oldValueArray['JobStartDatetime'] = $oldData->JobStartDateTime;
+			// 	}
+			// 	if (isset($oldData->SiteInDateTime)) {
+			// 		$oldValueArray['SiteInDatetime'] = $oldData->SiteInDateTime;
+			// 	}
+			// 	if (isset($oldData->SiteOutDateTime)) {
+			// 		$oldValueArray['SiteOutDatetime'] = $oldData->SiteOutDateTime;
+			// 	}
+			// 	if (isset($oldData->JobEndDateTime)) {
+			// 		$oldValueArray['JobEndDatetime'] = $oldData->JobEndDateTime;
+			// 	}
+			// }
+			// $oldValueJson = json_encode($oldValueArray);
 
 			if ($this->input->server('REQUEST_METHOD') === 'POST') {
 
@@ -12781,15 +12849,47 @@ class Booking extends BaseController
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
+				 $oldValueArray = [];
+            $updatedValueArray = [];
+
+            if ($oldData) {
+                // Normalize both old & new before comparing (ignore seconds)
+				$oldJobStart = $oldData->JobStartDateTime ? date('Y-m-d H:i', strtotime($oldData->JobStartDateTime)) : null;
+				$oldSiteIn   = $oldData->SiteInDateTime ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime)) : null;
+				$oldSiteOut  = $oldData->SiteOutDateTime ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime)) : null;
+				$oldJobEnd   = $oldData->JobEndDateTime ? date('Y-m-d H:i', strtotime($oldData->JobEndDateTime)) : null;
+
+				$newJobStart = date('Y-m-d H:i', strtotime($JobStartDatetime));
+				$newSiteIn   = date('Y-m-d H:i', strtotime($SiteInDatetime));
+				$newSiteOut  = date('Y-m-d H:i', strtotime($SiteOutDatetime));
+				$newJobEnd   = date('Y-m-d H:i', strtotime($JobEndDatetime));
+
+				if ($oldJobStart !== $newJobStart) {
+					$oldValueArray['JobStartDatetime']   = $oldJobStart;
+					$updatedValueArray['JobStartDatetime'] = $newJobStart;
+				}
+				if ($oldSiteIn !== $newSiteIn) {
+					$oldValueArray['SiteInDatetime']   = $oldSiteIn;
+					$updatedValueArray['SiteInDatetime'] = $newSiteIn;
+				}
+				if ($oldSiteOut !== $newSiteOut) {
+					$oldValueArray['SiteOutDatetime']   = $oldSiteOut;
+					$updatedValueArray['SiteOutDatetime'] = $newSiteOut;
+				}
+				if ($oldJobEnd !== $newJobEnd) {
+					$oldValueArray['JobEndDatetime']   = $oldJobEnd;
+					$updatedValueArray['JobEndDatetime'] = $newJobEnd;
+				}
+            }
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
 				$condJson = json_encode($cond);
-
+			if (!empty($updatedValueArray)) {
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
-					'OldValue'        => $oldValueJson,
+					'UpdatedValue'    => json_encode($updatedValueArray),
+                    'OldValue'        => json_encode($oldValueArray),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'DayWork date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -12798,7 +12898,7 @@ class Booking extends BaseController
 					'UserPlatform' => $this->agent->platform()
 				);
 				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
-
+			}
 				/* ===================================== */
 
 
@@ -13730,18 +13830,18 @@ class Booking extends BaseController
 				// ===== Fetch OLD data BEFORE update =====
             $oldData = $this->db->get_where('tbl_booking_loads1', ['LoadID' => $LoadID])->row();
 
-            $oldValueArray = [];
-			if ($oldData) {
-				$oldValueArray = [
-					'JobStartDateTime' => $oldData->JobStartDateTime,
-					'SiteInDateTime'   => $oldData->SiteInDateTime,
-					'SiteOutDateTime'  => $oldData->SiteOutDateTime,
-					'SiteInDateTime2'  => $oldData->SiteInDateTime2,
-					'SiteOutDateTime2' => $oldData->SiteOutDateTime2,
-					'JobEndDateTime'   => $oldData->JobEndDateTime,
-				];
-			}
-			$oldValueJson = json_encode($oldValueArray);
+            // $oldValueArray = [];
+			// if ($oldData) {
+			// 	$oldValueArray = [
+			// 		'JobStartDateTime' => $oldData->JobStartDateTime,
+			// 		'SiteInDateTime'   => $oldData->SiteInDateTime,
+			// 		'SiteOutDateTime'  => $oldData->SiteOutDateTime,
+			// 		'SiteInDateTime2'  => $oldData->SiteInDateTime2,
+			// 		'SiteOutDateTime2' => $oldData->SiteOutDateTime2,
+			// 		'JobEndDateTime'   => $oldData->JobEndDateTime,
+			// 	];
+			// }
+			// $oldValueJson = json_encode($oldValueArray);
 
 
 				$JobStartDatetime = $this->input->post('JobStartDatetime');
@@ -13752,9 +13852,17 @@ class Booking extends BaseController
 				$JobEndDatetime = $this->input->post('JobEndDatetime');
 				$LoadID = $this->input->post('LoadID');
 
+				// $js = explode(' ', $JobStartDatetime);
+				// $js1 = explode('/', $js[0]);
+				// $JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+				if (!empty($JobStartDatetime)) {
 				$js = explode(' ', $JobStartDatetime);
 				$js1 = explode('/', $js[0]);
 				$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+				} else {
+					$JobStartDatetime = $oldData->JobStartDateTime;
+				}
 
 				$si = explode(' ', $SiteInDatetime);
 				$si1 = explode('/', $si[0]);
@@ -13787,15 +13895,43 @@ class Booking extends BaseController
 				$cond = array('LoadID ' => $LoadID);
 				$update = $this->Common_model->update("tbl_booking_loads1", $LoadInfo, $cond);
 
+				/* =================== Prepare Logs =================== */
+            $oldValueArray    = [];
+            $updatedValueArray = [];
+
+            if ($oldData) {
+                // Normalize for comparison (ignore seconds)
+                $oldJS  = $oldData->JobStartDateTime  ? date('Y-m-d H:i', strtotime($oldData->JobStartDateTime)) : null;
+                $oldSI  = $oldData->SiteInDateTime    ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime)) : null;
+                $oldSO  = $oldData->SiteOutDateTime   ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime)) : null;
+                $oldSI2 = $oldData->SiteInDateTime2   ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime2)) : null;
+                $oldSO2 = $oldData->SiteOutDateTime2  ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime2)) : null;
+                $oldJE  = $oldData->JobEndDateTime    ? date('Y-m-d H:i', strtotime($oldData->JobEndDateTime)) : null;
+
+                $newJS  = date('Y-m-d H:i', strtotime($JobStartDatetime));
+                $newSI  = date('Y-m-d H:i', strtotime($SiteInDatetime));
+                $newSO  = date('Y-m-d H:i', strtotime($SiteOutDatetime));
+                $newSI2 = date('Y-m-d H:i', strtotime($SiteInDatetime2));
+                $newSO2 = date('Y-m-d H:i', strtotime($SiteOutDatetime2));
+                $newJE  = date('Y-m-d H:i', strtotime($JobEndDatetime));
+
+                if ($oldJS !== $newJS) { $oldValueArray['JobStartDatetime']  = $oldJS;  $updatedValueArray['JobStartDatetime']  = $newJS; }
+                if ($oldSI !== $newSI) { $oldValueArray['SiteInDatetime']    = $oldSI;  $updatedValueArray['SiteInDatetime']    = $newSI; }
+                if ($oldSO !== $newSO) { $oldValueArray['SiteOutDatetime']   = $oldSO;  $updatedValueArray['SiteOutDatetime']   = $newSO; }
+                if ($oldSI2 !== $newSI2) { $oldValueArray['SiteInDatetime2']   = $oldSI2; $updatedValueArray['SiteInDatetime2']   = $newSI2; }
+                if ($oldSO2 !== $newSO2) { $oldValueArray['SiteOutDatetime2']  = $oldSO2; $updatedValueArray['SiteOutDatetime2']  = $newSO2; }
+                if ($oldJE !== $newJE) { $oldValueArray['JobEndDatetime']   = $oldJE;  $updatedValueArray['JobEndDatetime']   = $newJE; }
+            }
+
 				/* =================== Site Logs ===================  */
 				$LoadInfoJson = json_encode($LoadInfo);
 				$condJson = json_encode($cond);
-
+			if (!empty($updatedValueArray)) {
 				$SiteLogInfo = array(
 					'TableName' => 'tbl_booking_loads1',
 					'PrimaryID' => $LoadID,
-					'UpdatedValue' => $LoadInfoJson . " => " . $condJson,
-					'OldValue' => $oldValueJson, // Store old values here
+					'UpdatedValue'    => json_encode($updatedValueArray),
+                    'OldValue'        => json_encode($oldValueArray),
 					'UpdatedByUserID' => $this->session->userdata['userId'],
 					'SitePage' => 'Haulage date update',
 					'RemoteIPAddress' => $_SERVER['REMOTE_ADDR'],
@@ -13804,7 +13940,7 @@ class Booking extends BaseController
 					'UserPlatform' => $this->agent->platform()
 				);
 				$this->Common_model->insert("tbl_site_logs", $SiteLogInfo);
-
+			}
 				/* ===================================== */
 
 				// print_r($SiteLogInfo);
