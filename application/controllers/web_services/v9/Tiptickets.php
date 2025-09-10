@@ -1001,4 +1001,126 @@ class Tiptickets extends REST_Controller {
             'data' => $data
         ], REST_Controller::HTTP_OK); 
 	}
+
+	public function tipticketopportunitynew_get()
+	{
+		$token = $this->get('token');
+		$tipID = $this->get('TipID');
+		$driver_id = $this->get('driver_id');
+		$lorry_no = $DriverID = $this->get('lorry_no');
+
+		// Pagination parameters
+		$page = (int)$this->get('page') ?? 1;
+		$limit = (int)$this->get('limit') ?? 10;
+		if ($page < 1) $page = 1;
+		if ($limit < 1) $limit = 10;
+
+		$offset = ($page - 1) * $limit;
+
+		$con['returnType'] = 'single';
+		$con['conditions'] = array(
+			'DriverID' => $driver_id,
+			'Status' => 0
+		);
+
+		$logData = [
+			'driver_id' => $this->post('driver_id') ?? "",
+			'lorry_no' => $this->post('lorry_no') ?? "",
+			'api_call' => __METHOD__, // Get current method name
+			'api_request' => json_encode($this->post())
+		];
+
+		$this->log_api_data($logData);
+
+		$user = $this->Drivers_API_Model->getRows($con);
+
+		if (REST_Controller::TOKEKEYS != $token) {
+			$status = "0";
+			$message = 'Invalid API Key';
+			$data = [];
+		} else if (!isset($lorry_no) || empty($lorry_no)) {
+			$status = "0";
+			$message = 'Invalid Request';
+			$data = [];
+		} else if (empty($driver_id) || empty($DriverID)) {
+			$status = "0";
+			$message = 'Please check required fields';
+			$data = [];
+		} else if (empty($user)) {
+			$status = "0";
+			$message = 'User id not found or account disabled';
+			$data = [];
+		} else if (empty($tipID)) {
+			$status = "0";
+			$message = 'Please add tip';
+			$data = [];
+		} else {
+
+			// Count total records first
+			$this->db->select('COUNT(*) as total');
+			$this->db->from('tbl_opportunity_tip');
+			$this->db->where("TipID", $tipID);
+			$this->db->where("Status", 0);
+			$totalQuery = $this->db->get()->row();
+			$totalRecords = $totalQuery ? (int)$totalQuery->total : 0;
+
+			// Fetch paginated results
+			$this->db->select('*');
+			$this->db->from('tbl_opportunity_tip');
+			$this->db->where("TipID", $tipID);
+			$this->db->where("Status", 0);
+			$this->db->limit($limit, $offset);
+			$query = $this->db->get();
+
+			$resultData = [];
+			if ($query->num_rows() > 0) {
+				$status = "1";
+				$message = '';
+				$results = $query->result();
+
+				foreach ($results as $result) {
+					$opId = $result->OpportunityID;
+					$this->db->select('*');
+					$this->db->from('tbl_opportunities');
+					$this->db->where("OpportunityID", $opId);
+					$innerQuery = $this->db->get();
+
+					if ($innerQuery->num_rows() > 0) {
+						$innerresults = $innerQuery->result();
+						$innerresults[0]->TipRefNo = $result->TipRefNo;
+						$resultData[] = $innerresults[0];
+					}
+				}
+
+				$data = [
+					'records' => $resultData,
+					'pagination' => [
+						'total' => $totalRecords,
+						'page' => $page,
+						'limit' => $limit,
+						'total_pages' => ceil($totalRecords / $limit)
+					]
+				];
+			} else {
+				$status = "0";
+				$message = 'No Records Found.';
+				$data = [
+					'records' => [],
+					'pagination' => [
+						'total' => 0,
+						'page' => $page,
+						'limit' => $limit,
+						'total_pages' => 0
+					]
+				];
+			}
+		}
+
+		$this->response([
+			'status' => $status,
+			'message' => $message,
+			'data' => $data
+		], REST_Controller::HTTP_OK);
+	}
+
 }	
