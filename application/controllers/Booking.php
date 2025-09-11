@@ -10859,10 +10859,24 @@ class Booking extends BaseController
 				$JobEndDatetime = $this->input->post('JobEndDatetime');
 				$LoadID = $this->input->post('LoadID');
 
-				$js = explode(' ', $JobStartDatetime);
-				$js1 = explode('/', $js[0]);
-				$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+				// $js = explode(' ', $JobStartDatetime);
+				// $js1 = explode('/', $js[0]);
+				// $JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
 
+				if (!empty($JobStartDatetime)) {
+					$js = explode(' ', $JobStartDatetime);
+					$js1 = explode('/', $js[0]);
+					$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+					// ✅ If time is 00:00, keep old value
+					$submittedTime = date('H:i', strtotime($JobStartDatetime));
+					if ($submittedTime === '00:00' && !empty($oldData->JobStartDateTime)) {
+						$JobStartDatetime = $oldData->JobStartDateTime;
+					}
+				} else {
+					$JobStartDatetime = $oldData->JobStartDateTime;
+				}
+				
 				$si = explode(' ', $SiteInDatetime);
 				$si1 = explode('/', $si[0]);
 				$SiteInDatetime = trim($si1[2]) . "-" . trim($si1[1]) . "-" . trim($si1[0]) . " " . $si[1];
@@ -11110,9 +11124,23 @@ class Booking extends BaseController
 				$LoadID = $this->input->post('LoadID');
 				$TicketNo = $this->input->post('TicketNo');
 
-				$js = explode(' ', $JobStartDatetime);
-				$js1 = explode('/', $js[0]);
-				$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+				// $js = explode(' ', $JobStartDatetime);
+				// $js1 = explode('/', $js[0]);
+				// $JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+				if (!empty($JobStartDatetime)) {
+					$js = explode(' ', $JobStartDatetime);
+					$js1 = explode('/', $js[0]);
+					$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+					// ✅ If time is 00:00, keep old value
+					$submittedTime = date('H:i', strtotime($JobStartDatetime));
+					if ($submittedTime === '00:00' && !empty($oldData->JobStartDateTime)) {
+						$JobStartDatetime = $oldData->JobStartDateTime;
+					}
+				} else {
+					$JobStartDatetime = $oldData->JobStartDateTime;
+				}
 
 				$si = explode(' ', $SiteInDatetime);
 				$si1 = explode('/', $si[0]);
@@ -12829,9 +12857,23 @@ class Booking extends BaseController
 				$JobEndDatetime = $this->input->post('JobEndDatetime');
 				$LoadID = $this->input->post('LoadID');
 
-				$js = explode(' ', $JobStartDatetime);
-				$js1 = explode('/', $js[0]);
-				$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+				// $js = explode(' ', $JobStartDatetime);
+				// $js1 = explode('/', $js[0]);
+				// $JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+				if (!empty($JobStartDatetime)) {
+					$js = explode(' ', $JobStartDatetime);
+					$js1 = explode('/', $js[0]);
+					$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+					// ✅ If time is 00:00, keep old value
+					$submittedTime = date('H:i', strtotime($JobStartDatetime));
+					if ($submittedTime === '00:00' && !empty($oldData->JobStartDateTime)) {
+						$JobStartDatetime = $oldData->JobStartDateTime;
+					}
+				} else {
+					$JobStartDatetime = $oldData->JobStartDateTime;
+				}
 
 				$si = explode(' ', $SiteInDatetime);
 				$si1 = explode('/', $si[0]);
@@ -13857,9 +13899,15 @@ class Booking extends BaseController
 				// $JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
 
 				if (!empty($JobStartDatetime)) {
-				$js = explode(' ', $JobStartDatetime);
-				$js1 = explode('/', $js[0]);
-				$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+					$js = explode(' ', $JobStartDatetime);
+					$js1 = explode('/', $js[0]);
+					$JobStartDatetime = trim($js1[2]) . "-" . trim($js1[1]) . "-" . trim($js1[0]) . " " . $js[1];
+
+					// ✅ If time is 00:00, keep old value
+					$submittedTime = date('H:i', strtotime($JobStartDatetime));
+					if ($submittedTime === '00:00' && !empty($oldData->JobStartDateTime)) {
+						$JobStartDatetime = $oldData->JobStartDateTime;
+					}
 				} else {
 					$JobStartDatetime = $oldData->JobStartDateTime;
 				}
