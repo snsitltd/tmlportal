@@ -110,36 +110,36 @@ class Tiptickets extends REST_Controller {
         }else {
 			
 		// ✅ Fetch old material name using MaterialID from tbl_booking_loads1 + tbl_materials
-			if (!empty($loadID)) {
-				$this->db->select('tbl_booking_loads1.MaterialID, tbl_materials.MaterialName');
-				$this->db->from('tbl_booking_loads1');
-				$this->db->join('tbl_materials', 'tbl_materials.MaterialID = tbl_booking_loads1.MaterialID', 'left');
-				$this->db->where('tbl_booking_loads1.LoadID', $loadID);
-				$oldMatQuery = $this->db->get();
+			// if (!empty($loadID)) {
+			// 	$this->db->select('tbl_booking_loads1.MaterialID, tbl_materials.MaterialName');
+			// 	$this->db->from('tbl_booking_loads1');
+			// 	$this->db->join('tbl_materials', 'tbl_materials.MaterialID = tbl_booking_loads1.MaterialID', 'left');
+			// 	$this->db->where('tbl_booking_loads1.LoadID', $loadID);
+			// 	$oldMatQuery = $this->db->get();
 
-				if ($oldMatQuery->num_rows() > 0) {
-					$oldMaterialName = $oldMatQuery->row()->MaterialName;
+			// 	if ($oldMatQuery->num_rows() > 0) {
+			// 		$oldMaterialName = $oldMatQuery->row()->MaterialName;
 
-					// ✅ Compare old and new material name (case-insensitive)
-					if (strcasecmp(trim($oldMaterialName), trim($materialName)) !== 0) {
-						// Insert into logs table
-						$logData = [
-							'driver_id'   => $driver_id,
-							'lorry_no'    => $lorry_no,
-							'api_call'    => 'Material_update',
-							'api_request' => json_encode([
-								'LoadID'          => $loadID,
-								'OldMaterialName' => $oldMaterialName,
-								'NewMaterialName' => $materialName,
-								'DriverName'      => $driverName,
-								'DateTime'        => date("Y-m-d H:i:s")
-							]),
-							'created_at'  => date("Y-m-d H:i:s"),
-							'updated_at'  => date("Y-m-d H:i:s")
-						];
-						$this->db->insert('tbl_api_logs', $logData);
-					}
-				}
+			// 		// ✅ Compare old and new material name (case-insensitive)
+			// 		if (strcasecmp(trim($oldMaterialName), trim($materialName)) !== 0) {
+			// 			// Insert into logs table
+			// 			$logData = [
+			// 				'driver_id'   => $driver_id,
+			// 				'lorry_no'    => $lorry_no,
+			// 				'api_call'    => 'Material_update',
+			// 				'api_request' => json_encode([
+			// 					'LoadID'          => $loadID,
+			// 					'OldMaterialName' => $oldMaterialName,
+			// 					'NewMaterialName' => $materialName,
+			// 					'DriverName'      => $driverName,
+			// 					'DateTime'        => date("Y-m-d H:i:s")
+			// 				]),
+			// 				'created_at'  => date("Y-m-d H:i:s"),
+			// 				'updated_at'  => date("Y-m-d H:i:s")
+			// 			];
+			// 			$this->db->insert('tbl_api_logs', $logData);
+			// 		}
+			// 	}
 			}
 
 		
