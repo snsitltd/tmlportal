@@ -385,6 +385,17 @@ $formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
 					</span>
 				</div>
 			<?php endif; ?>
+			<div>
+    <?php if (!empty($driverlogs)) : ?>
+        <p>Logs Have Data</p>
+
+    <?php elseif (empty($driverlogs)) : ?>
+        <p>Driver Logs Empty</p>
+
+    <?php else : ?>
+        <p>No Information To Show</p>
+    <?php endif; ?>
+</div>
 
 		</div>
 	</div>

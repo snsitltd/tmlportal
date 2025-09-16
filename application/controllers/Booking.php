@@ -5724,6 +5724,8 @@ class Booking extends BaseController
 			$data['Loads'] = $this->Booking_model->ShowRequestLoadDetails($LoadID);
 			$data['Photos'] = $this->Booking_model->ShowRequestLoadPhotos($LoadID);
 			$data['updatelogs'] = $this->Booking_model->ShowUpdateLogs($LoadID);
+			$data['driverlogs'] = $this->Booking_model->ShowDriverLogs($LoadID);
+			
 			// var_dump($data['logs']);
 			// exit; 
 			//echo json_encode(var_dump($data['Loads'])); 

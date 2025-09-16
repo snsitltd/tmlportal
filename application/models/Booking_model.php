@@ -88,6 +88,21 @@ class Booking_model extends CI_Model{
 
 			return $result;
 		}
+
+		function ShowDriverLogs($loadID){
+			$this->db->select('id, driver_id, lorry_no, api_call, api_request, created_at, updated_at');
+			$this->db->from('tbl_api_logs');
+			$this->db->like('api_call', 'materialupdate');
+			$this->db->like('api_request', '"LoadID":"'.$loadID.'"'); // Match LoadID inside api_request JSON/text
+			$query = $this->db->get();
+				
+			if ($query->num_rows() > 0) {
+				return $query->result(); // Return as array of objects
+			} else {
+				return []; // Return empty array if no records found
+			}
+		}
+		
 		private function convertMaterialIDToName($jsonString)
 		{
 			if (!$this->isJson($jsonString)) {
