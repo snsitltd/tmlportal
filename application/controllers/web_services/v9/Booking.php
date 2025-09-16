@@ -1499,21 +1499,21 @@ class Booking extends REST_Controller
                     $TipID = $dataarr[0]->TipID;
                 }
 
-                $existingMaterialID   = $dataarr[0]->MaterialID;
-                $existingMaterialName = $dataarr[0]->MaterialName ?? '';
-                $Load_status          = $dataarr[0]->Load_status ?? 0;
+                // $existingMaterialID   = $dataarr[0]->MaterialID;
+                // $existingMaterialName = $dataarr[0]->MaterialName ?? '';
+                // $Load_status          = $dataarr[0]->Load_status ?? 0;
 
-                // ✅ Fetch new material name if MaterialID is provided
-                $newMaterialName = '';
-                if (!empty($MaterialID)) {
-                    $newMaterialQuery = $this->db->select('MaterialName')
-                        ->from('tbl_materials')
-                        ->where('MaterialID', $MaterialID)
-                        ->get();
-                    if ($newMaterialQuery->num_rows() > 0) {
-                        $newMaterialName = $newMaterialQuery->row()->MaterialName;
-                    }
-                }
+                // // ✅ Fetch new material name if MaterialID is provided
+                // $newMaterialName = '';
+                // if (!empty($MaterialID)) {
+                //     $newMaterialQuery = $this->db->select('MaterialName')
+                //         ->from('tbl_materials')
+                //         ->where('MaterialID', $MaterialID)
+                //         ->get();
+                //     if ($newMaterialQuery->num_rows() > 0) {
+                //         $newMaterialName = $newMaterialQuery->row()->MaterialName;
+                //     }
+                // }
 
                 //echo $dataarr[0]->Email; exit();
                 if ($Load_status == 1) {
@@ -1547,25 +1547,25 @@ class Booking extends REST_Controller
                     }
 
                     // ✅ Compare and log if material changed and Load is in status 1
-                if ($existingMaterialID != $MaterialID) {
-                    $logData = [
-                        'driver_id'   => $driver_id,
-                        'lorry_no'    => $lorry_no,
-                        'api_call'    => 'Material_update2',
-                        'api_request' => json_encode([
-                            'LoadID'             => $LoadID,
-                            'OldMaterialID'      => $existingMaterialID,
-                            'OldMaterialName'    => $existingMaterialName,
-                            'NewMaterialID'      => $MaterialID,
-                            'NewMaterialName'    => $newMaterialName,
-                            'DriverName'         => $DriverName,
-                            'DateTime'           => date("Y-m-d H:i:s")
-                        ]),
-                        'created_at'  => date("Y-m-d H:i:s"),
-                        'updated_at'  => date("Y-m-d H:i:s"),
-                    ];
-                    $this->db->insert('tbl_api_logs', $logData);
-                }
+                // if ($existingMaterialID != $MaterialID) {
+                //     $logData = [
+                //         'driver_id'   => $driver_id,
+                //         'lorry_no'    => $lorry_no,
+                //         'api_call'    => 'Material_update2',
+                //         'api_request' => json_encode([
+                //             'LoadID'             => $LoadID,
+                //             'OldMaterialID'      => $existingMaterialID,
+                //             'OldMaterialName'    => $existingMaterialName,
+                //             'NewMaterialID'      => $MaterialID,
+                //             'NewMaterialName'    => $newMaterialName,
+                //             'DriverName'         => $DriverName,
+                //             'DateTime'           => date("Y-m-d H:i:s")
+                //         ]),
+                //         'created_at'  => date("Y-m-d H:i:s"),
+                //         'updated_at'  => date("Y-m-d H:i:s"),
+                //     ];
+                //     $this->db->insert('tbl_api_logs', $logData);
+                // }
                     $udateData = array(
                         "MaterialID" => $MaterialID,
                         "TipID" => $TipID,
