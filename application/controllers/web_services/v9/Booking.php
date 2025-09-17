@@ -1450,6 +1450,7 @@ class Booking extends REST_Controller
                 tbl_booking_request.PaymentRefNo,
                 tbl_booking_request.JourneyTime,
                 tbl_materials.SicCode, 
+                tbl_materials.MaterialName,
                 tbl_opportunities.Street1, 
                 IFNULL(tbl_opportunities.Street2, "") as Street2, 
                 tbl_opportunities.Town, 

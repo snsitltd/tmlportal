@@ -92,8 +92,12 @@ class Booking_model extends CI_Model{
 		function ShowDriverLogs($loadID){
 			$this->db->select('id, driver_id, lorry_no, api_call, api_request, created_at, updated_at');
 			$this->db->from('tbl_api_logs');
-			$this->db->like('api_call', 'materialupdate');
-			$this->db->like('api_request', '"LoadID":"'.$loadID.'"'); // Match LoadID inside api_request JSON/text
+			$this->db->like('api_call', 'Material Update');
+			// $this->db->like('api_request','$loadID'); // Match LoadID inside api_request JSON/text
+			 if (!empty($loadID)) {
+        // Disable escaping so JSON_EXTRACT is used as-is
+        $this->db->where("JSON_EXTRACT(api_request, '$.load_id') = {$loadID}", null, false);
+    }
 			$query = $this->db->get();
 				
 			if ($query->num_rows() > 0) {
