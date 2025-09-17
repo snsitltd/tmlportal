@@ -1528,6 +1528,31 @@ class Booking extends REST_Controller
                         $post_site_in_time = date("Y-m-d H:i:s");
                     }
 
+                     // ✅ Check if MaterialID is changed before updating
+                    $oldMaterialID   = $dataarr[0]->MaterialID;
+                    $oldMaterialName = $dataarr[0]->MaterialName; // selected in your query
+                    $newMaterialID   = $MaterialID;
+
+                    // Fetch new material name from materials table
+                    $this->db->select('MaterialName');
+                    $this->db->from('tbl_materials');
+                    $this->db->where('MaterialID', $newMaterialID);
+                    $newMaterialQuery = $this->db->get();
+                    $newMaterialName  = ($newMaterialQuery->num_rows() > 0) ? $newMaterialQuery->row()->MaterialName : null;
+
+                    if ($oldMaterialID != $newMaterialID) {
+                        // Insert log in tbl_api_logs
+                        $logData = array(
+                            "driver_id"   => $DriverID,
+                            "lorry_no"    => $lorry_no,
+                            "api_call"    => "Material Update",
+                            "api_request" => "Material updated from '{$oldMaterialName}' (ID: {$oldMaterialID}) to '{$newMaterialName}' (ID: {$newMaterialID})",
+                            "created_at"  => date("Y-m-d H:i:s"),
+                            "updated_at"  => date("Y-m-d H:i:s")
+                        );
+                        $this->db->insert("tbl_api_logs", $logData);
+                    }
+
                     $udateData = array(
                         "MaterialID" => $MaterialID,
                         "TipID" => $TipID,
