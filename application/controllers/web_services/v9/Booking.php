@@ -1555,27 +1555,6 @@ class Booking extends REST_Controller
                         $message = 'Customer Signature Required';
                     } else {
 
-                        
-
-                        // Now update the database for status = 3
-                        $udateData = [
-                            "MaterialID" => $MaterialID,
-                            "TipID" => $TipID,
-                            "TipNumber" => $TipNumber,
-                            "GrossWeight" => $GrossWeight,
-                            "Tare" => $user['Tare'],
-                            "Net" => $net,
-                            "Notes1" => $Notes,
-                            "Status" => 3,
-                            "SiteOutDateTime" => date("Y-m-d H:i:s"),
-                            "SiteOutLat" => $LogInLat,
-                            "SiteOutLog" => $LogInLong,
-                            "SiteOutLoc" => $LogInLoc,
-                        ];
-
-                        $this->db->where('LoadID', $LoadID);
-                        $this->db->update("tbl_booking_loads1", $udateData);
-
                         // Check MaterialID change before updating
                         $oldMaterialID   = $dataarr[0]->MaterialID;
                         $oldMaterialName = $dataarr[0]->MaterialName;
@@ -1606,14 +1585,7 @@ class Booking extends REST_Controller
                             $this->db->insert("tbl_api_logs", $logData);
                         }
 
-                        //  Send response to frontend
-                        $this->response([
-                            'status' => 1,
-                            'message' => 'Status changed to 3 successfully',
-                            'load_id' => $LoadID,
-                            'new_material' => $newMaterialName
-                        ], REST_Controller::HTTP_OK);
-
+                        
                         //Unique Code Generate for PDF name
                         $UniqCodeGen = md5(mt_rand(0, 999999) . date("Y-m-d H:i:s"));
                         sleep(2);
