@@ -1462,7 +1462,6 @@ class Booking extends REST_Controller
                 tbl_booking_loads1.ConveyanceNo, 
                 tbl_booking_loads1.BookingID, 
                 tbl_booking_loads1.MaterialID, 
-                tbl_materials.MaterialName,
                 tbl_booking_loads1.TipID, 
                 tbl_booking_loads1.DriverName, 
                 tbl_booking_loads1.VehicleRegNo, 
@@ -1498,23 +1497,6 @@ class Booking extends REST_Controller
                 if (!isset($TipID) || empty($TipID)) {
                     $TipID = $dataarr[0]->TipID;
                 }
-
-                // $existingMaterialID   = $dataarr[0]->MaterialID;
-                // $existingMaterialName = $dataarr[0]->MaterialName ?? '';
-                // $Load_status          = $dataarr[0]->Load_status ?? 0;
-
-                // // ✅ Fetch new material name if MaterialID is provided
-                // $newMaterialName = '';
-                // if (!empty($MaterialID)) {
-                //     $newMaterialQuery = $this->db->select('MaterialName')
-                //         ->from('tbl_materials')
-                //         ->where('MaterialID', $MaterialID)
-                //         ->get();
-                //     if ($newMaterialQuery->num_rows() > 0) {
-                //         $newMaterialName = $newMaterialQuery->row()->MaterialName;
-                //     }
-                // }
-
                 //echo $dataarr[0]->Email; exit();
                 if ($Load_status == 1) {
                     $udateData = array(
@@ -1546,26 +1528,6 @@ class Booking extends REST_Controller
                         $post_site_in_time = date("Y-m-d H:i:s");
                     }
 
-                    // ✅ Compare and log if material changed and Load is in status 1
-                // if ($existingMaterialID != $MaterialID) {
-                //     $logData = [
-                //         'driver_id'   => $driver_id,
-                //         'lorry_no'    => $lorry_no,
-                //         'api_call'    => 'Material_update2',
-                //         'api_request' => json_encode([
-                //             'LoadID'             => $LoadID,
-                //             'OldMaterialID'      => $existingMaterialID,
-                //             'OldMaterialName'    => $existingMaterialName,
-                //             'NewMaterialID'      => $MaterialID,
-                //             'NewMaterialName'    => $newMaterialName,
-                //             'DriverName'         => $DriverName,
-                //             'DateTime'           => date("Y-m-d H:i:s")
-                //         ]),
-                //         'created_at'  => date("Y-m-d H:i:s"),
-                //         'updated_at'  => date("Y-m-d H:i:s"),
-                //     ];
-                //     $this->db->insert('tbl_api_logs', $logData);
-                // }
                     $udateData = array(
                         "MaterialID" => $MaterialID,
                         "TipID" => $TipID,
@@ -4243,39 +4205,7 @@ class Booking extends REST_Controller
         // Return the list of generated PDF file names
         $this->response(['status' => true, 'pdfFiles' => $pdfFileNames], 200);
     }
-    
 
-	public function update_ref_post(){
-		$token = $this->post('token');
-		if(REST_Controller::TOKEKEYS != $token){
-            $status = "0";
-            $message ='Invalid API Key';
-        }
-		$tipTicketId = $this->post('TipTicketID');
-		$tipID = $this->post('TipID');
-		$tTIPID = $tipID;
-		$tipadQRY = $this->db->query("select TipName,Street1,Street2,Town,County,PostCode,PermitRefNo from tbl_tipaddress where TipID = '$tTIPID'");
-		$tipadQRY = $tipadQRY->row_array();
-                         
-                 $query = $this->db->get_where('tbl_tipticket', ['TipTicketID' => $tipTicketId]);
-			$result = $query->row_array();
 
-			if ($result) {
-				echo json_encode([
-					'status' => 'success',
-					'data' => $result
-				]);
-			} else {
-				echo json_encode([
-					'status' => 'error',
-					'message' => 'No data found'
-				]);
-			}
-	}
-	
-	public function create_test_post()
-	{
-		echo "method called";
 
-}
 }

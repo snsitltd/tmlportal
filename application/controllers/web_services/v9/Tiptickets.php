@@ -109,40 +109,6 @@ class Tiptickets extends REST_Controller {
             $message ='User id not found or account disabled';
         }else {
 			
-		// ✅ Fetch old material name using MaterialID from tbl_booking_loads1 + tbl_materials
-			// if (!empty($loadID)) {
-			// 	$this->db->select('tbl_booking_loads1.MaterialID, tbl_materials.MaterialName');
-			// 	$this->db->from('tbl_booking_loads1');
-			// 	$this->db->join('tbl_materials', 'tbl_materials.MaterialID = tbl_booking_loads1.MaterialID', 'left');
-			// 	$this->db->where('tbl_booking_loads1.LoadID', $loadID);
-			// 	$oldMatQuery = $this->db->get();
-
-			// 	if ($oldMatQuery->num_rows() > 0) {
-			// 		$oldMaterialName = $oldMatQuery->row()->MaterialName;
-
-			// 		// ✅ Compare old and new material name (case-insensitive)
-			// 		if (strcasecmp(trim($oldMaterialName), trim($materialName)) !== 0) {
-			// 			// Insert into logs table
-			// 			$logData = [
-			// 				'driver_id'   => $driver_id,
-			// 				'lorry_no'    => $lorry_no,
-			// 				'api_call'    => 'Material_update',
-			// 				'api_request' => json_encode([
-			// 					'LoadID'          => $loadID,
-			// 					'OldMaterialName' => $oldMaterialName,
-			// 					'NewMaterialName' => $materialName,
-			// 					'DriverName'      => $driverName,
-			// 					'DateTime'        => date("Y-m-d H:i:s")
-			// 				]),
-			// 				'created_at'  => date("Y-m-d H:i:s"),
-			// 				'updated_at'  => date("Y-m-d H:i:s")
-			// 			];
-			// 			$this->db->insert('tbl_api_logs', $logData);
-			// 		}
-			// 	}
-			}
-
-		
             $tipticketsInfo = array(
 				'SiteAddress'=>$siteAddress, 
 				'TipID'=>$tipID, 
@@ -367,23 +333,7 @@ class Tiptickets extends REST_Controller {
             'data' => $data
         ], REST_Controller::HTTP_OK);   
     }
-	
-	public function create_test_post(){
-	    
-	    $logData = [
-	        'driver_id' => $this->post('driver_id'),
-	        'lorry_no' => $this->post('lorry_no'),
-            'api_call' => __METHOD__, // Get current method name
-            'api_request' => json_encode($this->post())
-        ];
-        
-        $this->log_api_data($logData);
-    	    
-	    $this->response([
-            'status' => true,
-            'message' => "Devam testing",
-        ], REST_Controller::HTTP_OK);   
-	}
+
 	
 	public function update_post(){
         
@@ -1052,7 +1002,7 @@ class Tiptickets extends REST_Controller {
         ], REST_Controller::HTTP_OK); 
 	}
 
-		public function tipticketopportunitynew_get()
+	public function tipticketopportunitynew_get()
 	{
 		$token = $this->get('token');
 		$tipID = $this->get('TipID');
