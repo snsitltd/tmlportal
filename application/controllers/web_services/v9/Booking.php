@@ -1580,30 +1580,63 @@ class Booking extends REST_Controller
                         $message = 'Customer Signature Required';
                     } else {
 
-                         // ✅ Check if MaterialID is changed before updating
-                    $oldMaterialID   = $dataarr[0]->MaterialID;
-                    $oldMaterialName = $dataarr[0]->MaterialName; // selected in your query
-                    $newMaterialID   = $MaterialID;
+                        // Check MaterialID change before updating
+                        $oldMaterialID   = $dataarr[0]->MaterialID;
+                        $oldMaterialName = $dataarr[0]->MaterialName;
+                        $newMaterialID   = $MaterialID;
 
-                    // Fetch new material name from materials table
-                    $this->db->select('MaterialName');
-                    $this->db->from('tbl_materials');
-                    $this->db->where('MaterialID', $newMaterialID);
-                    $newMaterialQuery = $this->db->get();
-                    $newMaterialName  = ($newMaterialQuery->num_rows() > 0) ? $newMaterialQuery->row()->MaterialName : null;
+                        // Fetch new material name
+                        $this->db->select('MaterialName');
+                        $this->db->from('tbl_materials');
+                        $this->db->where('MaterialID', $newMaterialID);
+                        $newMaterialQuery = $this->db->get();
+                        $newMaterialName  = ($newMaterialQuery->num_rows() > 0) ? $newMaterialQuery->row()->MaterialName : null;
 
-                    if ($oldMaterialID != $newMaterialID) {
-                        // Insert log in tbl_api_logs
-                        $logData = array(
-                            "driver_id"   => $DriverID,
-                            "lorry_no"    => $lorry_no,
-                            "api_call"    => "Material Update",
-                            "api_request" => "Material updated from '{$oldMaterialName}' (ID: {$oldMaterialID}) to '{$newMaterialName}' (ID: {$newMaterialID})",
-                            "created_at"  => date("Y-m-d H:i:s"),
-                            "updated_at"  => date("Y-m-d H:i:s")
-                        );
-                        $this->db->insert("tbl_api_logs", $logData);
-                    }
+                        // Log material change if it changed
+                        if ($oldMaterialID != $newMaterialID) {
+                            $logData = [
+                                "driver_id"   => $DriverID,
+                                "lorry_no"    => $lorry_no,
+                                "api_call"    => "Material Update",
+                                "api_request" => json_encode([
+                                    "load_id" => $LoadID,
+                                    "old_material" => ["id" => $oldMaterialID, "name" => $oldMaterialName],
+                                    "new_material" => ["id" => $newMaterialID, "name" => $newMaterialName],
+                                    "status" => $Load_status
+                                ], JSON_UNESCAPED_UNICODE),
+                                "created_at"  => date("Y-m-d H:i:s"),
+                                "updated_at"  => date("Y-m-d H:i:s")
+                            ];
+                            $this->db->insert("tbl_api_logs", $logData);
+                        }
+
+                        // Now update the database for status = 3
+                        $udateData = [
+                            "MaterialID" => $MaterialID,
+                            "TipID" => $TipID,
+                            "TipNumber" => $TipNumber,
+                            "GrossWeight" => $GrossWeight,
+                            "Tare" => $user['Tare'],
+                            "Net" => $net,
+                            "Notes1" => $Notes,
+                            "Status" => 3,
+                            "SiteOutDateTime" => date("Y-m-d H:i:s"),
+                            "SiteOutLat" => $LogInLat,
+                            "SiteOutLog" => $LogInLong,
+                            "SiteOutLoc" => $LogInLoc,
+                        ];
+
+                        $this->db->where('LoadID', $LoadID);
+                        $this->db->update("tbl_booking_loads1", $udateData);
+
+                        //  Send response to frontend
+                        $this->response([
+                            'status' => 1,
+                            'message' => 'Status changed to 3 successfully',
+                            'load_id' => $LoadID,
+                            'new_material' => $newMaterialName
+                        ], REST_Controller::HTTP_OK);
+
                         //Unique Code Generate for PDF name
                         $UniqCodeGen = md5(mt_rand(0, 999999) . date("Y-m-d H:i:s"));
                         sleep(2);
