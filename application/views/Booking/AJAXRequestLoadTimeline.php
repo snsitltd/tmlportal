@@ -109,6 +109,35 @@ if ($Loads[0]->DriverName != "") {
 							</div>
 						</li>
 					<?php } ?>
+					<!-- driver material update code here  -->
+					<?php if (!empty($driverlogs)) : ?>
+    <?php foreach ($driverlogs as $log) : ?>
+        <li class="time-label">
+            <span class="bg-blue">
+                <?php echo date('d/m/Y H:i:s', strtotime($log['updated_at'])); ?>
+            </span>
+        </li>
+        <li>
+            <i class="fa fa-user bg-aqua"></i>
+            <div class="timeline-item">
+                <h3 class="timeline-header no-border">
+                    <a href="<?php echo base_url('viewDriver/' . $log['driver_id']); ?>">
+                        <?php echo $DriverName; ?>
+                        <?php if (!empty($Loads[0]->DriverMobile)) {
+                            echo "( " . $Loads[0]->DriverMobile . " )";
+                        } ?>
+                    </a>
+                    has updated material from 
+                    <b><?php echo is_array($log['old_material']) ? $log['old_material']['name'] : ($log['old_material'] ?? 'N/A'); ?></b> 
+                    to 
+                    <b><?php echo is_array($log['new_material']) ? $log['new_material']['name'] : ($log['new_material'] ?? 'N/A'); ?></b>.
+                </h3>
+            </div>
+        </li>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+																																						
 
 					<!-- END timeline item -->
 				<?php  }
@@ -386,7 +415,7 @@ $formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
 				</div>
 			<?php endif; ?>
 			<div>
-    <?php if (!empty($driverlogs)) : ?>
+    <!-- <?php if (!empty($driverlogs)) : ?>
         <p>Logs Have Data</p>
 
     <?php elseif (empty($driverlogs)) : ?>
@@ -395,7 +424,7 @@ $formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
     <?php else : ?>
         <p>No Information To Show</p>
     <?php endif; ?>
-</div>
+</div> -->
 
 		</div>
 	</div>

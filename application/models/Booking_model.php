@@ -89,23 +89,52 @@ class Booking_model extends CI_Model{
 			return $result;
 		}
 
-		function ShowDriverLogs($loadID){
-			$this->db->select('id, driver_id, lorry_no, api_call, api_request, created_at, updated_at');
-			$this->db->from('tbl_api_logs');
-			$this->db->like('api_call', 'Material Update');
-			// $this->db->like('api_request','$loadID'); // Match LoadID inside api_request JSON/text
-			 if (!empty($loadID)) {
-        // Disable escaping so JSON_EXTRACT is used as-is
-        $this->db->where("JSON_EXTRACT(api_request, '$.load_id') = {$loadID}", null, false);
+		function ShowDriverLogs($loadID = null) {
+    $this->db->select('id, driver_id, lorry_no, api_call, api_request, created_at, updated_at');
+    $this->db->from('tbl_api_logs');
+    $this->db->like('api_call', 'Material Update');
+
+    $query = $this->db->get();
+    $tempResults = [];
+
+    if ($query->num_rows() > 0) {
+        foreach ($query->result() as $row) {
+            $apiRequest = json_decode($row->api_request, true);
+
+            // Skip if loadID is provided and doesn't match
+            if (!empty($loadID) && ($apiRequest['load_id'] ?? null) != $loadID) {
+                continue;
+            }
+
+            $currentLoadID = $apiRequest['load_id'] ?? null;
+
+            if ($currentLoadID) {
+                // Only keep the latest updated log per load_id
+                if (!isset($tempResults[$currentLoadID]) || 
+                    strtotime($row->updated_at) > strtotime($tempResults[$currentLoadID]['updated_at'])) {
+
+                    $tempResults[$currentLoadID] = [
+                        'id' => $row->id,
+                        'driver_id' => $row->driver_id,
+                        'lorry_no' => $row->lorry_no,
+                        'api_call' => $row->api_call,
+                        'created_at' => $row->created_at,
+                        'updated_at' => $row->updated_at,
+                        'status' => $apiRequest['status'] ?? null,
+                        'load_id' => $currentLoadID,
+                        'old_material' => $apiRequest['old_material'] ?? null,
+                        'new_material' => $apiRequest['new_material'] ?? null
+                    ];
+                }
+            }
+        }
     }
-			$query = $this->db->get();
-				
-			if ($query->num_rows() > 0) {
-				return $query->result(); // Return as array of objects
-			} else {
-				return []; // Return empty array if no records found
-			}
-		}
+
+    // Return as indexed array for frontend
+    return array_values($tempResults);
+}
+
+
 		
 		private function convertMaterialIDToName($jsonString)
 		{
