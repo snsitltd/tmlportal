@@ -3486,66 +3486,186 @@ class Booking extends REST_Controller
         ], REST_Controller::HTTP_OK);
     }
 
+    // public function materials_list_post()
+    // {
+
+
+    //     // $token = $this->post('token');
+    //     // //$DriverID = $this->post('DriverID');
+    //     // $BookingType = $this->post('BookingType');
+    //     // $driver_id = $this->post('driver_id');
+    //     // $lorry_no = $DriverID = $this->post('lorry_no');
+
+    //     // $material_type = $this->post('material_type'); // 0 or 1
+    //     // $material_id   = $this->post('material_id');   
+        
+    //       $input = json_decode(file_get_contents('php://input'), true);
+    // $token          = isset($input['token']) ? $input['token'] : '';
+    // $BookingType    = isset($input['BookingType']) ? $input['BookingType'] : '';
+    // $driver_id      = isset($input['driver_id']) ? $input['driver_id'] : '';
+    // $DriverID       = isset($input['lorry_no']) ? $input['lorry_no'] : '';
+    // $material_type  = isset($input['material_type']) ? $input['material_type'] : '0';
+    // $material_id    = isset($input['material_id']) ? $input['material_id'] : '';
+    //     $data = [];
+
+    //     // Check user exists with the given credentials
+    //     $con['returnType'] = 'single';
+    //     $con['conditions'] = array(
+    //         'DriverID' => $driver_id,
+    //         'Status' => 0
+    //     );
+    //     $user = $this->Drivers_API_Model->getRows($con);
+
+
+    //     if (REST_Controller::TOKEKEYS != $token) {
+    //         $status = "0";
+    //         $message = 'Invalid API Key';
+    //     } else if (!isset($lorry_no) || empty($lorry_no)) {
+    //         $status = "0";
+    //         $message = 'Invalid Request';
+    //     } else if (empty($driver_id) || empty($DriverID) || empty($BookingType)) {
+    //         $status = "0";
+    //         $message = 'Please check required fields';
+    //     } else if (empty($user)) {
+    //         $status = "0";
+    //         $message = 'User id not found or account disabled';
+    //     } else {
+    //         if ($BookingType == '1') {
+    //             $Operation = 'IN';
+    //         } else {
+    //             $Operation = 'COLLECTION';
+    //         }
+    //         $this->db->select('*');
+    //         $this->db->from('tbl_materials');
+    //         $this->db->where('Operation', $Operation);
+    //         $this->db->where('Status', '1');
+    //         $query = $this->db->get();
+
+    //         if ($material_type == '1') {
+    //         if (!empty($material_id)) {
+    //             $this->db->where('Type', 1);
+    //             $this->db->where('MaterialID', $material_id);
+    //         } else {
+    //             $this->response([
+    //                 'status' => "0",
+    //                 'message' => 'Material ID is required when material_type is 1',
+    //                 'data' => []
+    //             ], REST_Controller::HTTP_OK);
+    //             return;
+    //         }
+    //     } elseif ($material_type == '0') {
+    //         $this->db->where('Type', 0);
+    //     }
+
+    //         if ($query->num_rows() > 0) {
+    //             $status = "1";
+    //             $message = 'Material list';
+    //             $data = $query->result();
+    //         } else {
+    //             $status = "0";
+    //             $message = 'Booking data not found.';
+    //         }
+    //     }
+
+    //     $this->response([
+    //         'status' => $status,
+    //         'message' => $message,
+    //         'data' => $data
+    //     ], REST_Controller::HTTP_OK);
+    // }
+
     public function materials_list_post()
-    {
+{
+    $input = json_decode(file_get_contents('php://input'), true);
+    $token          = isset($input['token']) ? $input['token'] : '';
+    $BookingType    = isset($input['BookingType']) ? $input['BookingType'] : '';
+    $driver_id      = isset($input['driver_id']) ? $input['driver_id'] : '';
+    $lorry_no       = isset($input['lorry_no']) ? $input['lorry_no'] : '';
+    $material_type  = isset($input['material_type']) ? $input['material_type'] : '0';
+    $material_id    = isset($input['material_id']) ? $input['material_id'] : '';
 
+    $data = [];
 
-        $token = $this->post('token');
-        //$DriverID = $this->post('DriverID');
-        $BookingType = $this->post('BookingType');
-        $driver_id = $this->post('driver_id');
-        $lorry_no = $DriverID = $this->post('lorry_no');
-        $data = [];
-
-        // Check user exists with the given credentials
-        $con['returnType'] = 'single';
-        $con['conditions'] = array(
-            'DriverID' => $driver_id,
-            'Status' => 0
-        );
-        $user = $this->Drivers_API_Model->getRows($con);
-
-
-        if (REST_Controller::TOKEKEYS != $token) {
-            $status = "0";
-            $message = 'Invalid API Key';
-        } else if (!isset($lorry_no) || empty($lorry_no)) {
-            $status = "0";
-            $message = 'Invalid Request';
-        } else if (empty($driver_id) || empty($DriverID) || empty($BookingType)) {
-            $status = "0";
-            $message = 'Please check required fields';
-        } else if (empty($user)) {
-            $status = "0";
-            $message = 'User id not found or account disabled';
-        } else {
-            if ($BookingType == '1') {
-                $Operation = 'IN';
-            } else {
-                $Operation = 'COLLECTION';
-            }
-            $this->db->select('*');
-            $this->db->from('tbl_materials');
-            $this->db->where('Operation', $Operation);
-            $this->db->where('Status', '1');
-            $query = $this->db->get();
-
-            if ($query->num_rows() > 0) {
-                $status = "1";
-                $message = 'Material list';
-                $data = $query->result();
-            } else {
-                $status = "0";
-                $message = 'Booking data not found.';
-            }
-        }
-
+    // Check API Key
+    if ($token != REST_Controller::TOKEKEYS) {
         $this->response([
-            'status' => $status,
-            'message' => $message,
-            'data' => $data
+            'status' => "0",
+            'message' => 'Invalid API Key',
+            'data' => []
         ], REST_Controller::HTTP_OK);
+        return;
     }
+
+    // Validate required fields
+    if (empty($driver_id) || empty($lorry_no) || empty($BookingType)) {
+        $this->response([
+            'status' => "0",
+            'message' => 'Invalid Request',
+            'data' => []
+        ], REST_Controller::HTTP_OK);
+        return;
+    }
+
+    // Check user exists
+    $con['returnType'] = 'single';
+    $con['conditions'] = [
+        'DriverID' => $driver_id,
+        'Status' => 0
+    ];
+    $user = $this->Drivers_API_Model->getRows($con);
+
+    if (empty($user)) {
+        $this->response([
+            'status' => "0",
+            'message' => 'User id not found or account disabled',
+            'data' => []
+        ], REST_Controller::HTTP_OK);
+        return;
+    }
+
+    // Determine operation
+    $Operation = ($BookingType == '1') ? 'IN' : 'COLLECTION';
+
+    // Build query
+    $this->db->select('*');
+    $this->db->from('tbl_materials');
+    $this->db->where('Operation', $Operation);
+    $this->db->where('Status', '1');
+
+    // Apply material type filters
+    if ($material_type == '1') {
+        if (empty($material_id)) {
+            $this->response([
+                'status' => "0",
+                'message' => 'Material ID is required when material_type is 1',
+                'data' => []
+            ], REST_Controller::HTTP_OK);
+            return;
+        }
+        $this->db->where('Type', 1);
+        $this->db->where('MaterialID', $material_id);
+    } elseif ($material_type == '0') {
+        $this->db->where('Type', 0);
+    }
+
+    // Execute query
+    $query = $this->db->get();
+
+    if ($query->num_rows() > 0) {
+        $status  = "1";
+        $message = 'Material list';
+        $data    = $query->result();
+    } else {
+        $status  = "0";
+        $message = 'No materials found for the given criteria.';
+    }
+
+    $this->response([
+        'status' => $status,
+        'message' => $message,
+        'data' => $data
+    ], REST_Controller::HTTP_OK);
+}
 
     public function tipaddress_post()
     {
@@ -4239,6 +4359,24 @@ class Booking extends REST_Controller
         $this->response(['status' => true, 'pdfFiles' => $pdfFileNames], 200);
     }
 
+    public function testing_post()
+{
+    $input = json_decode(file_get_contents('php://input'), true);
+    $token = isset($input['token']) ? $input['token'] : '';
+
+    if ($token != REST_Controller::TOKEKEYS) {
+        $this->response([
+            'status' => false,
+            'error'  => 'Invalid API key'
+        ], REST_Controller::HTTP_OK);
+        return;
+    }
+
+    $this->response([
+        'status' => true,
+        'message' => 'testing successful'
+    ], REST_Controller::HTTP_OK);
+}
 
 
 }
