@@ -3576,8 +3576,10 @@ class Booking extends REST_Controller
 
     public function materials_list_post()
 {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $token          = isset($input['token']) ? $input['token'] : '';
+    $input = file_get_contents('php://input');
+    $input = !empty($input) ? json_decode($input, true) : $_POST; // fallback for UAT
+    $token = isset($input['token']) ? trim($input['token']) : '';
+
     $BookingType    = isset($input['BookingType']) ? $input['BookingType'] : '';
     $driver_id      = isset($input['driver_id']) ? $input['driver_id'] : '';
     $lorry_no       = isset($input['lorry_no']) ? $input['lorry_no'] : '';
