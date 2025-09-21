@@ -1553,6 +1553,26 @@ class Booking extends REST_Controller
                         $status = "0";
                         $message = 'Customer Signature Required';
                     } else {
+
+                        // Now update the database for status = 3
+                        $udateData = [
+                            "MaterialID" => $MaterialID,
+                            "TipID" => $TipID,
+                            "TipNumber" => $TipNumber,
+                            "GrossWeight" => $GrossWeight,
+                            "Tare" => $user['Tare'],
+                            "Net" => $net,
+                            "Notes1" => $Notes,
+                            "Status" => 3,
+                            "SiteOutDateTime" => date("Y-m-d H:i:s"),
+                            "SiteOutLat" => $LogInLat,
+                            "SiteOutLog" => $LogInLong,
+                            "SiteOutLoc" => $LogInLoc,
+                        ];
+
+                        $this->db->where('LoadID', $LoadID);
+                        $this->db->update("tbl_booking_loads1", $udateData);
+
                         //Unique Code Generate for PDF name
                         $UniqCodeGen = md5(mt_rand(0, 999999) . date("Y-m-d H:i:s"));
                         sleep(2);
