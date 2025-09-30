@@ -1,6 +1,6 @@
 <link href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
 <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
-<!--<script src="<?php echo base_url('assets/js/jquery-min.js'); ?>" type="text/javascript"></script>  -->
+<!--<script src="<?php //echo base_url('assets/js/jquery-min.js'); ?>" type="text/javascript"></script>  -->
 <link href="<?php echo base_url('assets/css/jquery-ui.css'); ?>" rel="stylesheet" type="text/css" />
 <script src="<?php echo base_url('assets/js/jquery-ui.js'); ?>" type="text/javascript"></script> 
 
@@ -21,9 +21,9 @@
 
 </style> -->
 <div class="content-wrapper"> 
-    <section class="content-header"> <h1> <i class="fa fa-users"></i>DayWork Tickets </h1>    </section> 
-    <a class="btn btn-danger" href="<?php echo base_url(); ?>AllDayWorkTicketsArchived" style="float:right;margin: 6px "> Archived DayWork Tickets</a>
-	<section class="content"> 
+    <section class="content-header"> <h1> <i class="fa fa-users"></i>Archived Haulage Tickets </h1>    </section> 
+    <a class="btn btn-success" href="<?php echo base_url(); ?>HaulageTickets" style="float:right;margin: 6px "> Recent Haulage Tickets</a>
+    <section class="content"> 
 		<?php 
 			$error = $this->session->flashdata('error');
 			if($error){
@@ -63,20 +63,20 @@
 			<div class="col-md-12">
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
-						<li class=""><a href="<?php echo base_url('ConveyanceTickets'); ?>"  aria-expanded="false">Collection</a></li>   						 
-						<li class=""><a href="<?php echo base_url('DeliveryTickets'); ?>"  aria-expanded="false">Delivery</a></li> 
-						<li class="active"><a href="#DayWork" data-toggle="tab" aria-expanded="true">DayWork </a></li> 
-						<li  ><a href="<?php echo base_url('HaulageTickets'); ?>"  aria-expanded="false">Haulage</a></li> 
+						<li ><a href="<?php echo base_url('ConveyanceTickets'); ?>"  aria-expanded="false">Collection</a></li>   						 
+						<li ><a href="<?php echo base_url('DeliveryTickets'); ?>"  aria-expanded="false">Delivery</a></li> 
+						<li  ><a href="<?php echo base_url('DayWorkTickets'); ?>"  aria-expanded="false">DayWork</a></li> 
+						<li class="active"><a href="#Haulage" data-toggle="tab" aria-expanded="true">Haulage</a></li> 
 					</ul> 
 					<div class="tab-content"> 
-						<div class="tab-pane active" id="DayWork">   
+						<div class="tab-pane active" id="Haulage">   
 							<div class="row">
 							<div class="col-xs-12">
 								<div class="box">
 									<div class="box-header">
-										<h3 class="box-title"><b>DayWork Tickets List</b> </h3>
-										<button class="btn btn-success SplitExcelDayWork" name="splitxls" id="splitxls"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Split XLS</button> 
-										<button class="btn btn-danger DayWorkExcelExport" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Export XLS</button> 
+										<h3 class="box-title"><b>Haulage Tickets List</b> </h3>
+										<button class="btn btn-success SplitExcelHaulage" name="splitxls" id="splitxls"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Split XLS</button> 
+										<button class="btn btn-danger HaulageExcelExport" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Export XLS</button> 
 									</div> 
 									<div class="box-body">
 										<div id="example2_wrapper" class="dataTables_wrapper   form-inline dt-bootstrap table-responsive">
@@ -128,8 +128,8 @@ var defaultcol = "";
 const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeIgniter.
 var apiUrl = baseUrl; 
  
-var GetTableMetaApiEndpoint = 'DayWorkTicketsTableMeta';//Endpoint returning Table Metadata 
-var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and return Table Data
+var GetTableMetaApiEndpoint = 'HaulageTicketsTableMeta';//Endpoint returning Table Metadata 
+var GetTableDataApiEndpoint = 'AllHaulageTicketsAJAXArchived';//Endpoint processing and return Table Data
   
 	function getTableMeta() {
 
@@ -264,9 +264,9 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
                     Status = '<button class="btn btn-secondary StatusUpdate" data-PDF="' + data["ReceiptName"] + '" data-Status="' + data["Status"] + '" data-LoadID="' + data["LoadID"] + '" title="Click To Update Status">' + data["Status"] + '</button>';
                 } 
  				if(data["Status"]=="Finished"){ 
-					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime"]+'</button> ');	
+					$(row).find("td:eq(1)").html('<button  class="btn btn-warning  btn-info DateUpdate"  data-LoadID = "'+data["LoadID"]+'" data-JobStartDateTime = "'+data["JobStart"]+'"  data-SiteInDateTime = "'+data["SiteIn"]+'" data-HaulageInDateTime = "'+data["HaulageIn"]+'"  data-SiteOutDateTime = "'+data["SiteOut"]+'"  data-HaulageOutDateTime = "'+data["HaulageOut"]+'"  data-JobEndDateTime = "'+data["JobEnd"]+'" title="Click To Update Date "  >'+data["SiteOutDateTime2"]+'</button> ');	
 				}else{
-					$(row).find("td:eq(1)").html(data["JobStart"]);		
+					$(row).find("td:eq(1)").html(data["JobStartDateTime"]);	
 				}
 				$(row).find("td:eq(2)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'view-company/'+data["CompanyID"]+'" target="_blank" title="'+data["CompanyName"]+'">'+data["CompanyName"]+' </a> ');
 				$(row).find("td:eq(3)").html('<i data-BookingRequestID = "'+data["BookingRequestID"]+'"  data-BookingDateID = "'+data["BookingDateID"]+'" data-LoadID = "'+data["LoadID"]+'"  class="fa fa-pencil AllocateNewBooking"></i>  <a href="'+baseURL+'View-Opportunity/'+data["OpportunityID"]+'" target="_blank" title="'+data["OpportunityName"]+'">'+data["OpportunityName"]+'</a> ');
@@ -332,7 +332,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 		jQuery(document).on("click", ".LoadInfo", function(){   
 			$('#empModal').modal('show');  
 			var LoadID = $(this).attr("data-LoadID"), 
-				hitURL1 = baseURL + "AJAXShowRequestLoadsDetails",
+				hitURL1 = baseURL + "AJAXShowRequestHaulageLoadsDetails",
 				currentRow = $(this);  
 			//console.log(confirmation); 
 			jQuery.ajax({
@@ -353,15 +353,17 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 				JobStartDateTime = $(this).attr("data-JobStartDateTime"),   
 				SiteInDateTime = $(this).attr("data-SiteInDateTime"),   
 				SiteOutDateTime = $(this).attr("data-SiteOutDateTime"),   
+				HaulageInDateTime = $(this).attr("data-HaulageInDateTime"),   
+				HaulageOutDateTime = $(this).attr("data-HaulageOutDateTime"),   
 				JobEndDateTime = $(this).attr("data-JobEndDateTime"),   
-				hitURL3 = baseURL + "DateUpdateDayWorkAjax",
+				hitURL3 = baseURL + "DateUpdateHaulageAjax",
 				currentRow = $(this); 
 				//alert(LoadType);  
 				jQuery.ajax({
 				type : "POST",
 				dataType : "json", 
 				url : hitURL3,
-				data : { 'LoadID' : LoadID , 'SiteInDateTime' : SiteInDateTime ,'JobStartDateTime' : JobStartDateTime ,'SiteOutDateTime' : SiteOutDateTime ,'JobEndDateTime' : JobEndDateTime } 
+				data : { 'LoadID' : LoadID , 'SiteInDateTime' : SiteInDateTime ,'HaulageInDateTime' : HaulageInDateTime ,'JobStartDateTime' : JobStartDateTime ,'SiteOutDateTime' : SiteOutDateTime ,'HaulageOutDateTime' : HaulageOutDateTime ,'JobEndDateTime' : JobEndDateTime } 
 				}).success(function(data){ 
 					//alert(data)
 					$('.modal-body').html(data); 
@@ -380,7 +382,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 			var LoadID = $(this).attr("data-LoadID"),  
 				Status = $(this).attr("data-Status"),  
 				PDF = $(this).attr("data-PDF"),  
-				hitURL2 = baseURL + "StatusUpdateDayWorkAjax",
+				hitURL2 = baseURL + "StatusUpdateHaulageAjax",
 				currentRow = $(this); 
 				//alert(LoadType);  
 				jQuery.ajax({
@@ -401,7 +403,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 					 
 		});
 		
-		jQuery(document).on("click", ".SplitExcelDayWork", function(){  
+		jQuery(document).on("click", ".SplitExcelHaulage", function(){  
 			var CompanyName = $('#CompanyName').val(),  
 				OpportunityName =  $('#OpportunityName').val(),  
 				reservation =  $('#reservation').val(),   
@@ -411,7 +413,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 				DriverName =  $('#DriverName').val(),  
 				VehicleRegNo =  $('#VehicleRegNo').val(), 
 				Status =  $('#Status').val(),   
-				hitURL1 = baseURL + "SplitExcelDayWorkAjax",
+				hitURL1 = baseURL + "SplitExcelHaulageAjax",
 				currentRow = $(this);  
 				jQuery.ajax({
 				type : "POST",
@@ -430,7 +432,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 				});  	 
 		});
 		
-		jQuery(document).on("click", ".DayWorkExcelExport", function(){  
+		jQuery(document).on("click", ".HaulageExcelExport", function(){  
 			
 			
 		var CompanyName = $('#CompanyName').val(),   
@@ -444,7 +446,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 			Search =  $('input[type="search"]').val(),    
 			VehicleRegNo =  $('#VehicleRegNo').val(), 
 			Status =  $('#Status').val(),    
-			hitURLCon = baseURL + "DayWorkExcelExport",
+			hitURLCon = baseURL + "HaulageExcelExport",
 			currentRow = $(this);   
 			
 			if(reservation !="" || SiteOutDateTime !=""){ 
@@ -469,7 +471,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 			}	
 			
 	});
-	jQuery(document).on("click", ".AllocateNewBooking", function(){  
+	    jQuery(document).on("click", ".AllocateNewBooking", function(){  
 			var LoadID = $(this).attr("data-LoadID"), 
 				BookingDateID = $(this).attr("data-BookingDateID"), 
 				BookingRequestID = $(this).attr("data-BookingRequestID"), 
@@ -553,7 +555,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 					//alert(JSON.stringify( data ));     
 					//console.log(data);  
 					if(data.status == true) {  
-						window.location.href = baseURL+'DayWorkTickets' 
+						window.location.href = baseURL+'HaulageTickets' 
 					}else{  
 						alert("Oooops, Please try again later"); 
 					}  
@@ -563,8 +565,7 @@ var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and ret
 				alert("Please Enter Booking Request Number  ");  
 			}	
 			
-	});
-	  
+	});  
 	 
 	}); 
 	 

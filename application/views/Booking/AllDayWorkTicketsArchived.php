@@ -22,8 +22,8 @@
 </style> -->
 <div class="content-wrapper"> 
     <section class="content-header"> <h1> <i class="fa fa-users"></i>DayWork Tickets </h1>    </section> 
-    <a class="btn btn-danger" href="<?php echo base_url(); ?>AllDayWorkTicketsArchived" style="float:right;margin: 6px "> Archived DayWork Tickets</a>
-	<section class="content"> 
+    <a class="btn btn-success" href="<?php echo base_url(); ?>DayWorkTickets" style="float:right;margin: 6px "> Recent DayWork Tickets</a>
+    <section class="content"> 
 		<?php 
 			$error = $this->session->flashdata('error');
 			if($error){
@@ -74,7 +74,7 @@
 							<div class="col-xs-12">
 								<div class="box">
 									<div class="box-header">
-										<h3 class="box-title"><b>DayWork Tickets List</b> </h3>
+										<h3 class="box-title"><b>Archived DayWork Tickets List</b> </h3>
 										<button class="btn btn-success SplitExcelDayWork" name="splitxls" id="splitxls"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Split XLS</button> 
 										<button class="btn btn-danger DayWorkExcelExport" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Export XLS</button> 
 									</div> 
@@ -129,7 +129,7 @@ const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeI
 var apiUrl = baseUrl; 
  
 var GetTableMetaApiEndpoint = 'DayWorkTicketsTableMeta';//Endpoint returning Table Metadata 
-var GetTableDataApiEndpoint = 'AjaxDayWorkTickets';//Endpoint processing and return Table Data
+var GetTableDataApiEndpoint = 'AllDayWorkTicketsAJAXArchived';//Endpoint processing and return Table Data
   
 	function getTableMeta() {
 

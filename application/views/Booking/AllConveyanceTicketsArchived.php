@@ -22,7 +22,7 @@
 </style> -->
 <div class="content-wrapper"> 
     <section class="content-header"> <h1> <i class="fa fa-users"></i>Collection / Delivery Tickets  
-    <a class="btn btn-danger" href="<?php echo base_url(); ?>AllConveyanceTicketsArchived" style="float:right;margin: 6px "> Archived Conveyance Tickets</a> <a href="https://tml.snsitltd.com/cron/CronDocuments.php" target="_blank" class="btn btn-info" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Update HandWritten Tickets</a>  </h1>    
+    <a class="btn btn-success" href="<?php echo base_url(); ?>ConveyanceTickets" style="float:right;margin: 6px "> Recent Conveyance Tickets</a> <a href="https://tml.snsitltd.com/cron/CronDocuments.php" target="_blank" class="btn btn-info" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Update HandWritten Tickets</a>  </h1>    
 	</section> 
     <section class="content"> 
 		<?php 
@@ -92,7 +92,7 @@
 							<div class="col-xs-12">
 								<div class="box">
 									<div class="box-header">
-										<h3 class="box-title"><b>Conveyance Tickets List</b> </h3>
+										<h3 class="box-title"><b>Archived Conveyance Tickets List</b> </h3>
 										<button class="btn btn-warning WaitTimeSplitExcelConv" name="WaitTime" id="WaitTime"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> WaitTime XLS</button> 
 										<button class="btn btn-success SplitExcelConv" name="splitxls" id="splitxls"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Split XLS</button> 
 										<button class="btn btn-danger ConveyanceExcelExport" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Export XLS</button> 
@@ -130,7 +130,7 @@
         </div>
 		 
     </section>
-</div>  
+</div> 
 
 <script type="text/javascript" language="javascript" >
 
@@ -141,9 +141,8 @@ var apiUrl = baseURL;
 var ColumnData;    
 var defaultcol = "";
   
- 
 var GetTableMetaApiEndpoint = 'ConveyanceTicketsTableMeta';//Endpoint returning Table Metadata 
-var GetTableDataApiEndpoint = 'AjaxConveyanceTickets';//Endpoint processing and return Table Data
+var GetTableDataApiEndpoint = 'AllConveyanceTicketsAJAXArchived';//Endpoint processing and return Table Data
   
 	function getTableMeta() {
 
@@ -215,9 +214,7 @@ var GetTableDataApiEndpoint = 'AjaxConveyanceTickets';//Endpoint processing and 
 					if(reservation!=""){
 						data.search.value = "";
 					} 
-					//alert(JSON.stringify(data));
-					//console.log(confirmation); 
-
+					
 					var sort = data.order[0].column;
 					//alert(data['columns'][sort]['data'])
 					
@@ -811,4 +808,3 @@ var GetTableDataApiEndpoint = 'AjaxConveyanceTickets';//Endpoint processing and 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script> 
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>  
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.colVis.min.js"></script>  
-

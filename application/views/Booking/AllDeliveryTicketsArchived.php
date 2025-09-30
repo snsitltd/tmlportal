@@ -1,7 +1,7 @@
 <link href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
 <div class="content-wrapper"> 
     <section class="content-header"> <h1> <i class="fa fa-users"></i>Collection / Delivery Tickets 
-	<a class="btn btn-danger" href="<?php echo base_url(); ?>AllDeliveryTicketsArchived" style="float:right;margin: 6px "> Archived Delivery Tickets</a> <a href="https://tml.snsitltd.com/cron/CronDocuments.php" target="_blank" class="btn btn-info" name="exportxls1" id="exportxls1"  style="float:right;margin: 6px "> Update HandWritten Tickets</a>  </h1>    </section> 
+	<a class="btn btn-success" href="<?php echo base_url(); ?>DeliveryTickets" style="float:right;margin: 6px "> Recent Delivery Tickets</a> <a href="https://tml.snsitltd.com/cron/CronDocuments.php" target="_blank" class="btn btn-info" name="exportxls1" id="exportxls1"  style="float:right;margin: 6px "> Update HandWritten Tickets</a>  </h1>    </section> 
     <section class="content"> 
 		<?php 
 			$error = $this->session->flashdata('error');
@@ -52,7 +52,7 @@
 							<div class="col-xs-12">
 								<div class="box">
 									<div class="box-header">
-										<h3 class="box-title"><b>Delivery Ticket List</b></h3>
+										<h3 class="box-title"><b>Archived Delivery Ticket List</b></h3>
 										<button class="btn btn-success SplitExcelDel" name="splitxls1" id="splitxls1"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> Split XLS</button> 
 										<button class="btn btn-warning WaitTimeSplitExcelDel" name="WaitTime" id="WaitTime"  style="float:right;margin: 6px "><i class="fa fa-plus"></i> WaitTime XLS</button> 
 										<button class="btn btn-danger DeliveryExcelExport" name="exportxls" id="exportxls"  style="float:right;margin: 6px "> Export XLS</button> 
@@ -103,10 +103,8 @@ const baseUrl = '<?= base_url() ?>'; // Fetching the correct base URL from CodeI
 var apiUrl = baseUrl; 
 
 var GetTableMetaApiEndpoint1 = 'DeliveryTicketsTableMeta';//Endpoint returning Table Metadata 
-var GetTableDataApiEndpoint1 = 'AjaxDeliveryTickets';//Endpoint processing and return Table Data
+var GetTableDataApiEndpoint1 = 'AllDeliveryTicketsAJAXArchived';//Endpoint processing and return Table Data
 
-    
-	
 	function getTableMeta1() {
 
 		$.ajax({

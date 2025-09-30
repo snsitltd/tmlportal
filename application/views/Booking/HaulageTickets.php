@@ -22,6 +22,7 @@
 </style> -->
 <div class="content-wrapper"> 
     <section class="content-header"> <h1> <i class="fa fa-users"></i>Haulage Tickets </h1>    </section> 
+	 <a class="btn btn-danger" href="<?php echo base_url(); ?>AllHaulageTicketsArchived" style="float:right;margin: 6px "> Archived Haulage Tickets</a>
     <section class="content"> 
 		<?php 
 			$error = $this->session->flashdata('error');

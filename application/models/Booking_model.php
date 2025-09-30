@@ -2760,6 +2760,7 @@ class Booking_model extends CI_Model{
 		 
 		$this->db->where('tbl_booking_loads1.Status > 3 '); 
 		$this->db->where('tbl_booking1.BookingType  = 1 '); 
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) > DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
 		//$this->db->where('tbl_drivers.AppUser = 0 '); 
 				 
 		if( !empty($searchValue) ){   
@@ -2917,9 +2918,275 @@ class Booking_model extends CI_Model{
 
         return $return;
 
+	}
+		
+	public function GetAllConveyanceTicketsArchived()
+	{
+		if( !empty(trim($_POST['sort'])) ){  
+			$Sort = explode(' ', trim($_POST['sort'])); 
+			  
+			if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_tickets.Conveyance '; }  
+			if($Sort[0]=='WaitTime'){ $columnName = ' WaitTime '; }  
+			///if($Sort[0]=='JobStartDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y%m%d%H%i%S") ';  }   
+			if($Sort[0]=='SiteOutDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y%m%d%H%i%S") ';  }   
+			
+			if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
+			if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
+			if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; } 
+			if($Sort[0]=='TipName'){ $columnName = 'tbl_tipaddress.TipName '; } 
+			if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
+			//if($Sort[0]=='DriverName'){ $columnName = ' tbl_drivers.DriverName '; } 
+			if($Sort[0]=='DriverName'){ $columnName = ' tbl_booking_loads1.DriverName '; } 
+			//if($Sort[0]=='Price'){ $columnName = ' tbl_booking1.Price '; } 
+			if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.LoadPrice '; } 
+			if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
+			 
+			$columnSortOrder = $Sort[1]; 
+		}	
+		  
+		$searchValue = trim(strtolower($_POST['search'])); // Search value  
+		//$BookingType = trim(strtolower($_POST['BookingType']));  
+		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));  
+		$WaitTime = trim(strtolower($_POST['WaitTime']));  
+		$Price = trim(strtolower($_POST['Price']));  
+		
+		$SiteOutDateTime = trim(strtolower($_POST['SiteOutDateTime']));  
+		//$JobStartDateTime = trim(strtolower($_POST['JobStartDateTime']));  
+		$CompanyName = trim(strtolower($_POST['CompanyName']));  
+		$OpportunityName = trim(strtolower($_POST['OpportunityName']));   
+		$VehicleRegNo = trim(strtolower($_POST['VehicleRegNo']));    
+		$DriverName = trim(strtolower($_POST['DriverName']));   
+		$Status = trim(strtolower($_POST['Status']));   
+		$MaterialName = trim(strtolower($_POST['MaterialName']));   
+		$TipName = trim(strtolower($_POST['TipName']));   
+        $Reservation = trim(strtolower($_POST['Reservation']));
+		
+		$StartDate = ''; $EndDate = '';
+		if($Reservation!=""){
+			$RS = explode('-',$Reservation);     
+			
+			$SD = explode('/',trim($RS[0]));   
+			$StartDate = $SD[2].'-'.$SD[1].'-'.$SD[0]; 
+
+			$ED = explode('/',trim($RS[1]));   
+			$EndDate = $ED[2].'-'.$ED[1].'-'.$ED[0];   	
+			
+		}	  
+		//Only select column that want to show in datatable or you can filte it mnually when send it
+        $this->db->start_cache();
+		
+        //$this->db->select($columns);
+		$this->db->start_cache();  
+		 
+		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
+             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+        end) as Status"); 
+		
+		$this->db->select(' td3.GUID as ConveyanceGUID ');  
+		
+		$this->db->select(' trim(tbl_tickets.Conveyance) as TicketConveyance ');  
+		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
+		$this->db->select(' tbl_booking_loads1.ReceiptName ');  
+		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+		$this->db->select(' tbl_booking_loads1.LoadID ');  
+		$this->db->select(' tbl_booking_loads1.AutoAllocated ');  
+		
+		$this->db->select(' tbl_tickets.pdf_name ');
+		$this->db->select(' tbl_tickets.IsInBound ');		
+		$this->db->select(' tbl_tickets.Net  '); 
+		$this->db->select(' tbl_tickets.TicketNumber as SuppNo '); 
+		$this->db->select(' DATE_FORMAT(tbl_tickets.TicketDate,"%d-%m-%Y") as SuppDate ');  	 	  	 	      
+		
+		$this->db->select(' tbl_tipticket.TipTicketID '); 
+		$this->db->select(' tbl_tipticket.TipTicketNo '); 
+		$this->db->select(' DATE_FORMAT(tbl_tipticket.CreatedDateTime,"%d-%m-%Y") as TipTicketDate ');  	 	  	 	      
+		
+		$this->db->select(' tbl_booking_loads1.TipID '); 
+		$this->db->select(' tbl_booking_loads1.TipAddressUpdate '); 
+		$this->db->select(' tbl_booking_loads1.DriverName ');  	 		
+		$this->db->select(' tbl_booking_loads1.VehicleRegNo ');   		  		
+		$this->db->select(' tbl_booking_loads1.DriverLoginID ');   		  		
+		
+		////$this->db->select(' tbl_drivers.RegNumber as rname ');  	 			
+		////$this->db->select(' tbl_drivers_login.DriverName as dname ');  	 			
+		
+		$this->db->select(' tbl_booking_request.CompanyID ');  	 		
+		$this->db->select(' tbl_booking1.BookingType ');  	 		
+		$this->db->select(' tbl_booking1.LoadType ');  	
+		 
+		$this->db->select(' tbl_booking1.PurchaseOrderNo ');  	
+		$this->db->select(' tbl_booking1.MaterialID as BookingMaterialID '); 
+		$this->db->select(' tbl_booking_request.OpportunityID ');		
+		//$this->db->select(' tbl_booking1.Price ');		
+		$this->db->select(' tbl_booking_loads1.LoadPrice as Price  ');		
+		$this->db->select(' tbl_booking_request.CompanyName ');
+		$this->db->select(' tbl_booking_request.PurchaseOrderNumber ');
+		$this->db->select(' tbl_materials.MaterialName ');
+		$this->db->select(' tbl_booking_request.OpportunityName '); 
+		$this->db->select(' tbl_tipaddress.TipName ');
+		$this->db->select(' concat(tbl_tipaddress.Street1,tbl_tipaddress.Street2,tbl_tipaddress.Town,tbl_tipaddress.County,tbl_tipaddress.PostCode) as TipAddress '); 
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');  	 	  	 	       
+		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');  	 	  	 	      
+		$this->db->select(' tbl_booking_date1.BookingDateID ');
+		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStart ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');   
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');    
+		$this->db->select('ROUND(TIMESTAMPDIFF(MINUTE, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime) - tbl_booking_request.WaitingTime ) AS WaitTime');  
+		
+		//$this->db->select('ROUND((TIMESTAMPDIFF(SECOND, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime)/60))  AS WaitTime');    
+		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT'); 		   
+		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID ','LEFT'); 		    
+		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ','LEFT'); 		    
+		$this->db->join('tbl_tipaddress', 'tbl_booking_loads1.TipID = tbl_tipaddress.TipID ','LEFT'); 		 
+		$this->db->join('tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ','LEFT');
+		$this->db->join('tbl_tickets', 'tbl_booking_loads1.TicketID = tbl_tickets.TicketNo and tbl_tickets.TypeOfTicket = "In" ','LEFT'); 		 
+		//$this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID = tbl_tickets.LoadID ','LEFT'); 		 
+		$this->db->join('tbl_tipticket', 'tbl_booking_loads1.LoadID = tbl_tipticket.LoadID ','LEFT'); 		 
+		 
+		$this->db->join('tbl_tickets_documents as td3', 'tbl_tickets.Conveyance = td3.FD_650A620E AND td3.DocTypeID  = "392cf403 " ','LEFT'); 		 
+		 
+		$this->db->where('tbl_booking_loads1.Status > 3 '); 
+		$this->db->where('tbl_booking1.BookingType  = 1 '); 
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) < DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
+		//$this->db->where('tbl_drivers.AppUser = 0 '); 
+				 
+		if( !empty($searchValue) ){   
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]); 
+						$this->db->or_like('tbl_tickets.Conveyance', $s[$i]); 
+						$this->db->or_like(
+							'DATE_FORMAT(IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y")',
+							$s[$i]
+						);
+
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						//$this->db->or_like('tbl_drivers.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]);  
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						//$this->db->or_like('tbl_booking1.Price', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.LoadPrice', $s[$i]); 
+						$this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } 
+		if( !empty(trim($WaitTime)) ){    
+			$this->db->group_start(); 
+			$this->db->like(' ROUND((TIMESTAMPDIFF(SECOND, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime)/60)) ', trim($WaitTime));  
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($ConveyanceNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking_loads1.ConveyanceNo ', trim($ConveyanceNo)); 
+			$this->db->or_like(' tbl_tickets.Conveyance ', trim($ConveyanceNo));  
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($Price)) ){    
+			$this->db->group_start(); 
+			$this->db->like(' tbl_booking_loads1.LoadPrice ', trim($Price)); 
+ 			$this->db->group_end();  
+        }
+		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
+			$this->db->group_start();
+			$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) >=', $StartDate);
+    		$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) <=', $EndDate);
+
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($SiteOutDateTime)) ){    
+			$this->db->group_start(); 
+			 $this->db->like(
+			'DATE_FORMAT(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y %T")', 
+			trim($SiteOutDateTime)
+		); 
+ 			$this->db->group_end();  
         }
 		
+		if( !empty(trim($CompanyName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.CompanyName', trim($CompanyName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($OpportunityName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.OpportunityName', trim($OpportunityName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($MaterialName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_materials.MaterialName', trim($MaterialName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($TipName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_tipaddress.TipName', trim($TipName)); 
+ 			$this->db->group_end();  
+        }
+		 
+		if( !empty(trim($VehicleRegNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_loads1.VehicleRegNo', trim($VehicleRegNo)); 
+ 			$this->db->group_end();  
+        }
+		 
+		if( !empty(trim($DriverName)) ){    
+			$this->db->group_start(); 
+			$this->db->like('tbl_booking_loads1.DriverName', trim($DriverName));  
+ 			$this->db->group_end();  
+        } 
+		if( !empty(trim($Status)) ){     
+			if(strtolower($Status[0])=='f' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '4'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='c' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='w' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}else{ 
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '11'); 
+				$this->db->group_end();  
+			} 
+        }
 		
+		$this->db->group_by("tbl_booking_loads1.LoadID ");   
+		$this->db->order_by($columnName.' '.$columnSortOrder);	
+        $this->db->limit($_REQUEST['length'], $_REQUEST['start']);
+		
+		$query = $this->db->get('tbl_booking_loads1');
+		$this->db->stop_cache();
+	
+        $data = array();
+		$data = $query->result_array();
+		$totalData  = $this->db->count_all_results();
+		$totalFiltered =  $totalData; 
+		 
+        //Prepare Return Data
+        $return = array(
+                "draw"            => $_REQUEST['draw'] ,   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                "recordsTotal"    => $totalData,  // total number of records
+                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data //$query->result_array() //$data  // total data array
+        );
+
+        return $return;
+	}	
 	public function GetDeliveryTickets(){
 		//print_r($_POST);
 		//exit;
@@ -3037,6 +3304,7 @@ class Booking_model extends CI_Model{
 		$this->db->where('tbl_booking_loads1.Status > 3 '); 
 		$this->db->where('tbl_booking1.BookingType  = 2 '); 
 		$this->db->where('tbl_drivers.AppUser = 0 '); 	
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) > DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
 				 
 		if( !empty($searchValue) ){   
 			$s = explode(' ',$searchValue);
@@ -3178,9 +3446,248 @@ class Booking_model extends CI_Model{
 
         return $return;
 
+    }
+
+	public function GetAllDeliveryTicketsArchived(){
+		
+		if( !empty(trim($_POST['sort'])) ){  
+			$Sort = explode(' ', trim($_POST['sort'])); 
+			if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_booking_loads1.ConveyanceNo '; } 
+			if($Sort[0]=='WaitTime'){ $columnName = ' WaitTime '; }  
+			if($Sort[0]=='SiteOutDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y%m%d%H%i%S") ';  }   
+			if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
+			if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
+			if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; } 
+			if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
+			if($Sort[0]=='DriverName'){ $columnName = ' tbl_drivers.DriverName '; } 
+			if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
+			if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.Price '; } 
+			if($Sort[0]=='PurchaseOrderNo'){ $columnName = ' tbl_booking1.PurchaseOrderNo '; } 
+			if($Sort[0]=='TicketNumber'){ $columnName = ' tbl_tickets.TicketNumber '; } 
+			 
+			$columnSortOrder = $Sort[1]; 
+		}	
+		  
+		$searchValue = trim(strtolower($_POST['search'])); // Search value  
+		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));  
+		$WaitTime = trim(strtolower($_POST['WaitTime']));  
+		$TicketNumber = trim(strtolower($_POST['TicketNumber']));  
+		
+		$SiteOutDateTime = trim(strtolower($_POST['SiteOutDateTime']));  
+		$CompanyName = trim(strtolower($_POST['CompanyName']));  
+		$OpportunityName = trim(strtolower($_POST['OpportunityName']));   
+		$VehicleRegNo = trim(strtolower($_POST['VehicleRegNo']));    
+		$DriverName = trim(strtolower($_POST['DriverName']));   
+		$Status = trim(strtolower($_POST['Status']));   
+		$MaterialName = trim(strtolower($_POST['MaterialName']));   
+        $Reservation1 = trim(strtolower($_POST['Reservation1']));
+		$Price = trim(strtolower($_POST['Price']));
+		$PurchaseOrderNo = trim(strtolower($_POST['PurchaseOrderNo']));
+		
+		$StartDate = ''; $EndDate = '';
+		if($Reservation1!=""){
+			$RS = explode('-',$Reservation1);     
+			
+			$SD = explode('/',trim($RS[0]));   
+			$StartDate = $SD[2].'-'.$SD[1].'-'.$SD[0]; 
+
+			$ED = explode('/',trim($RS[1]));   
+			$EndDate = $ED[2].'-'.$ED[1].'-'.$ED[0];   	
+			
+		}	  
+		//Only select column that want to show in datatable or you can filte it mnually when send it
+        $this->db->start_cache();
+		
+		$this->db->start_cache(); 
+		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
+             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+        end) as Status"); 
+		
+		$this->db->select(' tbl_tickets.TicketNumber ');      
+		$this->db->select(' tbl_tickets.TicketNo ');      
+		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
+		$this->db->select(' tbl_booking_loads1.ReceiptName ');  
+		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+		$this->db->select(' tbl_booking_loads1.LoadID '); 
+		$this->db->select(' tbl_booking_loads1.DriverName ');  	 		
+		$this->db->select(' tbl_booking_loads1.VehicleRegNo ');  	 		
+		$this->db->select(' tbl_booking_loads1.TipID ');  		
+		$this->db->select(' tbl_drivers.RegNumber as rname ');  	 			
+		
+		$this->db->select(' tbl_booking_request.PurchaseOrderNumber '); 
+		$this->db->select(' tbl_booking_request.CompanyID');  	 		
+		$this->db->select(' tbl_booking_request.OpportunityID ');		
+		$this->db->select(' tbl_booking_request.CompanyName '); 
+		$this->db->select(' tbl_booking_request.OpportunityName '); 
+		
+		$this->db->select(' tbl_booking1.BookingType ');  	 		
+		$this->db->select(' tbl_booking1.LoadType ');  	 
+		$this->db->select(' tbl_booking1.TonBook ');	
+		$this->db->select(' tbl_booking1.LorryType ');	
+		$this->db->select(' tbl_booking1.PurchaseOrderNo ');  
+		$this->db->select(' tbl_materials.Status as MStatus ');
+		$this->db->select(' tbl_booking_date1.BookingDateID ');
+		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		
+		$this->db->select(' tbl_materials.MaterialName '); 
+		$this->db->select(' tbl_booking_loads1.LoadPrice as Price '); 
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');  	 	  	 	      
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStartDateTime ');  	 	  	 	      
+		$this->db->select(' tbl_tickets_documents.ID  as DOCID ');  
+		$this->db->select('ROUND(TIMESTAMPDIFF(MINUTE, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime) - tbl_booking_request.WaitingTime ) AS WaitTime');   
+		 
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStart ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');   
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');    
+		  
+		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT'); 		   
+		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ','LEFT'); 		   
+		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID ','LEFT'); 
+		$this->db->join('tbl_drivers', 'tbl_booking_loads1.DriverID = tbl_drivers.LorryNo ','LEFT'); 		 
+		$this->db->join('tbl_tipaddress', 'tbl_booking_loads1.TipID = tbl_tipaddress.TipID ','LEFT'); 		  
+		$this->db->join('tbl_tickets', 'tbl_booking_loads1.LoadID = tbl_tickets.LoadID ','LEFT'); 		 
+		$this->db->join('tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ','LEFT'); 		 
+		$this->db->join('tbl_tickets_documents', 'tbl_tickets.TicketNumber = tbl_tickets_documents.FD_16EB2AD9 AND tbl_tickets_documents.DocTypeID = "1036437d" ','LEFT'); 	 
+		$this->db->where('tbl_booking_loads1.Status > 3 '); 
+		$this->db->where('tbl_booking1.BookingType  = 2 '); 
+		$this->db->where('tbl_drivers.AppUser = 0 '); 	
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) < DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
+				
+		if( !empty($searchValue) ){   
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_tickets.TicketNumber', $s[$i]);  
+						$this->db->or_like(
+							'DATE_FORMAT(IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y")',
+							$s[$i]
+						);
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						$this->db->or_like('tbl_drivers.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } 
+		if( !empty(trim($WaitTime)) ){    
+			$this->db->group_start();  
+			$this->db->like(' ROUND((TIMESTAMPDIFF(SECOND, tbl_booking_loads1.SiteInDateTime, tbl_booking_loads1.SiteOutDateTime)/60)) ', trim($WaitTime));  
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($TicketNumber)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_tickets.TicketNumber ', trim($TicketNumber)); 
+ 			$this->db->group_end();  
         }
 		
-	  
+		if( !empty(trim($Price)) ){    
+			$this->db->group_start(); 
+			$this->db->like(' tbl_booking_loads1.LoadPrice ', trim($Price)); 
+ 			$this->db->group_end();  
+        }
+		
+		if( !empty(trim($PurchaseOrderNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking1.PurchaseOrderNo ', trim($PurchaseOrderNo)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($ConveyanceNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking_loads1.ConveyanceNo ', trim($ConveyanceNo)); 
+ 			$this->db->group_end();  
+        }
+		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
+			$this->db->group_start(); 
+			  
+			$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) >=', $StartDate);
+    		$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) <=', $EndDate);
+
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($SiteOutDateTime)) ){    
+			$this->db->group_start(); 
+			$this->db->like(
+			'DATE_FORMAT(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y %T")', 
+			trim($SiteOutDateTime)
+		); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($CompanyName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.CompanyName', trim($CompanyName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($OpportunityName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.OpportunityName', trim($OpportunityName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($MaterialName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_materials.MaterialName', trim($MaterialName)); 
+ 			$this->db->group_end();  
+        }
+		 
+		if( !empty(trim($VehicleRegNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_loads1.VehicleRegNo', trim($VehicleRegNo)); 
+ 			$this->db->group_end();  
+        }
+		 
+		if( !empty(trim($DriverName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_drivers.DriverName', trim($DriverName)); 
+ 			$this->db->group_end();  
+        } 
+		if( !empty(trim($Status)) ){     
+			if(strtolower($Status[0])=='f' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '4'); 
+				$this->db->group_end();  
+			} 
+			if(strtolower($Status[0])=='c' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->group_end();  
+			} 
+			if(strtolower($Status[0])=='w' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			} 
+        }
+		
+		$this->db->group_by("tbl_booking_loads1.LoadID ");   
+		$this->db->order_by($columnName.' '.$columnSortOrder);	
+        $this->db->limit($_REQUEST['length'], $_REQUEST['start']);
+		
+		$query = $this->db->get('tbl_booking_loads1');
+		$this->db->stop_cache();
+		
+        $data = array();
+		$data = $query->result_array();
+		$totalData  = $this->db->count_all_results();
+		$totalFiltered =  $totalData; 
+		 
+        //Prepare Return Data
+        $return = array(
+                "draw"            => $_REQUEST['draw'] ,   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                "recordsTotal"    => $totalData,  // total number of records
+                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data //$query->result_array() //$data  // total data array
+        );
+
+        return $return;
+
+    }
 	
 	public function GetLoadsMessage(){ 
 	
@@ -9858,7 +10365,7 @@ class Booking_model extends CI_Model{
 		
 		$this->db->where('tbl_booking_loads1.Status > 3 '); 
 		$this->db->where('tbl_booking1.BookingType  = 3 '); 
-		//$this->db->where('tbl_drivers.AppUser = 0 '); 
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) > DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
 				 
 		if( !empty($searchValue) ){   
 			$s = explode(' ',$searchValue);
@@ -9984,6 +10491,246 @@ class Booking_model extends CI_Model{
 		//exit;
     
 	
+        //Reset Key ArrayGetDayWorkTickets
+        $data = array();
+		$data = $query->result_array();
+		$totalData  = $this->db->count_all_results();
+		$totalFiltered =  $totalData; 
+		 
+        //Prepare Return Data
+        $return = array(
+                "draw"            => $_REQUEST['draw'] ,   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                "recordsTotal"    => $totalData,  // total number of records
+                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data //$query->result_array() //$data  // total data array
+        );
+
+        return $return;
+
+    }
+		
+	public function GetAllDayWorkTicketsArchived(){
+		//print_r($_POST);
+		//exit;
+		if( !empty(trim($_POST['sort'])) ){  
+			$Sort = explode(' ', trim($_POST['sort'])); 
+			
+			//print_r($Sort);
+			//exit;
+			  
+			if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_tickets.Conveyance '; }  
+			 
+			///if($Sort[0]=='JobStartDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%Y%m%d%H%i%S") ';  }   
+			if($Sort[0]=='SiteOutDateTime'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%Y%m%d%H%i%S") ';  }  
+			if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
+			if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
+			if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; }  
+			if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
+			if($Sort[0]=='DriverName'){ $columnName = ' tbl_booking_loads1.DriverName '; } 
+			//if($Sort[0]=='Price'){ $columnName = ' tbl_booking1.Price '; } 
+			if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.LoadPrice '; } 
+			if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
+			 
+			$columnSortOrder = $Sort[1]; 
+		}	
+		  
+		$searchValue = trim(strtolower($_POST['search'])); // Search value  
+		//$BookingType = trim(strtolower($_POST['BookingType']));  
+		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));  
+		 
+		$Price = trim(strtolower($_POST['Price']));  
+		
+		$SiteOutDateTime = trim(strtolower($_POST['SiteOutDateTime']));  
+		//$JobStartDateTime = trim(strtolower($_POST['JobStartDateTime']));  
+		$CompanyName = trim(strtolower($_POST['CompanyName']));  
+		$OpportunityName = trim(strtolower($_POST['OpportunityName']));   
+		$VehicleRegNo = trim(strtolower($_POST['VehicleRegNo']));    
+		$DriverName = trim(strtolower($_POST['DriverName']));   
+		$Status = trim(strtolower($_POST['Status']));   
+		$MaterialName = trim(strtolower($_POST['MaterialName']));   
+		   
+        $Reservation = trim(strtolower($_POST['Reservation']));
+		
+		$StartDate = ''; $EndDate = '';
+		if($Reservation!=""){
+			$RS = explode('-',$Reservation);     
+			
+			$SD = explode('/',trim($RS[0]));   
+			$StartDate = $SD[2].'-'.$SD[1].'-'.$SD[0]; 
+
+			$ED = explode('/',trim($RS[1]));   
+			$EndDate = $ED[2].'-'.$ED[1].'-'.$ED[0];   	
+			
+		}	  
+		//Only select column that want to show in datatable or you can filte it mnually when send it
+        $this->db->start_cache();
+		
+        //$this->db->select($columns);
+		$this->db->start_cache();  
+		 
+		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
+             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+        end) as Status"); 
+		  
+		 
+		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
+		$this->db->select(' tbl_booking_loads1.ReceiptName ');  
+		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+		$this->db->select(' tbl_booking_loads1.LoadID ');  
+		$this->db->select(' tbl_booking_loads1.AutoAllocated ');  
+		 
+		$this->db->select(' tbl_booking_loads1.TipID '); 
+		$this->db->select(' tbl_booking_loads1.TipAddressUpdate '); 
+		$this->db->select(' tbl_booking_loads1.DriverName ');  	 		
+		$this->db->select(' tbl_booking_loads1.VehicleRegNo ');   		  		
+		$this->db->select(' tbl_booking_loads1.DriverLoginID ');   		  		
+		  
+		$this->db->select(' tbl_booking_request.CompanyID ');  	 		
+		$this->db->select(' tbl_booking1.BookingType ');  	 		
+		$this->db->select(' tbl_booking1.LoadType ');  	  	 
+		$this->db->select(' tbl_booking_request.OpportunityID ');		
+		$this->db->select(' tbl_booking_loads1.LoadPrice as Price ');		
+		$this->db->select(' tbl_booking_request.CompanyName ');
+		$this->db->select(' tbl_booking_request.PurchaseOrderNumber ');
+		$this->db->select(' tbl_booking1.PurchaseOrderNo ');
+		$this->db->select(' tbl_materials.MaterialName ');
+		$this->db->select(' tbl_booking_request.OpportunityName '); 
+		
+		$this->db->select(' tbl_booking_date1.BookingDateID ');
+		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');  	 	  	 	       
+		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');  	 	  	 	      
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y ") as JobStart ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');   
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');    
+		
+		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT'); 		   
+		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID ','LEFT');  
+		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ','LEFT'); 	  
+		$this->db->join('tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ','LEFT');    
+		
+		$this->db->where('tbl_booking_loads1.Status > 3 '); 
+		$this->db->where('tbl_booking1.BookingType  = 3 '); 
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) < DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
+				 
+		if( !empty($searchValue) ){   
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]);  
+						//$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y")  ', $s[$i]);
+						// $this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y")  ', $s[$i]);  
+						$this->db->or_like(
+							'DATE_FORMAT(IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y")',
+							$s[$i]
+						);
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]);
+						//$this->db->or_like('tbl_drivers.DriverName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]);  
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.LoadPrice', $s[$i]); 
+						//$this->db->or_like('tbl_tipaddress.TipName', $s[$i]); 
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } 
+		 
+		if( !empty(trim($ConveyanceNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking_loads1.ConveyanceNo ', trim($ConveyanceNo));  
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($Price)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking_loads1.LoadPrice ', trim($Price)); 
+ 			$this->db->group_end();  
+        }
+		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
+			$this->db->group_start();
+			$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) >=', $StartDate);
+    		$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) <=', $EndDate);
+
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($SiteOutDateTime)) ){    
+			$this->db->group_start(); 
+			$this->db->like(
+			'DATE_FORMAT(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y %T")', 
+			trim($SiteOutDateTime)
+		); 
+ 			$this->db->group_end();  
+        }
+		
+		if( !empty(trim($CompanyName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.CompanyName', trim($CompanyName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($OpportunityName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.OpportunityName', trim($OpportunityName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($MaterialName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_materials.MaterialName', trim($MaterialName)); 
+ 			$this->db->group_end();  
+        }
+		 
+		 
+		if( !empty(trim($VehicleRegNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_loads1.VehicleRegNo', trim($VehicleRegNo)); 
+ 			$this->db->group_end();  
+        }
+		 
+		if( !empty(trim($DriverName)) ){    
+			$this->db->group_start(); 
+			$this->db->like('tbl_booking_loads1.DriverName', trim($DriverName)); 
+ 			//$this->db->like('tbl_drivers.DriverName', trim($DriverName)); 
+			//$this->db->or_like('tbl_drivers_login.DriverName', trim($DriverName));  
+ 			$this->db->group_end();  
+        } 
+		if( !empty(trim($Status)) ){     
+			if(strtolower($Status[0])=='f' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '4'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='c' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='w' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}else{ 
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '11'); 
+				$this->db->group_end();  
+			} 
+        }
+		
+		$this->db->group_by("tbl_booking_loads1.LoadID ");   
+		$this->db->order_by($columnName.' '.$columnSortOrder);	
+        $this->db->limit($_REQUEST['length'], $_REQUEST['start']);
+		
+	    
+		$query = $this->db->get('tbl_booking_loads1');
+		$this->db->stop_cache();
+		//echo $this->db->last_query();
+		//exit;
+    
+	
         //Reset Key Array
         $data = array();
 		$data = $query->result_array();
@@ -10000,9 +10747,8 @@ class Booking_model extends CI_Model{
 
         return $return;
 
-        }
-		
-		
+    }
+
 		public function SplitExcelDayWorkTicketsAll1($CompanyName,$OpportunityName,$Reservation,$SiteOutDateTime,$ConveyanceNo,$MaterialName,$DriverName,$VehicleRegNo,$Status,$Search,$Price){
 		//print_r($_POST);
 		//exit;
@@ -10817,6 +11563,7 @@ class Booking_model extends CI_Model{
 		
 		//$this->db->where('tbl_booking_loads1.Status > 3 ');  
 		$this->db->where('tbl_booking1.BookingType  = 4 '); 
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) > DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
 		// $this->db->where('DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y-%m-%d") >= (CURDATE() - INTERVAL 90 DAY)');   
 		$this->db->group_start(); 
 		$this->db->where('tbl_booking_loads1.Status = 4 ');
@@ -10963,7 +11710,250 @@ class Booking_model extends CI_Model{
 
         return $return;
 
+	}
+
+	public function GetAllHaulageTicketsArchieved(){
+	
+		if( !empty(trim($_POST['sort'])) ){  
+			$Sort = explode(' ', trim($_POST['sort'])); 
+			  
+			if($Sort[0]=='ConveyanceNo'){ $columnName = 'tbl_tickets.Conveyance '; }  
+			 
+			if($Sort[0]=='SiteOutDateTime2'){  $columnName = ' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y%m%d%H%i%S") ';  }  
+			if($Sort[0]=='CompanyName'){ $columnName = 'tbl_booking_request.CompanyName '; } 
+			if($Sort[0]=='OpportunityName'){ $columnName = 'tbl_booking_request.OpportunityName '; }   
+			if($Sort[0]=='MaterialName'){ $columnName = 'tbl_booking1.MaterialName '; }  
+			if($Sort[0]=='VehicleRegNo'){ $columnName = 'tbl_booking_loads1.VehicleRegNo'; }  
+			if($Sort[0]=='DriverName'){ $columnName = ' tbl_booking_loads1.DriverName '; } 
+			if($Sort[0]=='Price'){ $columnName = ' tbl_booking_loads1.LoadPrice '; } 
+			if($Sort[0]=='Status'){ $columnName = ' tbl_booking_loads1.Status '; } 
+			 
+			$columnSortOrder = $Sort[1]; 
+		}	
+		  
+		$searchValue = trim(strtolower($_POST['search'])); // Search value  
+		//$BookingType = trim(strtolower($_POST['BookingType']));  
+		$ConveyanceNo = trim(strtolower($_POST['ConveyanceNo']));  
+		 
+		$Price = trim(strtolower($_POST['Price']));  
+		
+		$SiteOutDateTime2 = trim(strtolower($_POST['SiteOutDateTime2']));  
+		//$JobStartDateTime = trim(strtolower($_POST['JobStartDateTime']));  
+		$CompanyName = trim(strtolower($_POST['CompanyName']));  
+		$OpportunityName = trim(strtolower($_POST['OpportunityName']));   
+		$VehicleRegNo = trim(strtolower($_POST['VehicleRegNo']));    
+		$DriverName = trim(strtolower($_POST['DriverName']));   
+		$Status = trim(strtolower($_POST['Status']));   
+		$MaterialName = trim(strtolower($_POST['MaterialName']));   
+		   
+        $Reservation = trim(strtolower($_POST['Reservation']));
+		
+		$StartDate = ''; $EndDate = '';
+		if($Reservation!=""){
+			$RS = explode('-',$Reservation);     
+			
+			$SD = explode('/',trim($RS[0]));   
+			$StartDate = $SD[2].'-'.$SD[1].'-'.$SD[0]; 
+
+			$ED = explode('/',trim($RS[1]));   
+			$EndDate = $ED[2].'-'.$ED[1].'-'.$ED[0];   	
+			
+		}	  
+		//Only select column that want to show in datatable or you can filte it mnually when send it
+        $this->db->start_cache();
+		
+        //$this->db->select($columns);
+		$this->db->start_cache();  
+		 
+		$this->db->select("(case when (tbl_booking_loads1.Status = '4') then 'Finished'
+             when  (tbl_booking_loads1.Status = '5') then 'Cancelled'
+             when  (tbl_booking_loads1.Status = '6') then 'Wasted' 
+        end) as Status"); 
+		  
+		 
+		$this->db->select(' tbl_booking_loads1.ConveyanceNo ');  
+		$this->db->select(' tbl_booking_loads1.TicketUniqueID ');  
+		$this->db->select(' tbl_booking_loads1.ReceiptName ');  
+		$this->db->select(' tbl_booking_loads1.MaterialID ');  	 		
+		$this->db->select(' tbl_booking_loads1.LoadID ');  
+		$this->db->select(' tbl_booking_loads1.AutoAllocated ');  
+		 
+		$this->db->select(' tbl_booking_loads1.TipID '); 
+		$this->db->select(' tbl_booking_loads1.TipAddressUpdate '); 
+		$this->db->select(' tbl_booking_loads1.DriverName ');  	 		
+		$this->db->select(' tbl_booking_loads1.VehicleRegNo ');   		  		
+		$this->db->select(' tbl_booking_loads1.DriverLoginID ');   		  		
+		  
+		$this->db->select(' tbl_booking_request.CompanyID ');  	 		
+		$this->db->select(' tbl_booking1.BookingType ');  	 		
+		$this->db->select(' tbl_booking1.LoadType ');  	 
+		$this->db->select(' tbl_booking1.PurchaseOrderNo ');  	 
+		$this->db->select(' tbl_booking_request.OpportunityID ');		
+		$this->db->select(' tbl_booking_loads1.LoadPrice as Price ');		
+		$this->db->select(' tbl_booking_request.CompanyName ');
+		$this->db->select(' tbl_booking_request.PurchaseOrderNumber ');
+		$this->db->select(' tbl_materials.MaterialName ');
+		$this->db->select(' tbl_booking_request.OpportunityName '); 
+		$this->db->select(' tbl_booking_date1.BookingDateID ');
+		$this->db->select(' tbl_booking_date1.BookingRequestID ');
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d-%m-%Y") as SiteOutDateTime ');  	 	  	 	       
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y") as SiteOutDateTime2 ');  	 	  	 	       
+		$this->db->select(' DATE_FORMAT(tbl_booking_date1.BookingDate,"%d-%m-%Y") as RequestDate ');  	 	  	 	      
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y") as JobStartDateTime ');  
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y ") as JobStart ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime,"%d/%m/%Y %T") as SiteIn ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.JobEndDateTime,"%d/%m/%Y %T") as JobEnd ');   
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime,"%d/%m/%Y %T") as SiteOut ');    
+		
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteInDateTime2,"%d/%m/%Y %T") as HaulageIn ');  
+		$this->db->select(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d/%m/%Y %T") as HaulageOut ');    
+		
+		$this->db->join('tbl_booking_request', 'tbl_booking_loads1.BookingRequestID = tbl_booking_request.BookingRequestID ','LEFT'); 		   
+		$this->db->join('tbl_booking_date1', 'tbl_booking_loads1.BookingDateID = tbl_booking_date1.BookingDateID ','LEFT');  
+		$this->db->join('tbl_booking1', 'tbl_booking_loads1.BookingID = tbl_booking1.BookingID ','LEFT'); 	  
+		$this->db->join('tbl_materials', 'tbl_booking_loads1.MaterialID = tbl_materials.MaterialID ','LEFT');    
+		
+		//$this->db->where('tbl_booking_loads1.Status > 3 ');  
+		$this->db->where('tbl_booking1.BookingType  = 4 '); 
+		$this->db->where('IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime) < DATE_FORMAT(CURDATE() - INTERVAL 3 MONTH, "%Y-%m-01")');
+		// $this->db->where('DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%Y-%m-%d") >= (CURDATE() - INTERVAL 90 DAY)');   
+		$this->db->group_start(); 
+		$this->db->where('tbl_booking_loads1.Status = 4 ');
+		$this->db->or_where(' tbl_booking_loads1.Status = 5  ');
+		$this->db->or_where(' tbl_booking_loads1.Status = 6  ');
+		$this->db->group_end(); 
+		//$this->db->where('tbl_drivers.AppUser = 0 '); 
+				 
+		if( !empty($searchValue) ){   
+			$s = explode(' ',$searchValue);
+			if(count($s)>0){ 
+				for($i=0;$i<count($s);$i++){   
+					$this->db->group_start();   
+						$this->db->or_like('tbl_booking_loads1.ConveyanceNo', $s[$i]);  
+						//$this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.JobStartDateTime,"%d-%m-%Y")  ', $s[$i]);
+						// $this->db->or_like(' DATE_FORMAT(tbl_booking_loads1.SiteOutDateTime2,"%d-%m-%Y")  ', $s[$i]);
+						$this->db->or_like(
+							'DATE_FORMAT(IFNULL(tbl_booking_loads1.SiteOutDateTime, tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y")',
+							$s[$i]
+						);  
+						$this->db->or_like('tbl_booking_request.CompanyName', $s[$i]); 
+						$this->db->or_like('tbl_booking_request.OpportunityName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.DriverName', $s[$i]);  
+						$this->db->or_like('tbl_booking_loads1.VehicleRegNo', $s[$i]);  
+						$this->db->or_like('tbl_materials.MaterialName', $s[$i]); 
+						$this->db->or_like('tbl_booking_loads1.LoadPrice', $s[$i]);  
+						
+					$this->db->group_end(); 
+				}
+			}    
+        } 
+		 
+		if( !empty(trim($ConveyanceNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking_loads1.ConveyanceNo ', trim($ConveyanceNo));  
+ 			$this->db->group_end();  
         }
+		if( !empty(trim($Price)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like(' tbl_booking_loads1.LoadPrice ', trim($Price)); 
+ 			$this->db->group_end();  
+        }
+		if(trim($StartDate)!="" && trim($EndDate)!=""  ){    
+			$this->db->group_start();
+	
+			$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) >=', $StartDate);
+    		$this->db->where('DATE(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime)) <=', $EndDate);
+
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($SiteOutDateTime2)) ){    
+			$this->db->group_start(); 
+			$this->db->like(
+			'DATE_FORMAT(IFNULL(NULLIF(tbl_booking_loads1.SiteOutDateTime,"0000-00-00 00:00:00"), tbl_booking_loads1.JobStartDateTime), "%d-%m-%Y %T")', 
+			trim($SiteOutDateTime2)
+		); 
+ 			$this->db->group_end();  
+        }
+		
+		if( !empty(trim($CompanyName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.CompanyName', trim($CompanyName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($OpportunityName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_request.OpportunityName', trim($OpportunityName)); 
+ 			$this->db->group_end();  
+        }
+		if( !empty(trim($MaterialName)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_materials.MaterialName', trim($MaterialName)); 
+ 			$this->db->group_end();  
+        }
+		 
+		 
+		if( !empty(trim($VehicleRegNo)) ){    
+			$this->db->group_start(); 
+ 			$this->db->like('tbl_booking_loads1.VehicleRegNo', trim($VehicleRegNo)); 
+ 			$this->db->group_end();  
+        }
+		 
+		if( !empty(trim($DriverName)) ){    
+			$this->db->group_start(); 
+			$this->db->like('tbl_booking_loads1.DriverName', trim($DriverName));  
+ 			$this->db->group_end();  
+        } 
+		if( !empty(trim($Status)) ){     
+			if(strtolower($Status[0])=='f' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '4'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='c' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '5'); 
+				$this->db->group_end();  
+			}else if(strtolower($Status[0])=='w' ){
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '6'); 
+				$this->db->group_end();  
+			}else{ 
+				$this->db->group_start(); 
+				$this->db->like(' tbl_booking_loads1.Status ', '11'); 
+				$this->db->group_end();  
+			} 
+        }
+		
+		$this->db->group_by("tbl_booking_loads1.LoadID ");   
+		$this->db->order_by($columnName.' '.$columnSortOrder);	
+        $this->db->limit($_REQUEST['length'], $_REQUEST['start']);
+		
+	    
+		$query = $this->db->get('tbl_booking_loads1');
+		$this->db->stop_cache();
+		//echo $this->db->last_query();
+		//exit;
+    
+	
+        //Reset Key Array
+        $data = array();
+		$data = $query->result_array();
+		$totalData  = $this->db->count_all_results();
+		$totalFiltered =  $totalData; 
+		 
+        //Prepare Return Data
+        $return = array(
+                "draw"            => $_REQUEST['draw'] ,   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                "recordsTotal"    => $totalData,  // total number of records
+                "recordsFiltered" => $totalFiltered, // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data //$query->result_array() //$data  // total data array
+        );
+
+        return $return;
+
+	}
 		
 		public function SplitExcelHaulageTicketsAll($CompanyName,$OpportunityName,$Reservation,$SiteOutDateTime2,$ConveyanceNo,$MaterialName,$DriverName,$VehicleRegNo,$Status,$Search,$Price){
 		//print_r($_POST);
@@ -11153,6 +12143,7 @@ class Booking_model extends CI_Model{
 		//$result = $query->result(); 		  
         return $result; 
     }
+	
 	
 	public function SplitExcelOppoGroupHaulage($CompanyName,$OpportunityName,$Reservation,$SiteOutDateTime2,$ConveyanceNo,$MaterialName,$DriverName,$VehicleRegNo,$Status){
 		//print_r($_POST);

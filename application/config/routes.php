@@ -329,9 +329,12 @@ $route['ShowUpdateBookingAJAXPOST'] = "Booking/ShowUpdateBookingAJAXPOST";
 $route['ConveyanceTicketsTableMeta'] = "Booking/ConveyanceTicketsTableMeta";
 $route['ConveyanceTickets'] = "Booking/ConveyanceTickets";
 $route['AjaxConveyanceTickets'] = "Booking/AjaxConveyanceTickets";
-
+$route['AllConveyanceTicketsArchived'] = "Booking/AllConveyanceTicketsArchived";
+$route['AllConveyanceTicketsAJAXArchived'] = "Booking/AllConveyanceTicketsAJAXArchived";
 $route['DeliveryTickets'] = "Booking/DeliveryTickets";
 $route['AjaxDeliveryTickets'] = "Booking/AjaxDeliveryTickets";
+$route['AllDeliveryTicketsArchived'] = "Booking/AllDeliveryTicketsArchived";
+$route['AllDeliveryTicketsAJAXArchived'] = "Booking/AllDeliveryTicketsAJAXArchived";
 $route['DeliveryTicketsTableMeta'] = "Booking/DeliveryTicketsTableMeta";
 
 
@@ -775,6 +778,8 @@ $route['BookingRequestDayworkFinish/(:any)'] = "Booking/BookingRequestDayworkFin
 $route['DayWorkTicketsTableMeta'] = "Booking/DayWorkTicketsTableMeta";
 $route['DayWorkTickets'] = "Booking/DayWorkTickets";
 $route['AjaxDayWorkTickets'] = "Booking/AjaxDayWorkTickets";
+$route['AllDayWorkTicketsArchived'] = "Booking/AllDayWorkTicketsArchived";
+$route['AllDayWorkTicketsAJAXArchived'] = "Booking/AllDayWorkTicketsAJAXArchived";
 
 $route['DateUpdateDayWorkAjax'] = "Booking/DateUpdateDayWorkAjax";
 $route['DateUpdateDayWork/(:num)'] = "Booking/DateUpdateDayWork/$1";
@@ -794,6 +799,9 @@ $route['SplitExcelExportAllDayWork'] = "Booking/SplitExcelExportAllDayWork";
 $route['HaulageTicketsTableMeta'] = "Booking/HaulageTicketsTableMeta";
 $route['HaulageTickets'] = "Booking/HaulageTickets";
 $route['AjaxHaulageTickets'] = "Booking/AjaxHaulageTickets";
+$route['AllHaulageTicketsArchived'] = "Booking/AllHaulageTicketsArchived";
+$route['AllHaulageTicketsAJAXArchived'] = "Booking/AllHaulageTicketsAJAXArchived";
+
  
 $route['AJAXShowRequestHaulageLoadsDetails'] = "Booking/AJAXShowRequestHaulageLoadsDetails";
 

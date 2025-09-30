@@ -5066,7 +5066,21 @@ class Booking extends BaseController
 		}
 	}
 
+	public function AllConveyanceTicketsArchived()
+	{
+		if ($this->isView == 0) {
+			$data = array();
+			$this->global['pageTitle'] = 'Error';
+			$this->loadViews("permission", $this->global, $data, NULL);
+		} else {
+			$data = array();
+			//echo '<pre>';print_r($data['ticketsRecords']);die;           
+			$this->global['pageTitle'] = WEB_PAGE_TITLE . ' : All Conveyance Tickets Listing (Archived)';
+			$this->global['active_menu'] = 'conveyance';
 
+			$this->loadViews("Booking/AllConveyanceTicketsArchived", $this->global, $data, NULL);
+		}
+	}
 
 	public function DeliveryTickets()
 	{
@@ -5083,6 +5097,29 @@ class Booking extends BaseController
 			$this->loadViews("Booking/DeliveryTickets", $this->global, $data, NULL);
 		}
 	}
+
+	public function AllDeliveryTicketsArchived()
+	{
+		if ($this->isView == 0) {
+			$data = array();
+			$this->global['pageTitle'] = 'Error';
+			$this->loadViews("permission", $this->global, $data, NULL);
+		} else {
+			$data = array();
+			$this->global['pageTitle'] = WEB_PAGE_TITLE . ' : All Delivery Tickets Listing (Archived)';
+			$this->global['active_menu'] = 'conveyance';
+
+			$this->loadViews("Booking/AllDeliveryTicketsArchived", $this->global, $data, NULL);
+		}
+	}
+
+	public function AllDeliveryTicketsAJAXArchived()
+	{
+		$this->load->library('ajax');
+		$data = $this->Booking_model->GetAllDeliveryTicketsArchived();
+		$this->ajax->send($data);
+	}
+
 	public function AllMessage()
 	{
 		if ($this->isView == 0) {
@@ -5217,14 +5254,17 @@ class Booking extends BaseController
 		$this->ajax->send($data);
 	}
 
+	public function AllConveyanceTicketsAJAXArchived()
+	{
+		$this->load->library('ajax');
+		$data = $this->Booking_model->GetAllConveyanceTicketsArchived();
+		$this->ajax->send($data);
+	}
 
 	function ConveyanceTicketsTableMeta()
 	{
 		echo '{"Name":"Conveyance","Action":true,"Column":[{"Name":"ConveyanceNo","Title":"Conv No","Searchable":true,"Class":null},{"Name":"SiteOutDateTime","Title":"DateTime","Searchable":true,"Class":null},{"Name":"CompanyName","Title":"Customer Name","Searchable":true,"Class":null},{"Name":"OpportunityName","Title":"Job Site Address","Searchable":true,"Class":null},{"Name":"TipName","Title":"Supplier Name","Searchable":true,"Class":null},{"Name":"TipAddress","Title":"Tip Site Address","Searchable":false,"Class":null},{"Name":"SuppDate","Title":"SuppTkt Dt","Searchable":false,"Class":null},{"Name":"SuppNo","Title":"SuppTkt No","Searchable":false,"Class":null},{"Name":"PurchaseOrderNo","Title":"PO NO","Searchable":false,"Class":null},{"Name":"MaterialName","Title":"Product Description","Searchable":true,"Class":null},{"Name":"DriverName","Title":"Driver Name","Searchable":true,"Class":null},{"Name":"VehicleRegNo","Title":"VRNO","Searchable":true,"Class":null},{"Name":"Price","Title":"Price","Searchable":true,"Class":null},{"Name":"WaitTime","Title":"WaitTime","Searchable":true,"Class":null},{"Name":"Status","Title":"Status","Searchable":true,"Class":null}]}';
 	}
-
-
-
 
 	public function AjaxDeliveryTickets()
 	{
@@ -5242,10 +5282,7 @@ class Booking extends BaseController
 	{
 		$this->load->library('ajax');
 		$data = $this->Booking_model->GetBookingData();
-		//echo "<PRE>";
-		//print_r($data);
-		//echo "</PRE>";
-		//exit;
+		
 		$this->ajax->send($data);
 	}
 
@@ -12771,6 +12808,23 @@ class Booking extends BaseController
 			$this->loadViews("Booking/DayWorkTickets", $this->global, $data, NULL);
 		}
 	}
+
+	public function AllDayWorkTicketsArchived()
+	{
+		if ($this->isView == 0) {
+			$data = array();
+			$this->global['pageTitle'] = 'Error';
+			$this->loadViews("permission", $this->global, $data, NULL);
+		} else {
+			$data = array();
+
+			$this->global['pageTitle'] = WEB_PAGE_TITLE . ' : All DayWork Tickets Archived';
+			$this->global['active_menu'] = 'conveyance';
+
+			$this->loadViews("Booking/AllDayWorkTicketsArchived", $this->global, $data, NULL);
+		}
+	}
+
 	public function AjaxDayWorkTickets()
 	{
 		$this->load->library('ajax');
@@ -12778,6 +12832,12 @@ class Booking extends BaseController
 		$this->ajax->send($data);
 	}
 
+	public function AllDayWorkTicketsAJAXArchived()
+	{
+		$this->load->library('ajax');
+		$data = $this->Booking_model->GetAllDayWorkTicketsArchived();
+		$this->ajax->send($data);
+	}
 
 	public function HaulageTickets()
 	{
@@ -12794,10 +12854,34 @@ class Booking extends BaseController
 			$this->loadViews("Booking/HaulageTickets", $this->global, $data, NULL);
 		}
 	}
+
+	public function AllHaulageTicketsArchived()
+	{
+		if ($this->isView == 0) {
+			$data = array();
+			$this->global['pageTitle'] = 'Error';
+			$this->loadViews("permission", $this->global, $data, NULL);
+		} else {
+			$data = array();
+
+			$this->global['pageTitle'] = WEB_PAGE_TITLE . ' : All Haulage Tickets Archived';
+			$this->global['active_menu'] = 'conveyance';
+
+			$this->loadViews("Booking/AllHaulageTicketsArchived", $this->global, $data, NULL);
+		}
+	}
+
 	public function AjaxHaulageTickets()
 	{
 		$this->load->library('ajax');
 		$data = $this->Booking_model->GetHaulageTickets();
+		$this->ajax->send($data);
+	}
+
+	public function AllHaulageTicketsAJAXArchived()
+	{
+		$this->load->library('ajax');
+		$data = $this->Booking_model->GetAllHaulageTicketsArchieved();
 		$this->ajax->send($data);
 	}
 
