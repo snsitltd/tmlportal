@@ -13750,13 +13750,13 @@ class Booking extends BaseController
             $oldValueArray = [];
 			if ($oldData) {
 				$oldValueArray = [
-					'JobStartDateTime' => $oldData->JobStartDateTime,
-					'SiteInDateTime'   => $oldData->SiteInDateTime,
-					'SiteOutDateTime'  => $oldData->SiteOutDateTime,
-					'SiteInDateTime2'  => $oldData->SiteInDateTime2,
-					'SiteOutDateTime2' => $oldData->SiteOutDateTime2,
-					'JobEndDateTime'   => $oldData->JobEndDateTime,
-				];
+				'JobStartDatetime' => !empty($oldData->JobStartDateTime) ? date('Y-m-d H:i', strtotime($oldData->JobStartDateTime)) : null,
+				'SiteInDatetime'   => !empty($oldData->SiteInDateTime)   ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime)) : null,
+				'SiteOutDatetime'  => !empty($oldData->SiteOutDateTime)  ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime)) : null,
+				'SiteInDatetime2'  => !empty($oldData->SiteInDateTime2)  ? date('Y-m-d H:i', strtotime($oldData->SiteInDateTime2)) : null,
+				'SiteOutDatetime2' => !empty($oldData->SiteOutDateTime2) ? date('Y-m-d H:i', strtotime($oldData->SiteOutDateTime2)) : null,
+				'JobEndDatetime'   => !empty($oldData->JobEndDateTime)   ? date('Y-m-d H:i', strtotime($oldData->JobEndDateTime)) : null,
+			];
 			}
 			$oldValueJson = json_encode($oldValueArray);
 

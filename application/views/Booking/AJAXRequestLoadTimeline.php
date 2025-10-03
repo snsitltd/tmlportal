@@ -228,27 +228,28 @@ if ($Loads[0]->DriverName != "") {
 					<i class="fa fa-clock-o bg-red"></i>
 				</li>
 			</ul>
-			<style>
-				.activity-timeline-header {
-					background: #d2d6de;
-					color: #000000ff;
-					padding: 10px 20px;
-					font-size: large;
-					font-weight: bold;
-					border-radius: 6px;
-					text-align: left;
-					margin: 30px 0;
-					margin-top: 60px;
-				}
-			</style>
+<style>
+.activity-timeline-header {
+    background: #d2d6de;
+    color: #000000ff;
+    padding: 10px 20px;
+    font-size: large;
+    font-weight: bold;
+    border-radius: 6px;
+    text-align: left;
+    margin: 30px 0;
+    margin-top: 60px;
+}
+</style>
 
-			<div class="activity-timeline-header">
+<div class="activity-timeline-header">
     Activity Timeline
 </div>
 
-<?php if (!empty($updatelogs)) : ?>
+<?php
+if (!empty($updatelogs)) :
 
-    <?php
+    // ✅ Helper functions moved to top
     if (!function_exists('isJson')) {
         function isJson($string)
         {
@@ -258,7 +259,19 @@ if ($Loads[0]->DriverName != "") {
         }
     }
 
-    $CI = &get_instance();
+    function normalizeDateValue($value)
+    {
+        if (empty($value)) return $value;
+
+        $formats = ['Y-m-d H:i:s', 'Y-m-d H:i', 'd/m/Y H:i:s', 'd/m/Y H:i'];
+        foreach ($formats as $fmt) {
+            $dateObj = DateTime::createFromFormat($fmt, $value);
+            if ($dateObj) {
+                return $dateObj->format('d-m-Y H:i'); // ✅ Only minutes
+            }
+        }
+        return $value; // not a date
+    }
 
     function decodeLogDataSimple($rawValue, $CI)
     {
@@ -271,118 +284,91 @@ if ($Loads[0]->DriverName != "") {
                 foreach ($decoded as $key => $val) {
                     if (strtolower($key) === 'loadprice') continue;
 
-                    // ✅ Tip Name
+                    // ✅ Convert TipID -> Tip Name
                     if (strtolower($key) === 'tipid') {
                         $tipRow = $CI->db->get_where('tbl_tipaddress', ['TipID' => $val])->row();
                         $val = $tipRow ? $tipRow->TipName : "(Unknown Tip)";
                         $key = "Tip Name";
                     }
 
-                    // ✅ Material Name
+                    // ✅ Convert MaterialID -> Material Name
                     if (strtolower($key) === 'materialid') {
                         $material = $CI->db->get_where('tbl_materials', ['MaterialID' => $val])->row();
                         $val = $material ? $material->MaterialName : "(Unknown Material)";
                         $key = "Material Name";
                     }
 
-                     // ✅ Strict Date Format Conversion
-                if (!empty($val) && preg_match('/^\d{4}-\d{2}-\d{2}/', $val)) { 
-                    // Only if value looks like a date in YYYY-MM-DD format
-                    $dateObj = DateTime::createFromFormat('Y-m-d H:i:s', $val);
-                    if ($dateObj) {
-                        $val = $dateObj->format('d/m/Y H:i:s'); // ✅ Force DD/MM/YYYY format
-                    }
-                }
+                    // ✅ Normalize date formats
+                    if (!empty($val)) $val = normalizeDateValue($val);
 
                     $prettyKey = ucwords(str_replace('_', ' ', preg_replace('/([a-z])([A-Z])/', '$1 $2', $key)));
                     $decodedArr[$prettyKey] = $val;
                 }
             }
         } else {
-            // Handle plain text logs
+            // Handle plain text logs (like "Material Name : X")
             $clean = trim(preg_replace('/^Value\s*:/i', '', $rawValue));
             $clean = preg_replace('/^Material\s*Name\s*:\s*/i', '', $clean);
-
             if (!empty($clean)) {
                 $decodedArr["Material Name"] = $clean;
             }
         }
-
         return $decodedArr;
     }
 
-    function renderOldNewBlocks($oldDataArr, $newDataArr)
-    {
-        // ✅ Status Map
-        $statusMap = [
-            4 => 'Finished',
-            5 => 'Cancelled',
-            6 => 'Wasted Journey',
-            7 => 'Invoice Cancelled',
-            8 => 'Invoice Cancelled'
-        ];
-
-        $html = "";
-        $hiddenKeys = ['BookingID', 'BookingDateID'];
-
-        if (!empty($oldDataArr) || !empty($newDataArr)) {
-            // 🔶 Yellow "Updated From"
-            $html .= "<p><strong style='color: #ff851b;'>Updated From :</strong></p>";
-            if (!empty($oldDataArr)) {
-                foreach ($oldDataArr as $key => $value) {
-                    $normalizedKey = str_replace(' ', '', strtolower($key));
-                    if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue;
-
-                    // ✅ Convert Status number to name
-                    if (strtolower($key) === 'status' && isset($statusMap[$value])) {
-                        $value = $statusMap[$value];
-                    }
-
-                    $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
-                }
-            } else {
-                $html .= "<div><em>No Old Data</em></div>";
-            }
-
-            // 🔶 Yellow "Updated To"
-            $html .= "<p style='margin-top:10px;'><strong style='color: #ff851b;'>Updated To :</strong></p>";
-            if (!empty($newDataArr)) {
-                foreach ($newDataArr as $key => $value) {
-                    $normalizedKey = str_replace(' ', '', strtolower($key));
-                    if (in_array($normalizedKey, array_map('strtolower', $hiddenKeys))) continue;
-
-                    // ✅ Convert Status number to name
-                    if (strtolower($key) === 'status' && isset($statusMap[$value])) {
-                        $value = $statusMap[$value];
-                    }
-
-                    $html .= "<div><strong>{$key}:</strong> " . htmlspecialchars($value) . "</div>";
-                }
-            } else {
-                $html .= "<div><em>No New Data</em></div>";
-            }
-        }
-        return $html;
-    }
-    ?>
-
-				<ul class="timeline">
-					<?php foreach ($updatelogs as $log) : ?>
-						<?php
-$dateObj = DateTime::createFromFormat('Y-m-d H:i:s', $log->LogDateTime);
-$formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
+    $CI = &get_instance();
 ?>
-<li class="time-label">
-    <span style="font-weight:bold; color:#333; background: #d2d6de">
-        <?= $formattedDate; ?>
-    </span>
-</li>
 
+<ul class="timeline">
+<?php foreach ($updatelogs as $log): ?>
+    <?php
+    $oldArr = decodeLogDataSimple($log->OldValue, $CI);
+    $newArr = decodeLogDataSimple($log->UpdatedValue, $CI);
 
-						<li>
-							<i class="fa fa-edit bg-orange"></i>
-							<div class="timeline-item p-3">
-								<?php
+    $changedFields = [];
+
+    foreach ($newArr as $key => $newVal) {
+        $normalizedKey = strtolower(str_replace(' ', '', $key));
+        if ($normalizedKey === 'jobstartdatetime') continue; // skip JobStartDatetime
+
+        $oldVal = $oldArr[$key] ?? null;
+
+        $formattedOld = $oldVal;
+        $formattedNew = $newVal;
+
+        // ✅ Normalize dates again and ignore seconds when comparing
+        $oldDateObj = DateTime::createFromFormat('d-m-Y H:i', normalizeDateValue($oldVal));
+        $newDateObj = DateTime::createFromFormat('d-m-Y H:i', normalizeDateValue($newVal));
+
+        if ($oldDateObj && $newDateObj) {
+            $formattedOld = $oldDateObj->format('d-m-Y H:i');
+            $formattedNew = $newDateObj->format('d-m-Y H:i');
+            if ($formattedOld === $formattedNew) continue; // skip if only seconds changed
+        }
+
+        if (trim((string)$formattedOld) !== trim((string)$formattedNew)) {
+            $changedFields[$key] = [
+                'old' => $formattedOld,
+                'new' => $formattedNew
+            ];
+        }
+    }
+
+    if (empty($changedFields)) continue; // skip logs without changes
+
+    $logDateObj = DateTime::createFromFormat('Y-m-d H:i:s', $log->LogDateTime);
+    $formattedLogDate = $logDateObj ? $logDateObj->format('d-m-Y H:i') : $log->LogDateTime;
+    ?>
+    <li class="time-label">
+        <span style="font-weight:bold; color:#333; background: #d2d6de">
+            <?= $formattedLogDate; ?>
+        </span>
+    </li>
+
+    <li>
+        <i class="fa fa-edit bg-orange"></i>
+        <div class="timeline-item p-3">
+											<?php
 								if (stripos($log->SitePage, 'material update') !== false) $log->SitePage = "Material";
 								if (stripos($log->SitePage, 'date update') !== false) $log->SitePage = "Date";
 								if (stripos($log->SitePage, 'tip update') !== false) $log->SitePage = "Tip Address";
@@ -392,24 +378,31 @@ $formattedDate = $dateObj ? $dateObj->format('d/m/Y H:i:s') : $log->LogDateTime;
 								$oldArr = decodeLogDataSimple($log->OldValue, $CI);
 								$newArr = decodeLogDataSimple($log->UpdatedValue, $CI);
 								?>
+            <h3 class="timeline-header">
+                <strong style="color:#3c8dbc;"><?= htmlspecialchars($log->CreatedByName); ?></strong>
+                updated <b><?= htmlspecialchars(ucfirst($log->SitePage)); ?></b>
+            </h3>
 
-								<h3 class="timeline-header">
-									<strong style="color:#3c8dbc;"><?= $log->CreatedByName; ?></strong>
-									updated <b><?= ucfirst($log->SitePage); ?></b>
-								</h3>
+            <div class="timeline-body">
+                <strong>Updated From :</strong><br>
+                <?php foreach ($changedFields as $field => $values): ?>
+                    <?= ucwords(str_replace('_', ' ', $field)) ?>: <?= htmlspecialchars($values['old']) ?><br>
+                <?php endforeach; ?>
 
-								<div class="timeline-body">
-									<?= renderOldNewBlocks($oldArr, $newArr); ?>
-								</div>
-							</div>
-						</li>
-					<?php endforeach; ?>
-				</ul>
+                <br><strong>Updated To :</strong><br>
+                <?php foreach ($changedFields as $field => $values): ?>
+                    <?= ucwords(str_replace('_', ' ', $field)) ?>: <?= htmlspecialchars($values['new']) ?><br>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </li>
+<?php endforeach; ?>
+</ul>
 
-			<?php else : ?>
-				<div style="margin: 30px 0; text-align:center;">
-					<span style="color:#555; padding:6px 15px; font-size:medium; border-radius:6px; display:inline-block;">
-						No Activity Timeline.
-					</span>
-				</div>
-			<?php endif; ?>
+<?php else: ?>
+    <div style="margin: 30px 0; text-align:center;">
+        <span style="color:#555; padding:6px 15px; font-size:medium; border-radius:6px; display:inline-block;">
+            No Activity Timeline.
+        </span>
+    </div>
+<?php endif; ?>
